@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+body {
+    background-color: #0079C2;
+    padding: 0;
+    margin: 0;
+}
+
+.content01 {
+    background-color: #0E5688;
+    padding-top: 2rem;
+}
+
+.content02 {
+    background-color: #0E5688;
+    padding-top: 2rem;
+}
+nav {
+    background-color: #FFF;
+    margin: auto;
+    max-width: 1920px;
+    padding: 1rem 6.5rem;
+    display: flex;
+    align-items: center;
+    gap: 7rem;
+}
+
+nav img {
+    width: 9%;
+}
+
+nav a {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+a::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: red;
+    /* Color de la línea de subrayado */
+    transition: width 0.3s ease;
+    /* Suaviza el subrayado */
+}
+
+a:hover {
+    transform: scale(1.1);
+    /* Aumenta el tamaño un 10% */
+    color: red;
+    /* Cambia el color del enlace */
+}
+
+a:hover::after {
+    width: 100%;
+    /* La línea de subrayado se expande completamente */
+}
+
+
+
+
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        /* Cambia a columna para pantallas más pequeñas */
+        align-items: flex-start;
+        padding: 1rem 3rem;
+    }
+
+    nav img {
+        width: 25vw;
+        /* Ajusta el tamaño del logo en pantallas medianas */
+    }
+
+    nav a {
+        font-size: 5vw;
+        /* Ajusta el tamaño del texto */
+        margin: 0.5rem 0;
+        /* Añade espacio entre enlaces */
+    }
+}
+
+/* Para pantallas pequeñas (celulares promedio) */
+@media (max-width: 480px) {
+    nav {
+        flex-direction: column;
+        /* Cambia la barra de navegación a columna */
+        align-items: center;
+        /* Alinea el contenido en el centro */
+        padding: 1rem 2rem;
+    }
+
+    nav img {
+        width: 30vw;
+        /* Logo más grande en celulares pequeños */
+        max-width: 80px;
+        /* Límite para no exceder el tamaño */
+    }
+
+    nav a {
+        font-size: 6vw;
+        /* Ajusta el tamaño del texto para mejor legibilidad */
+        margin: 0.8rem 0;
+        /* Añade más espacio entre los enlaces */
+    }
+
+    .content01,
+    .content02 {
+        padding: 2rem 3%;
+        /* Reduce el padding en celulares pequeños */
+    }
+}
