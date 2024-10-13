@@ -15,18 +15,45 @@ body {
     background-color: #0E5688;
     padding-top: 2rem;
 }
+.categorias-container{
+    padding-right: 3rem;
+    padding-left: 3rem;
+}
+.categorias-container img{
+    height: 250px;
+    width: 250px;
+}
+.categorias{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding-right: 15rem;
+    padding-left: 15rem;
+    gap: 1rem;
+}
+.categorias02{
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding-right: 7rem;
+    padding-left: 7rem;
+    gap: 5rem;
+}
 nav {
     background-color: #FFF;
     margin: auto;
     max-width: 1920px;
-    padding: 1rem 6.5rem;
+    padding: 1rem 3.5rem;
     display: flex;
     align-items: center;
-    gap: 7rem;
+    gap: 5.5rem;
 }
 
 nav img {
-    width: 9%;
+    width: 5%;
 }
 
 nav a {
@@ -38,6 +65,8 @@ nav a {
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
+
+
 a::after {
     content: "";
     position: absolute;
@@ -45,22 +74,22 @@ a::after {
     height: 2px;
     bottom: 0;
     left: 0;
-    background-color: red;
-    /* Color de la línea de subrayado */
-    transition: width 0.3s ease;
-    /* Suaviza el subrayado */
+    background-color: red; /* Color de la línea de subrayado */
+    transition: width 0.3s ease; /* Suaviza el subrayado */
 }
 
 a:hover {
-    transform: scale(1.1);
-    /* Aumenta el tamaño un 10% */
-    color: red;
-    /* Cambia el color del enlace */
+    transform: scale(1.1); /* Aumenta el tamaño un 10% */
+    color: red; /* Cambia el color del enlace */
 }
 
-a:hover::after {
-    width: 100%;
-    /* La línea de subrayado se expande completamente */
+.active {
+    color: red; /* Cambiará el color al enlace activo */
+}
+
+/* Clase para agrandar al hacer clic */
+.scale {
+    transform: scale(1.2); /* Aumenta el tamaño un 20% */
 }
 
 

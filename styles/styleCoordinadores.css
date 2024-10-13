@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+.content03{
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+.card{
+    background-color: #FFF;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    width: 48%;
+    border-radius: 4.5rem;
+}
+.card p{
+    margin: 0;
+    padding: 1rem;
+    font-family: "Anton", sans-serif;
+    font-size: 56px;
+    color: #0E5688;
+}
+
+.contenedor-principal{
+    padding-right: 3rem;
+    padding-left: 3rem;
+}
+.contenedor-principal img{
+    height: 250px;
+    width: 250px;
+}
+.contenedor-principal p{
+    font-family: "Anton", sans-serif;
+    font-weight: lighter;
+    font-size: 22px;
+    text-align: center;
+    color: #FFF;
+}
+
+.columna01{ 
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+    padding-right: 15rem;
+    padding-left: 15rem;
+    gap: 1rem;
+}
+.columna02{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding-right: 15rem;
+    padding-left: 15rem;
+    gap: 1rem;
+}

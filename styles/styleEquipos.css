@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+.content03{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 42rem;
+}
+
+.content03 input{
+    background-color: #fff;
+    border-color: #ADA6A2;
+    border-style: solid;
+    border-width: 2px;
+    padding-top: 2rem;
+    padding: 1rem 5rem;
+    padding-right: 2rem;
+    border-radius: 1rem;
+    
+}
+.content03 input[type="submit"]{
+    background-color: red;
+    padding-top: 5rem;
+    padding-right: 3rem;
+    padding-left: 2rem;
+    padding: 1rem 3rem;
+    border-radius: 1rem;
+}
+
+.card{
+    background-color: #FFF;
+    display: flex;
+    justify-content: center;
+    width: 25%;
+    border-radius: 4.5rem;
+}
+.card p{
+    margin: 0;
+    padding: 1rem;
+    font-family: "Anton", sans-serif;
+    font-size: 56px;
+    color: #0E5688;
+}
+.equipos{
+    padding-top: 2rem;
+    padding-right: 6rem;
+    padding-left: 6rem;
+}
+
+.equipos img {
+    height: 250px;
+    width: 250px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suaviza la transformación y la sombra */
+}
+
+.equipos img:hover {
+    transform: scale(1.1); /* Aumenta el tamaño de la imagen */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Añade sombra a la imagen */
+}
+
+
+.seccion01{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding-right: 20rem;
+    padding-left: 20rem;
+    padding-bottom: 2rem;
+    gap: 1rem;
+}
+.seccion01 h4{
+    padding: 0;
+    margin: 0;
+    font-family: "Anton", sans-serif;
+    font-size: 32px;
+    font-weight: lighter;
+    color: #fff;
+    text-align: center;
+}
+.seccion02{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding-right: 20rem;
+    padding-left: 20rem;
+    gap: 1rem;
+}
+.seccion02 h4{
+    padding: 0;
+    margin: 0;
+    font-family: "Anton", sans-serif;
+    font-size: 32px;
+    font-weight: lighter;
+    color: #fff;
+    text-align: center;
+}
+

@@ -1,19 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 
 .content03{
-    padding-top: 2rem;
+    padding-top: 1rem;
 }
 .card{
     background-color: #FFF;
     display: flex;
     margin: auto;
     justify-content: center;
-    width: 52%;
+    width: 35%;
     border-radius: 4rem;
 }
 
 .card h1{
     font-family: "Anton", sans-serif;
-    font-size: 64px;
+    font-size: 45px;
     color: #0E5688;
 }

@@ -2,14 +2,14 @@
 
 .content03{
     padding-top: 1rem;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
 }
 .card{
     background-color: #FFF;
     display: flex;
     margin: auto;
     justify-content: center;
-    width: 21%;
+    width: 29%;
     border-radius: 4.5rem;
 }
 .card p{
@@ -19,4 +19,3 @@
     font-size: 56px;
     color: #0E5688;
 }
-
