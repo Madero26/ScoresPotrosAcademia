@@ -2,18 +2,20 @@
 
 .content03{
     padding-top: 1rem;
+    padding-bottom: 1rem;
 }
 .card{
     background-color: #FFF;
     display: flex;
     margin: auto;
     justify-content: center;
-    width: 37%;
-    border-radius: 4rem;
+    width: 34%;
+    border-radius: 4.5rem;
 }
-
-.card h1{
+.card p{
+    margin: 0;
+    padding: 1rem;
     font-family: "Anton", sans-serif;
-    font-size: 48px;
+    font-size: 56px;
     color: #0E5688;
 }

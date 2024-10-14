@@ -4,11 +4,23 @@ body {
     background-color: #0079C2;
     padding: 0;
     margin: 0;
+    transition: opacity 0.5s ease-in-out; /* Transición suave de la opacidad */
 }
 
 .content01 {
     background-color: #0E5688;
     padding-top: 2rem;
+}
+.content01 a{
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: tomato;
+    font-family: "Source Sans 3", sans-serif;
+    color: #FFF;
+    font-size: 20px;
+    text-align: center;
+    text-decoration: none;
+    
 }
 
 .content02 {
@@ -63,6 +75,9 @@ nav a {
     color: #000;
     text-decoration: none;
     transition: transform 0.3s ease, color 0.3s ease;
+}
+.fade-out {
+    opacity: 0;
 }
 
 

@@ -14,25 +14,43 @@
     <nav>
         <img src="./imgs/potros.png" alt="POTROS ITSON">
         <div>
-            <a href="index.html">INICIO</a>
+            <a href="index.html" class="link">INICIO</a>
         </div>
         <div>
-            <a href="Estadisticas.html">ESTADISTICAS</a>
+            <a href="Estadisticas.html" class="link">ESTADISTICAS</a>
         </div>
         <div>
-            <a href="JugadoresD.html">JUGADORES DESTACADOS</a>
+            <a href="JugadoresD.html" class="link">JUGADORES DESTACADOS</a>
         </div>
         <div>
-            <a href="Pagos.html">PAGOS</a>
+            <a href="Pagos.html" class="link">PAGOS</a>
         </div>
         <div>
-            <a href="Coordinadores.html">COORDINADORES</a>
+            <a href="Coordinadores.html" class="link">COORDINADORES</a>
         </div>
         <div>
-            <a href="Standing.html">STANDING</a>
+            <a href="Standing.html" class="link">STANDING</a>
         </div>
         <img src="./imgs/logo.png" alt="Logo">
+    
     </nav>
+    <script>
+        // Agregar el evento a todos los enlaces con clase 'link'
+        document.querySelectorAll('.link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Evita que el link se cargue inmediatamente
+                const url = this.href; // Captura la URL del enlace
+
+                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
+                document.body.classList.add('fade-out');
+
+                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
+                setTimeout(function() {
+                    window.location.href = url; // Cambia a la nueva URL después de la animación
+                }, 90); // Espera 500 ms para redirigir
+            });
+        });
+    </script>
     <script src="./js/Animaciones.js"></script>
     <section class="content02">_</section>
     <section class="content03">
