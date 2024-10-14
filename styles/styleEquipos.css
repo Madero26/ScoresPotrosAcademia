@@ -4,26 +4,26 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: space-around;
+    justify-content: space-between;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    padding-left: 42rem;
+    margin-left: 43%;
+    
 }
 
 .content03 input{
     background-color: #fff;
     border-color: #ADA6A2;
+    font-size: 24px;
     border-style: solid;
     border-width: 2px;
     padding-top: 2rem;
     padding: 1rem 5rem;
-    padding-right: 2rem;
     border-radius: 1rem;
     
 }
 .content03 input[type="submit"]{
     background-color: red;
-    padding-top: 5rem;
     padding-right: 3rem;
     padding-left: 2rem;
     padding: 1rem 3rem;
@@ -34,7 +34,7 @@
     background-color: #FFF;
     display: flex;
     justify-content: center;
-    width: 25%;
+    width: 30%;
     border-radius: 4.5rem;
 }
 .card p{
