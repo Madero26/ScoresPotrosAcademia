@@ -56,10 +56,14 @@
     </script>
     <script src="./js/Animaciones.js"></script>
     <section class="content02">_</section>
-    <h1>FORMULARIO PARA SUBIR FOTOS</h1>
+    <h1 class="act">FORMULARIO PARA ACTUALIZAR DATOS DEL JUGADOR</h1>
     
-    <form action="" method="POST">
-        <label for="categoria">Selecciona la Categoría:</label>
+    <form action="FormularioDatosActualizarJugador.html">
+        <label for="name">Nombre Completo Del Jugador:</label>
+        <input type="text" placeholder="Nombres" required>
+        <input type="text" placeholder="Apellido Paterno" required>
+        <input type="text" placeholder="Apellido Materno" required>
+        <label for="categoria">Selecciona La Categoría:</label>
         <select name="categoria" id="categoria" required>
             <option value="3-4">3-4 Años</option>
             <option value="5-6">5-6 Años</option>
@@ -69,27 +73,12 @@
             <option value="13-14">13-14 Años</option>
             <option value="15-16">15-16 Años</option>
         </select>
-
-        <label for="equipo">Nombre del Equipo:</label>
-        <select name="equipo" required>
-            <option value="Potrillos">Potrillos</option>
-        <option value="Munstangs">Munstangs</option>
-        <option value="Ponys">Ponys</option>
-        <option value="Broncos">broncos</option>
-        </select>
-
-        <label for="fotoCategoria">Subir Foto de la Categoría:</label>
-        <input type="file" name="fotoCategoria" id="fotoCategoria" accept="image/*" required>
-
-        <label for="fotoEquipo">Subir Foto del Equipo:</label>
-        <input type="file" name="fotoEquipo" id="fotoEquipo" accept="image/*" required>
-
-        <input type="submit" value="Subir Fotos" onclick="mostrarMensaje()">
+        <input type="submit" value="Buscar" onclick="mostrarMensaje()">
         <script>
-                function mostrarMensaje() {
-                    alert("Vuelve a iniciar sescion con tu nueva contraseña");
-                }
-            </script>
+            function mostrarMensaje() {
+                alert("JUGADOR ENCONTRADO CON EXITO");
+            }
+        </script>
     </form>
 
 </body>
