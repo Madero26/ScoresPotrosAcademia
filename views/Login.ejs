@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="resources/styles/styleMain.css">
+    <link rel="stylesheet" href="resources/styles/styleLoginAdmin.css">
+    <link rel="icon" href="resources/imgs/academia-logo.png">
+</head>
+<body>
+
+    
+    <section class="content03">
+        <div class="card">
+            <p>INICIO DE SESION</p>
+        </div>
+    </section>
+
+    <section class="login-body">
+        <div class="login-container">
+            <form id="login-form" action="auth" method="POST">
+              <input type="text" name= "username" id="user" placeholder="Usuario" required>
+              <input type="password" name="password" id="pass" placeholder="Contraseña" required>
+                <input type="submit" value="Iniciar Sesion">
+            </form>
+          </div>
+    </section>
+    <div class="regresar">
+        <a href="index.ejs"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+    </div>
+    
+</body>
+</html>

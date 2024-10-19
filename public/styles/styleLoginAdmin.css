@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+.content03{
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+.card{
+    background-color: #FFF;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    width: 25%;
+    border-radius: 4.5rem;
+}
+.card p{
+    margin: 0;
+    padding: 1rem;
+    font-family: "Anton", sans-serif;
+    font-size: 56px;
+    color: #0E5688;
+}
+.cardContra{
+    background-color: #FFF;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    width: 33%;
+    border-radius: 4.5rem;
+}
+.cardContra p{
+    margin: 0;
+    padding: 1rem;
+    font-family: "Anton", sans-serif;
+    font-size: 56px;
+    color: #0E5688;
+}
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+font-size: 24px;
+    min-height: 50vh;
+    
+  }
+  
+  .login-container {
+    width: 500px;
+    padding: 50px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-container input {
+    width: 100%;
+    margin-bottom: 30px;
+    font-size: 24px;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .login-container input[type="submit"] {
+    width: 100%;
+    padding: 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 24px;
+    background-color: #0a3871;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .login-container button:hover {
+    background-color: #0b4a85;
+  }
+  
+  .login-container p {
+    margin-top: 20px;
+    text-align: center;
+    color: #495057;
+  }
+  
+  .login-container a {
+    color: #0a3871;
+    text-decoration: none;
+  }
+  
+  .login-container a:hover {
+    text-decoration: underline;
+  }
+  .regresar img{
+    padding-top: 1rem;
+    width: 3%;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .regresar img:hover {
+    transform: scale(1.5);
+}

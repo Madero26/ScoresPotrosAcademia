@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="resources/styles/styleMain.css">
+    <link rel="icon" href="resources/imgs/academia-logo.png">
+    <link rel="stylesheet" href="resources/styles/styleCoordinadores.css">
+</head>
+<body>
+
+    <section class="content01">_</section>
+    <nav>
+        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
+        <div>
+            <a href="index.ejs" class="link">INICIO</a>
+        </div>
+        <div>
+            <a href="Estadisticas.ejs" class="link">ESTADISTICAS</a>
+        </div>
+        <div>
+            <a href="JugadoresD.ejs" class="link">JUGADORES DESTACADOS</a>
+        </div>
+        <div>
+            <a href="Pagos.ejs" class="link">PAGOS</a>
+        </div>
+        <div>
+            <a href="Coordinadores.ejs" class="link">COORDINADORES</a>
+        </div>
+        <div>
+            <a href="Standing.ejs" class="link">STANDING</a>
+        </div>
+        <img src="resources/imgs/logo.png" alt="Logo">
+    
+    </nav>
+    <script>
+        // Agregar el evento a todos los enlaces con clase 'link'
+        document.querySelectorAll('.link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Evita que el link se cargue inmediatamente
+                const url = this.href; // Captura la URL del enlace
+
+                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
+                document.body.classList.add('fade-out');
+
+                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
+                setTimeout(function() {
+                    window.location.href = url; // Cambia a la nueva URL después de la animación
+                }, 90); // Espera 500 ms para redirigir
+            });
+        });
+    </script>
+    <script src="resources/js/Animaciones.js"></script>
+    <section class="content02">_</section>
+    <section class="content03">
+        <div class="card">
+            <p>COORDINADORES DE LAS CATEGORIAS</p>
+        </div>
+    </section>
+
+    <section class="contenedor-principal">
+        <div class="columna01">
+            <div>
+                <img src="resources/imgs/logo.png" alt="Ricardo Saavedra">
+                <p>Ricardo Saavedra</p>
+                <p>Categoria 3-6</p>
+            </div>
+            <div>
+                <img src="resources/imgs/logo.png" alt="Aldo Hernadez">
+                <p>Aldo Hernandez</p>
+                <p>Categoria 7-8</p>
+            </div>
+            <div>
+                <img src="resources/imgs/logo.png" alt="Miguel Cervantes">
+                <p>Miguel Cervantes</p>
+                <p>Categoria 9-10</p>
+            </div>
+        </div>
+        <div class="columna02">
+            <div>
+                <img src="resources/imgs/logo.png" alt="Ismael Agüero">
+                <p>Ismael Agüero</p>
+                <p>Categoria 11-12</p>
+            </div>
+            <div>
+                <img src="resources/imgs/logo.png" alt="Martin Arvizu">
+                <p>Martin Arvizu</p>
+                <p>Categoria 13-14</p>
+            </div>
+            <div>
+                <img src="resources/imgs/logo.png" alt="Martin Arvizu">
+                <p>Martin Arvizu</p>
+                <p>Categoria 13-14</p>
+            </div>
+        </div>
+
+    </section>
+    
+</body>
+</html>

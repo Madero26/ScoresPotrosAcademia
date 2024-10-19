@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="resources/styles/styleMain.css">
+    <link rel="icon" href="resources/imgs/academia-logo.png">
+    <link rel="stylesheet" href="resources/styles/styleJugadoresDestacados.css">
+</head>
+<body>
+
+    <section class="content01">_</section>
+    <nav>
+        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
+        <div>
+            <a href="index.ejs" class="link">INICIO</a>
+        </div>
+        <div>
+            <a href="Estadisticas.ejs" class="link">ESTADISTICAS</a>
+        </div>
+        <div>
+            <a href="JugadoresD.ejs" class="link">JUGADORES DESTACADOS</a>
+        </div>
+        <div>
+            <a href="Pagos.ejs" class="link">PAGOS</a>
+        </div>
+        <div>
+            <a href="Coordinadores.ejs" class="link">COORDINADORES</a>
+        </div>
+        <div>
+            <a href="Standing.ejs" class="link">STANDING</a>
+        </div>
+        <img src="resources/imgs/logo.png" alt="Logo">
+    
+    </nav>
+    <script>
+        // Agregar el evento a todos los enlaces con clase 'link'
+        document.querySelectorAll('.link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Evita que el link se cargue inmediatamente
+                const url = this.href; // Captura la URL del enlace
+
+                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
+                document.body.classList.add('fade-out');
+
+                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
+                setTimeout(function() {
+                    window.location.href = url; // Cambia a la nueva URL después de la animación
+                }, 90); // Espera 500 ms para redirigir
+            });
+        });
+    </script>
+    <script src="resources/js/Animaciones.js"></script>
+    <section class="content02">_</section>
+    <section class="content03">
+        <div class="card">
+            <p>CATEGORIAS:</p>
+        </div>
+    </section>
+
+    <section class="categorias-container">
+        <div  class="categorias">
+            <a href="Destacados_3-4.ejs"><img src="resources/imgs/logo.png" alt="Categoria 3-4 años"></a>
+            <a href="Destacados_5-6.ejs"><img src="resources/imgs/logo.png" alt="Categoria 5-6 años"></a>
+            <a href="Destacados_7-8.ejs"><img src="resources/imgs/logo.png" alt="Categoria 7-8 años"></a>
+        </div>
+        <div  class="categorias02">
+            <a href="Destacados_9-10.ejs"><img src="resources/imgs/logo.png" alt="Categoria 9-10 años"></a>
+            <a href="Destacados_11-12.ejs"><img src="resources/imgs/logo.png" alt="Categoria 11-12 años"></a>
+            <a href="Destacados_13-14.ejs"><img src="resources/imgs/logo.png" alt="Categoria 13-14 años"></a>
+            <a href="Destacados_15-16.ejs"><img src="resources/imgs/logo.png" alt="Categoria 15-16 años"></a>
+            
+        </div>
+    </section>
+    
+</body>
+</html>

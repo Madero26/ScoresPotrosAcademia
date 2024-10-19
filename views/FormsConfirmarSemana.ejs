@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="resources/styles/styleForms.css">
+    <link rel="icon" href="resources/imgs/academia-logo.png">
+
+</head>
+<body>
+    <h1 class="conf-actualizar">FORMULARIO PARA ACTUALIZAR DATOS DEL JUGADOR</h1>
+    
+    <form action="/register" method="POST">
+        
+        <label for="date">Fecha Actual:</label>
+        <input type="date" required>
+        <label for="categoria">Selecciona La Categoria:</label>
+        <label for="adeudo">Registra el total de adeudo</label>
+        <input type="range" name="adeudo" id="adeudo" min="0" max="200">
+        <div class="botones">
+        <input type="submit" value="ACTUALIZAR" onclick="mostrarMensaje()">
+        <input type="button" value="REGRESAR" onclick="mostrarMensaje2()">
+    </div>
+        <script>
+            function mostrarMensaje() {
+                alert("SE ACTUALIZO EL JUGADOR CON EXITO");
+            }
+        </script>
+        <script>
+            function mostrarMensaje2() {
+                alert("REGRESANDO AL FORMULARIO ANTERIOR");
+                window.history.back();
+            }
+        </script>
+    </form>
+
+</body>
+</html>

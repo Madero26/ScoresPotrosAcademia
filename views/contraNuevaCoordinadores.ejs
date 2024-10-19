@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="resources/styles/styleMain.css">
+    <link rel="stylesheet" href="resources/styles/stylePago.css">
+    <link rel="icon" href="resources/imgs/academia-logo.png">
+</head>
+<body>
+
+    
+    <section class="content03">
+        <div class="cardContra">
+            <p>CAMBIAR CONTRASEÑA</p>
+        </div>
+    </section>
+
+    <section class="login-body">
+        <div class="login-container">
+            <form id="login-form" action="Login.ejs">
+              <input type="text" name= "username" placeholder="Contraseña anterior" required>
+              <input type="password" name="password" placeholder="Contraseña nueva" required>
+              <button type="submit" name="iniciar" onclick="mostrarMensaje()">Cambiar </button><!-- Botón para iniciar sesión -->
+              <script>
+                function mostrarMensaje() {
+                    alert("Vuelve a iniciar sescion con tu nueva contraseña");
+                }
+            </script>
+            </form>
+          </div>
+    </section>
+    <div class="regresar">
+        <p>Regresar</p>
+    <a href="FormFotos.ejs"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+    </div>
+</body>
+</html>
