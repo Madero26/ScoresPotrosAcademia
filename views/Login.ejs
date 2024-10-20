@@ -19,9 +19,9 @@
 
     <section class="login-body">
         <div class="login-container">
-            <form id="login-form" action="auth" method="POST">
-              <input type="text" name= "username" id="user" placeholder="Usuario" required>
-              <input type="password" name="password" id="pass" placeholder="Contraseña" required>
+            <form action="/login" method="POST">
+              <input type="text" name= "user" id="user" placeholder="Usuario" >
+              <input type="password" name="pass" id="pass" placeholder="Contraseña" >
                 <input type="submit" value="Iniciar Sesion">
             </form>
           </div>
@@ -29,6 +29,20 @@
     <div class="regresar">
         <a href="index.ejs"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
     </div>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert != "undefined") { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %> ,
+                timer: <%= timer %>
+            }).then(()=>{
+                window.location = '/<%= ruta %>'
+            })
+        </script>
+
+        <% } %>
 </body>
 </html>

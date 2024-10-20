@@ -12,11 +12,12 @@
 <body>
     <section class="content01">
         <div class ="regreso">
-        <a href="index.ejs">Cerrar Sesion</a>
+        <a href="logout">Cerrar Sesion</a>
          </div>
         <div class="perfil">
-            <img src="resources/imgs/logo.png" alt="Foto de perfil">
-            <p>Nombre usuario</p>
+            <% if (usuario) { %>
+            <p> <%= usuario.usuario %> </p>
+            <% } %>
         </div>
     </section>
     <nav>
@@ -65,7 +66,7 @@
     <section class="content02">_</section>
     <h1 class="fotos">FORMULARIO PARA SUBIR FOTOS</h1>
     
-    <form action="/registerFotosCategoria" method="POST" enctype="multipart/form-data">
+    <form action="/formCoordinadores" method="POST" enctype="multipart/form-data">
         <label for="categoria">Selecciona la Categoría:</label>
         <select name="categoria" id="categoria" required>
             <option value="3-4 Años">3-4 Años</option>
@@ -83,5 +84,20 @@
         <input type="submit" value="Subir Fotos">
     </form>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert != "undefined") { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %> ,
+                timer: <%= timer %>
+            }).then(()=>{
+                window.location = '/formCoordinadores <%=  ruta %>'
+            })
+        </script>
+
+        <% } %>
 </body>
 </html>
