@@ -160,22 +160,21 @@ form input[type="submit"]{
 }
 .content01 {
     display: flex;
+    margin: 0;
+    padding: 0;
     flex-direction: row-reverse;
-    gap: 71%;
+    gap: 80%;
     background-color: #0E5688;
     padding-top: 1rem;
 }
 .perfil{
-    display: flex;
-    flex-direction: row;
-    gap: 10%;
-}
-.perfil img{
-    width: 15%;
+    background-color: red;
 }
 .perfil p{
+    padding: 0.5rem 0rem;
+    margin: 0;
     font-family: "Anton", sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     color: #fff;
 }
 

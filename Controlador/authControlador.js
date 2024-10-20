@@ -18,10 +18,11 @@ const storageCategorias = multer.diskStorage({
 const uploadCategorias = multer({ storage: storageCategorias });
 
 // Controlador para manejar la subida de fotos de coordinadores
-exports.formCoordinadores = [
+exports.formAdmin = [
     uploadCategorias.single('fotoCategoria'),
     async (req, res) => {
         try {
+            const usuario = req.usuario
             const categoria = req.body.categoria;
 
             // Verificar que la foto de la categoría fue subida correctamente
@@ -40,6 +41,7 @@ exports.formCoordinadores = [
                         resolve(result[0].id_categoria);
                     } else {
                         res.render('FormFotosCategoria', {
+                            usuario: usuario,
                             alert: true,
                             alertTitle: "ADVERTENCIA",
                             alertMessage: "Categoria no encontrada",
@@ -62,14 +64,16 @@ exports.formCoordinadores = [
             });
 
             res.render('FormFotosCategoria', {
+                usuario: usuario,
                 alert: true,
                 alertTitle: "SUBIDA DE FOTOS",
                 alertMessage: "!Se subieron los datos con éxito!",
                 alertIcon: 'success',
                 showConfirmButton: false,
                 timer: 1500,
-                ruta: ''
+                ruta: 'formAdmin'
             });
+
         } catch (error) {
             console.error(error);
             res.status(500).send(error);
@@ -155,6 +159,7 @@ exports.inicio = async(req, res)=>{
             
         })
         }
+        
     } catch (error) {
         console.log(error)
     }
@@ -166,8 +171,23 @@ exports.isAuthenticated = async (req, res, next) =>{
             const decodificada = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRETO)
             coneccion.query('SELECT * FROM UsuarioAdministradores WHERE id_usuario = ?', [decodificada.id], (error, results) =>{
                 if(!results){return next()}
+                if(results[0].rol == 'Coordinador'){
+                coneccion.query('SELECT * FROM Coordinadores WHERE id_usuario = ?', [decodificada.id], (error, coordinadorResult) => {
+                    if (error) {
+                        console.error(error);
+                        return res.status(500).send("Error al consultar coordinador");
+                    }
+                    // Verifica que se haya encontrado el coordinador
+                    if (coordinadorResult.length > 0) {
+                        req.user = coordinadorResult[0]; // Almacena el objeto coordinador en req.user
+                    } else {
+                        console.warn("Coordinador no encontrado");
+            }})
+        }else{
                 req.user = results[0]
                 return next()
+        }
+                
             })
         } catch (error) {
             console.log(error)
