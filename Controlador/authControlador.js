@@ -180,6 +180,7 @@ exports.isAuthenticated = async (req, res, next) =>{
                     // Verifica que se haya encontrado el coordinador
                     if (coordinadorResult.length > 0) {
                         req.user = coordinadorResult[0]; // Almacena el objeto coordinador en req.user
+                        return next()
                     } else {
                         console.warn("Coordinador no encontrado");
             }})
