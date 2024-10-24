@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,46 +10,146 @@
 
 
 </head>
+
 <body>
     <section class="content01">
-        <div class ="regreso">
-        <a href="logout">Cerrar Sesion</a>
-         </div>
+        <div class="regreso">
+            <a href="logout">Cerrar Sesion</a>
+        </div>
         <div class="perfil">
             <% if (usuario) { %>
-            <p> User:  <%= usuario.usuario %> </p>
-            <% } %>
+                <p> User: <%= usuario.usuario %>
+                </p>
+                <% } %>
         </div>
     </section>
     <nav>
         <img src="resources/imgs/potros.png" alt="POTROS ITSON">
         <div>
-            <a href="FormFotosEquipos.ejs">FORMULARIO FOTOS EQUIPOS</a>
+            <form action="">
+                <a href="">AGREGAR</a>
+            <select name="agregar" id="agregar">
+                <optgroup label="Categorias">
+                    <option value="categoria"><a href="">CREAR CATEGORIAS</a></option>
+                    <option value="equipo"><a href="">CREAR EQUIPOS</a></option>
+                    <option value="usuario"><a href="">CREAR USUARIO PARA COORDINADOR</a></option>
+                    <option value="coordinador"><a href="">CREAR COORDINADOR</a></option>
+                    <option value="entrenadores"><a href="">CREAR ENTRENADORES</a></option>
+                </optgroup>
+                <optgroup label="Jugadores">
+                    <option value="jugador"><a href="">CREAR JUGADOR</a></option>
+                    <option value="jugadorEquipo"><a href="">AGREGAR JUGADOR EQUIPO</a></option>
+                    <option value="jugadorCategoria"><a href="">AGREGAR JUGADOR CATEGORIA</a></option>
+                    <option value="jugadorUsuario"><a href="">CREAR USUARIO JUGADOR</a></option>
+                    <option value="jugadorPago"><a href="">AGREGAR PAGO SEMANAL</a></option>
+                </optgroup>
+            </select>
+        </form>
+            <script>
+                function redirigir() {
+                    var select = document.getElementById("agregar");
+                    var url = select.value;
+                    if (url) { // Verifica si se ha seleccionado una opción
+                        window.location.href = url; // Redirige a la URL seleccionada
+                    }
+                }
+            </script>
         </div>
         <div>
-            <a href="FormFotosCategoria.ejs">FORMULARIO FOTOS CATEGORIAS</a>
+            <form action="">
+                <a href="">ELIMINAR</a>
+            <select name="eliminar" id="eliminar">
+                <optgroup label="Categorias">
+                    <option value="categoria"><a href="">ELIMINAR CATEGORIA</a></option>
+                    <option value="equipo"><a href="">ELIMINAR EQUIPO</a></option>
+                    <option value="usuario"><a href="">ELIMINAR USUARIO PARA COORDINADOR</a></option>
+                    <option value="coordinador"><a href="">ELIMINAR COORDINADOR</a></option>
+                    <option value="entrenadores"><a href="">ELIMINAR ENTRENADOR</a></option>
+                </optgroup>
+                <optgroup label="Jugadores">
+                    <option value="jugador"><a href="">ELIMINAR JUGADOR</a></option>
+                    <option value="jugadorEquipo"><a href="">ELIMINAR JUGADOR DE EQUIPO</a></option>
+                    <option value="jugadorCategoria"><a href="">ELIMINAR CATEGORIA DE JUGADOR</a></option>
+                    <option value="jugadorUsuario"><a href="">ELIMINAR USUARIO JUGADOR</a></option>
+                    <option value="jugadorPago"><a href="">ELIMINAR PAGO SEMANAL</a></option>
+                </optgroup>
+            </select>
+        </form>
+            <script>
+                function redirigir() {
+                    var select = document.getElementById("eliminar");
+                    var url = select.value;
+                    if (url) { // Verifica si se ha seleccionado una opción
+                        window.location.href = url; // Redirige a la URL seleccionada
+                    }
+                }
+            </script>
         </div>
         <div>
-            <a href="FormularioAgregarJugador.ejs">FORMULARIO AGREGAR JUGADORES</a>
+            <form action="">
+                <a href="">ACTUALIZAR</a>
+            <select name="actualizar" id="actualizar">
+                <optgroup label="Categorias">
+                    <option value="categoria"><a href="">ACTUALIZAR DATOS DE CATEGORIA</a></option>
+                    <option value="equipo"><a href="">ACTUALIZAR DATOS DE EQUIPO</a></option>
+                    <option value="usuario"><a href="">ACTUALIZAR USUARIO PARA COORDINADOR</a></option>
+                    <option value="coordinador"><a href="">ACTUALIZAR DATOS COORDINADOR</a></option>
+                    <option value="entrenadores"><a href="">ACTUALIZAR DATOS ENTRENADOR</a></option>
+                </optgroup>
+                <optgroup label="Jugadores">
+                    <option value="jugador"><a href="">ACTUALIZAR DATOS JUGADOR</a></option>
+                    <option value="jugadorEquipo"><a href="">ACTUALIZAR EQUIPO DEL JUGADOR</a></option>
+                    <option value="jugadorCategoria"><a href="">ACTUALIZAR CATEGORIA DEL JUGADOR</a></option>
+                    <option value="jugadorUsuario"><a href="">ACTUALIZAR USUARIO DEL JUGADOR</a></option>
+                    <option value="jugadorPago"><a href="">ACTUALIZAR PAGO SEMANAL</a></option>
+                </optgroup>
+            </select>
+        </form>
+            <script>
+                function redirigir() {
+                    var select = document.getElementById("actualizar");
+                    var url = select.value;
+                    if (url) { // Verifica si se ha seleccionado una opción
+                        window.location.href = url; // Redirige a la URL seleccionada
+                    }
+                }
+            </script>
         </div>
         <div>
-            <a href="FormularioEliminarJugador.ejs">FORMULARIO ELIMINAR JUGADORES</a>
+            <form>
+                <a>FOTOS</a>
+                <select name="fotos" id="fotos" onchange="redirigir()">
+                    <optgroup label="Categorias">
+                        <option value="categoria"><a href="/formAdmin">SUBIR FOTO CATEGORIA</a></option>
+                        <option value="equipo"><a href="">SUBIR FOTO EQUIPO</a></option>
+                        <option value="coordinador"><a href="">SUBIR FOTO COORDINADOR</a></option>
+                        <option value="entrenadores"><a href="">SUBIR FOTO ENTRENADORES</a></option>
+                    </optgroup>
+                    <optgroup label="Jugadores">
+                        <option value="jugador"><a href="">SUBIR FOTO JUGADOR</a></option>
+                    </optgroup>
+                </select>
+            </form>
+            <script>
+                function redirigir() {
+                    var select = document.getElementById("fotos");
+                    var url = select.value;
+                    if (url) { // Verifica si se ha seleccionado una opción
+                        window.location.href = url; // Redirige a la URL seleccionada
+                    }
+                }
+            </script>
         </div>
         <div>
-            <a href="FormularioActualizarJugador.ejs">FORMULARIO ACTUALIZAR JUGADORES</a>
+            <a href="/AdminContra">CAMBIAR CONSTRASEÑA</a>
         </div>
-        <div>
-            <a href="FormsPagos.ejs">FORMULARIO PARA REGISTRAR PAGO SEMANAL</a>
-        </div>
-        <div>
-            <a href="contraNuevaCoordinadores.ejs">CAMBIAR CONTRASEÑA</a>
-        </div>
+
         <img src="resources/imgs/logo.png" alt="Logo">
     </nav>
     <script>
         // Agregar el evento a todos los enlaces con clase 'link'
-        document.querySelectorAll('.link').forEach(function(link) {
-            link.addEventListener('click', function(e) {
+        document.querySelectorAll('.link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault(); // Evita que el link se cargue inmediatamente
                 const url = this.href; // Captura la URL del enlace
 
@@ -56,7 +157,7 @@
                 document.body.classList.add('fade-out');
 
                 // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
-                setTimeout(function() {
+                setTimeout(function () {
                     window.location.href = url; // Cambia a la nueva URL después de la animación
                 }, 200); // Espera 500 ms para redirigir
             });
@@ -65,7 +166,7 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02">_</section>
     <h1 class="fotos">FORMULARIO PARA SUBIR FOTOS</h1>
-    
+
     <form action="/formAdmin" method="POST" enctype="multipart/form-data">
         <label for="categoria">Selecciona la Categoría:</label>
         <select name="categoria" id="categoria" required>
@@ -85,7 +186,7 @@
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <% if(typeof alert != "undefined") { %>
+    <% if(typeof alert !="undefined" ) { %>
         <script>
             Swal.fire({
                 title: '<%= alertTitle %>',
@@ -93,11 +194,12 @@
                 icon: '<%= alertIcon %>',
                 showConfirmButton: <%= showConfirmButton %> ,
                 timer: <%= timer %>
-            }).then(()=>{
-                window.location = '/<%= ruta %>'
-            })
+            }).then(() => {
+                    window.location = '/<%= ruta %>'
+                })
         </script>
 
         <% } %>
 </body>
+
 </html>
