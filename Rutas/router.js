@@ -43,6 +43,9 @@ router.get('/CoordContraNueva', authControlador.isAuthenticated, (req, res)=>{
 router.get('/CoordFotoCate', authControlador.isAuthenticated,(req, res)=>{
     res.render('FormFotosCategoriaIndividual', { usuario: req.user})
 })
+router.get('/CoordFotoCate', authControlador.isAuthenticated,(req, res)=>{
+    res.render('FormFotosCategoriaIndividual', { usuario: req.user})
+})
 
 
 router.get('/formEstadisticas', authControlador.isAuthenticated, (req, res)=>{

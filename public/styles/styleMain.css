@@ -1,87 +1,104 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 
+/* Estilos generales */
 body {
     background-color: #0079C2;
     padding: 0;
     margin: 0;
-    transition: opacity 0.5s ease-in-out; /* Transición suave de la opacidad */
+    transition: opacity 0.5s ease-in-out;
 }
 
-.content01 {
+.content01, .content02 {
     background-color: #0E5688;
-    padding-top: 2rem;
+    padding: 1.5rem 1rem;
 }
-.content01 a{
-    padding-left: 1rem;
-    padding-right: 1rem;
+
+.content01 a {
     background-color: tomato;
     font-family: "Source Sans 3", sans-serif;
     color: #FFF;
-    font-size: 20px;
-    text-align: center;
+    font-size: 1.4rem;
     text-decoration: none;
-    
 }
 
-.content02 {
-    background-color: #0E5688;
-    padding-top: 2rem;
+/* Tarjeta de contenido */
+.card {
+    background-color: #FFF;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 4rem;
+    margin-top: 1rem;
 }
-.categorias-container{
-    padding-right: 3rem;
-    padding-left: 3rem;
+
+.card h1 {
+    font-family: "Anton", sans-serif;
+    font-size: 2.75rem;
+    color: #0E5688;
+    text-align: center;
 }
-.categorias-container img{
-    height: 250px;
-    width: 250px;
+
+/* Contenedor de categorías */
+.categorias-container {
+    padding: 0 1.5rem;
 }
-.categorias{
+
+.categorias, .categorias02 {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    padding-right: 15rem;
-    padding-left: 15rem;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
 }
-.categorias02{
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    padding-right: 7rem;
-    padding-left: 7rem;
-    gap: 5rem;
+
+.categorias img, .categorias02 img {
+    height: 200px;
+    width: 200px;
+    border-radius: 15px;
 }
+
+/* Navbar */
 nav {
     background-color: #FFF;
     margin: auto;
-    max-width: 1920px;
-    padding: 1rem 3.5rem;
+    padding: 2rem 4rem;
     display: flex;
     align-items: center;
-    text-align: center;
-    gap: 5.5rem;
+    justify-content: space-between;
+    gap: 2rem;
+    overflow-x: auto; /* Scroll horizontal */
+    white-space: nowrap;
 }
 
 nav img {
-    width: 5%;
+    width: 70px;
+    max-width: 10vw;
 }
 
 nav a {
     font-family: "Source Sans 3", sans-serif;
-    font-size: 28px;
+    font-size: 1.5rem;
     font-weight: 600;
     color: #000;
     text-decoration: none;
     transition: transform 0.3s ease, color 0.3s ease;
 }
-.fade-out {
-    opacity: 0;
+
+nav a:hover {
+    transform: scale(1.1);
+    color: red;
 }
 
+nav .active {
+    color: red;
+}
 
+/* Efecto de escala */
+.scale {
+    transform: scale(1.2);
+}
 
 a::after {
     content: "";
@@ -90,75 +107,67 @@ a::after {
     height: 2px;
     bottom: 0;
     left: 0;
-    background-color: red; /* Color de la línea de subrayado */
-    transition: width 0.3s ease; /* Suaviza el subrayado */
+    background-color: red;
+    transition: width 0.3s ease;
 }
 
-a:hover {
-    transform: scale(1.1); /* Aumenta el tamaño un 10% */
-    color: red; /* Cambia el color del enlace */
-}
-
-.active {
-    color: red; /* Cambiará el color al enlace activo */
-}
-
-/* Clase para agrandar al hacer clic */
-.scale {
-    transform: scale(1.2); /* Aumenta el tamaño un 20% */
-}
-
-
-
-
+/* Responsividad para pantallas medianas (tabletas y celulares grandes) */
 @media (max-width: 768px) {
     nav {
-        flex-direction: column;
-        /* Cambia a columna para pantallas más pequeñas */
-        align-items: flex-start;
-        padding: 1rem 3rem;
+        padding: 1rem 2%;
+        gap: 2rem;
     }
 
     nav img {
-        width: 25vw;
-        /* Ajusta el tamaño del logo en pantallas medianas */
+        width: 10vw;
     }
 
     nav a {
-        font-size: 5vw;
-        /* Ajusta el tamaño del texto */
-        margin: 0.5rem 0;
-        /* Añade espacio entre enlaces */
+        font-size: 1.25rem;
+    }
+
+    .card {
+        width: 90%;
+    }
+
+    .categorias img, .categorias02 img {
+        height: 150px;
+        width: 150px;
     }
 }
 
-/* Para pantallas pequeñas (celulares promedio) */
+/* Responsividad para pantallas pequeñas (celulares) */
 @media (max-width: 480px) {
     nav {
         flex-direction: column;
-        /* Cambia la barra de navegación a columna */
         align-items: center;
-        /* Alinea el contenido en el centro */
-        padding: 1rem 2rem;
+        padding: 1rem 2%;
     }
 
     nav img {
-        width: 30vw;
-        /* Logo más grande en celulares pequeños */
-        max-width: 80px;
-        /* Límite para no exceder el tamaño */
+        width: 20vw;
+        max-width: 60px;
     }
 
     nav a {
-        font-size: 6vw;
-        /* Ajusta el tamaño del texto para mejor legibilidad */
-        margin: 0.8rem 0;
-        /* Añade más espacio entre los enlaces */
+        font-size: 1rem;
+        margin: 0.5rem 0;
     }
 
-    .content01,
-    .content02 {
-        padding: 2rem 3%;
-        /* Reduce el padding en celulares pequeños */
+    .content01, .content02 {
+        padding: 1rem 2%;
+    }
+
+    .card {
+        width: 95%;
+    }
+
+    .card h1 {
+        font-size: 2rem;
+    }
+
+    .categorias img, .categorias02 img {
+        height: 100px;
+        width: 100px;
     }
 }

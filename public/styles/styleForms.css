@@ -1,66 +1,12 @@
+/* Estilos generales */
 body {
     background-color: #0079C2;
     padding: 0;
     margin: 0;
-    transition: opacity 0.5s ease-in-out; /* Transición suave de la opacidad */
+    transition: opacity 0.5s ease-in-out;
 }
-.fotos{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    margin-top: 1rem;
-    margin-bottom: 3rem;
-    justify-content: center;
-    width: 50%;
-    padding: 1rem 1rem;
-    border-radius: 3rem;
-    font-family: "Anton", sans-serif;
-    font-size: 44px;
-    color: #0E5688;
-}
-.act{
-        background-color: #FFF;
-        display: flex;
-        margin: auto;
-        margin-top: 1rem;
-        margin-bottom: 3rem;
-        justify-content: center;
-        width: 72%;
-        padding: 1rem 1rem;
-        border-radius: 3rem;
-        font-family: "Anton", sans-serif;
-        font-size: 44px;
-        color: #0E5688;
-}
-.eliminar{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    margin-top: 1rem;
-    margin-bottom: 3rem;
-    justify-content: center;
-    width: 55%;
-    padding: 1rem 1rem;
-    border-radius: 3rem;
-    font-family: "Anton", sans-serif;
-    font-size: 44px;
-    color: #0E5688;
-}
-.agg{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    margin-top: 1rem;
-    margin-bottom: 3rem;
-    justify-content: center;
-    width: 56%;
-    padding: 1rem 1rem;
-    border-radius: 3rem;
-    font-family: "Anton", sans-serif;
-    font-size: 44px;
-    color: #0E5688;
-}
-.conf-eliminar{
+
+.fotos, .act, .eliminar, .agg, .conf-eliminar, .conf-actualizar {
     background-color: #FFF;
     display: flex;
     margin: auto;
@@ -68,245 +14,192 @@ body {
     margin-bottom: 3rem;
     justify-content: center;
     width: 80%;
-    padding: 1rem 1rem;
+    max-width: 800px;
     border-radius: 3rem;
     font-family: "Anton", sans-serif;
-    font-size: 44px;
+    font-size: 2.75rem;
     color: #0E5688;
+    text-align: center;
 }
-.conf-actualizar{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    margin-top: 1rem;
-    margin-bottom: 3rem;
-    justify-content: center;
-    width: 80%;
-    padding: 1rem 1rem;
-    border-radius: 3rem;
-    font-family: "Anton", sans-serif;
-    font-size: 44px;
-    color: #0E5688;
-}
-form{
+
+form {
     display: flex;
     flex-direction: column;
     margin: auto;
-    margin-left: 35%;
+    width: 100%;
+    max-width: 450px;
 }
-form label{
+
+form label {
     font-family: "Anton", sans-serif;
-    font-size: 30px;
+    font-size: 1.875rem;
     color: #fff;
+    text-align: left;
 }
-form input{
+
+form input, form select {
     margin-top: 1rem;
     margin-bottom: 1rem;
-    width: 40%;
-    font-size: 30px;
+    width: 100%;
+    font-size: 1.875rem;
     color: #0E5688;
 }
-form input[type="file"]{
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    width: 60%;
-    height: 50%;
-    font-size: 30px;
+
+form input[type="file"] {
+    width: 100%;
+    font-size: 1.25rem;
     color: #fff;
 }
 
-form select{
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    width: 20%;
-    font-size: 30px;
-}
-.botones{
+.botones {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
+    gap: 1rem;
 }
-.botones input[type="submit"]{
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    width: 18%;
-    font-size: 28px;
+
+.botones input[type="submit"], .botones input[type="button"], form input[type="submit"] {
+    width: 100%;
+    max-width: 200px;
+    font-size: 1.75rem;
     color: #FFF;
     background-color: red;
-    border-radius: .5rem;
-    border-color: #FFF;
+    border-radius: 0.5rem;
+    border: none;
+    padding: 0.5rem 1rem;
 }
-.botones input[type="button"]{
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    width: 18%;
-    font-size: 28px;
-    color: #FFF;
-    background-color: red;
-    border-radius: .5rem;
-    border-color: #FFF;
-    margin-left: 1rem;
-}
-form input[type="submit"]{
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    width: 18%;
-    font-size: 28px;
-    color: #FFF;
-    background-color: red;
-    border-radius: .5rem;
-    border-color: #FFF;
-    margin-left: 15%;
-}
+
 .content01 {
     display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: row-reverse;
-    gap: 80%;
+    justify-content: space-between;
+    align-items: center;
     background-color: #0E5688;
-    padding-top: 1rem;
+    padding: 0.5rem;
 }
-.perfil{
+
+.perfil {
     background-color: red;
 }
-.perfil p{
-    padding: 0.5rem 0rem;
-    margin: 0;
+
+.perfil p {
     font-family: "Anton", sans-serif;
-    font-size: 20px;
+    font-size: 1.25rem;
     color: #fff;
 }
 
-.regreso a{
+.regreso a {
     background-color: tomato;
     font-family: "Source Sans 3", sans-serif;
     color: #FFF;
-    font-size: 20px;
+    font-size: 1.25rem;
     text-align: center;
     text-decoration: none;
-    margin-right: 1rem;
-    padding: 0.5rem 0.2rem;
-    
+    padding: 0.5rem 0.8rem;
 }
 
 .content02 {
     background-color: #0E5688;
-    padding-top: 2rem;
+    padding: 2rem 3%;
 }
 
 nav {
     background-color: #FFF;
     margin: auto;
-    max-width: 1920px;
-    padding: 1rem 3.5rem;
+    padding: 2rem 4rem;
     display: flex;
     align-items: center;
-    text-align: center;
-    gap: 5.5rem;
+    justify-content: space-between;
+    gap: 2rem;
+    overflow-x: auto; /* Scroll horizontal */
+    white-space: nowrap;
 }
 
 nav img {
-    width: 5%;
+    width: 80px;
+    max-width: 100%;
+}
+
+nav select {
+    background-color: #FFF;
+    border: 1px solid #CCC;
+    border-radius: 5px;
+    padding: 0.3rem;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 nav a {
     font-family: "Source Sans 3", sans-serif;
-    font-size: 22px;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #000;
     text-decoration: none;
     transition: transform 0.3s ease, color 0.3s ease;
-}
-
-
-
-
- nav a::after {
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: red; /* Color de la línea de subrayado */
-    transition: width 0.3s ease; /* Suaviza el subrayado */
+    margin: 0 0.5rem;
 }
 
 nav a:hover {
-    transform: scale(1.1); /* Aumenta el tamaño un 10% */
-    color: red; /* Cambia el color del enlace */
-}
-.regreso a::after{
-    background-color: #0079C2;
-}
-.regreso a:hover {
-    transform: scale(1.1); /* Aumenta el tamaño un 10% */
-    color: #000; /* Cambia el color del enlace */
+    transform: scale(1.1);
+    color: red;
 }
 
 .active {
-    color: red; /* Cambiará el color al enlace activo */
-    transition: width 0.3s ease;
+    color: red;
 }
 
-/* Clase para agrandar al hacer clic */
 .scale {
-    transform: scale(1.2); /* Aumenta el tamaño un 20% */
+    transform: scale(1.2);
 }
 
 .fade-out {
     opacity: 0;
 }
 
+/* Ajustes de responsividad para dispositivos móviles */
 @media (max-width: 768px) {
+    .fotos, .act, .eliminar, .agg, .conf-eliminar, .conf-actualizar, form {
+        width: 90%;
+        font-size: 2.25rem;
+    }
+
+    .content01 {
+        padding: 1rem;
+    }
+
     nav {
-        flex-direction: column;
-        /* Cambia a columna para pantallas más pequeñas */
-        align-items: flex-start;
-        padding: 1rem 3rem;
+        padding: 0.5rem 1rem;
     }
 
     nav img {
-        width: 25vw;
-        /* Ajusta el tamaño del logo en pantallas medianas */
+        width: 40px;
     }
 
     nav a {
-        font-size: 5vw;
-        /* Ajusta el tamaño del texto */
-        margin: 0.5rem 0;
-        /* Añade espacio entre enlaces */
+        font-size: 1rem;
+        margin: 0.3rem 0.2rem;
     }
 }
 
-/* Para pantallas pequeñas (celulares promedio) */
 @media (max-width: 480px) {
-    nav {
-        flex-direction: column;
-        /* Cambia la barra de navegación a columna */
-        align-items: center;
-        /* Alinea el contenido en el centro */
-        padding: 1rem 2rem;
+    .fotos, .act, .eliminar, .agg, .conf-eliminar, .conf-actualizar, form {
+        width: 98%;
+        font-size: 1.5rem;
     }
 
     nav img {
-        width: 30vw;
-        /* Logo más grande en celulares pequeños */
-        max-width: 80px;
-        /* Límite para no exceder el tamaño */
+        width: 35px;
     }
 
     nav a {
-        font-size: 6vw;
-        /* Ajusta el tamaño del texto para mejor legibilidad */
-        margin: 0.8rem 0;
-        /* Añade más espacio entre los enlaces */
+        font-size: 0.875rem;
+        padding: 0.3rem;
     }
 
-    .content01,
-    .content02 {
-        padding: 2rem 3%;
-        /* Reduce el padding en celulares pequeños */
+    form label, form input, form select {
+        font-size: 1.25rem;
     }
 }
+
+
+
