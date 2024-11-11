@@ -22,20 +22,18 @@
     <nav>
         <img src="resources/imgs/potros.png" alt="POTROS ITSON">
         <div>
-            <a href="FormFotos.ejs">FORMULARIO DE FOTOS</a>
+            <a href="/formEstadisticas">FORMULARIO DE ESTADISTICAS DE EQUIPO</a>
         </div>
         <div>
-            <a href="FormularioAgregarJugador.ejs">FORMULARIO AGREGAR JUGADORES</a>
+            <a href="/formEstadisticasBateo">FORMULARIO DE ESTADISTICAS DE BATEO</a>
         </div>
         <div>
-            <a href="FormularioEliminarJugador.ejs">FORMULARIO ELIMINAR JUGADORES</a>
+            <a href="/formEstadisticaPitcheo">FORMULARIO DE ESTADISTICAS DE PITCHEO</a>
         </div>
         <div>
-            <a href="FormularioActualizarJugador.ejs">FORMULARIO ACTUALIZAR JUGADORES</a>
+            <a href="/formContraNuevaEstadisticas">CAMBIAR CONTRASEÑA</a>
         </div>
-        <div>
-            <a href="contraNuevaCoordinadores.ejs">CAMBIAR CONTRASEÑA</a>
-        </div>
+        
         <img src="resources/imgs/logo.png" alt="Logo">
     </nav>
     <script>
@@ -56,41 +54,24 @@
         });
     </script>
     <script src="resources/js/Animaciones.js"></script>
-    <section class="content02">_</section>
-    <h1>FORMULARIO PARA SUBIR FOTOS</h1>
+    <section class="content02"></section>
+    <h1 class="fotos">FORMULARIO ESTADISTICAS DE EQUIPO</h1>
     
-    <form action="/register" method="POST">
+    <form action="/" method="POST">
         <label for="categoria">Selecciona la Categoría:</label>
         <select name="categoria" id="categoria" required>
-            <option value="3-4">3-4 Años</option>
-            <option value="5-6">5-6 Años</option>
-            <option value="7-8">7-8 Años</option>
-            <option value="9-10">9-10 Años</option>
-            <option value="11-12">11-12 Años</option>
-            <option value="13-14">13-14 Años</option>
-            <option value="15-16">15-16 Años</option>
+            
         </select>
 
         <label for="equipo">Nombre del Equipo:</label>
         <select name="equipo" required>
-            <option value="Potrillos">Potrillos</option>
-        <option value="Munstangs">Munstangs</option>
-        <option value="Ponys">Ponys</option>
-        <option value="Broncos">broncos</option>
+            
         </select>
 
-        <label for="fotoCategoria">Subir Foto de la Categoría:</label>
-        <input type="file" name="fotoCategoria" id="fotoCategoria" accept="image/*" required>
-
-        <label for="fotoEquipo">Subir Foto del Equipo:</label>
-        <input type="file" name="fotoEquipo" id="fotoEquipo" accept="image/*" required>
+        
 
         <input type="submit" value="Subir Fotos" onclick="mostrarMensaje()">
-        <script>
-                function mostrarMensaje() {
-                    alert("Vuelve a iniciar sescion con tu nueva contraseña");
-                }
-            </script>
+        
     </form>
 
 </body>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="resources/styles/styleForms.css">
+    <link rel="icon" href="resources/imgs/academia-logo.png">
+</head>
+<body>
+    <section class="content01">
+        <div class="regreso">
+            <a href="logout">Cerrar Sesion</a>
+        </div>
+        <div class="perfil">
+            <% if (usuario) { %>
+                <p> User: <%= usuario.usuario %>
+                </p>
+                <% } %>
+        </div>
+    </section>
+    <nav>
+        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
+        <div>
+            <form>
+                <select name="agregar" id="agregar" onchange="redirigir(this)">
+                    <optgroup label="Categorias">
+                        <option value="/formCrearCategoria">CREAR CATEGORIAS</option>
+                        <option value="/formCrearEquipos">CREAR EQUIPOS</option>
+                        <option value="/formCrearUsuarioCoordinador">CREAR USUARIO PARA COORDINADOR</option>
+                        <option value="/formCrearCoordinadores">CREAR COORDINADOR</option>
+                        <option value="/formCrearEntrenadores">CREAR ENTRENADORES</option>
+                    </optgroup>
+                    <optgroup label="Jugadores">
+                        <option value="/formCrearJugador">CREAR JUGADOR</option>
+                        <option value="/formCrearUsuarioJugador">CREAR USUARIO JUGADOR</option>
+                        <option value="/formAgregarPago">AGREGAR PAGO SEMANAL</option>
+                    </optgroup>
+                </select>
+            </form>
+        </div>
+        <div>
+            <form>
+                <select name="eliminar" id="eliminar" onchange="redirigir(this)">
+                    <optgroup label="Categorias">
+                        <option value="/formEliminarCategoria">ELIMINAR CATEGORIA</option>
+                        <option value="/formEliminarEquipo">ELIMINAR EQUIPO</option>
+                        <option value="/formEliminarUsuarioCoordinador">ELIMINAR USUARIO COORDINADOR</option>
+                        <option value="/formEliminarCoordinador">ELIMINAR COORDINADOR</option>
+                        <option value="/formEliminarEntrenador">ELIMINAR ENTRENADOR</option>
+                    </optgroup>
+                    <optgroup label="Jugadores">
+                        <option value="/formEliminarJugador">ELIMINAR JUGADOR</option>
+                        <option value="/formEliminarUsuarioJugador">ELIMINAR USUARIO JUGADOR</option>
+                        <option value="/formEliminarPago">ELIMINAR PAGO SEMANAL</option>
+                    </optgroup>
+                </select>
+            </form>
+        </div>
+        <div>
+            <form>
+                <select name="actualizar" id="actualizar" onchange="redirigir(this)">
+                    <optgroup label="Categorias">
+                        <option value="/formActualizarCategoria">ACTUALIZAR DATOS DE CATEGORIA</option>
+                        <option value="/formActualizarEquipo">ACTUALIZAR DATOS DE EQUIPO</option>
+                        <option value="/formActualizarUsuarioCoordinador">ACTUALIZAR USUARIO PARA COORDINADOR</option>
+                        <option value="/formActualizarCoordinador">ACTUALIZAR DATOS COORDINADOR</option>
+                        <option value="/formActualizarEntrenador">ACTUALIZAR DATOS ENTRENADOR</option>
+                    </optgroup>
+                    <optgroup label="Jugadores">
+                        <option value="/formActualizarJugador">ACTUALIZAR DATOS JUGADOR</option>
+                        <option value="/formActualizarUsuarioJugador">ACTUALIZAR USUARIO DEL JUGADOR</option>
+                        <option value="/formActualizarPago">ACTUALIZAR PAGO SEMANAL</option>
+                    </optgroup>
+                </select>
+            </form>
+        </div>
+        <div>
+            <form>
+                <select name="fotos" id="fotos" onchange="redirigir(this)">
+                    <optgroup label="Categorias">
+                        <option value="/formAdmin">SUBIR FOTO CATEGORIA</option>
+                        <option value="/formFotoEquipo">SUBIR FOTO EQUIPO</option>
+                        <option value="/formFotoCoordinador">SUBIR FOTO COORDINADOR</option>
+                        <option value="/formAFotoEntrenadores">SUBIR FOTO ENTRENADORES</option>
+                    </optgroup>
+                    <optgroup label="Jugadores">
+                        <option value="/formFotoJugador">SUBIR FOTO JUGADOR</option>
+                    </optgroup>
+                </select>
+            </form>
+        </div>
+        <div>
+            <a href="/AdminContra">CAMBIAR CONTRASEÑA</a>
+        </div>
+        <img src="resources/imgs/logo.png" alt="Logo">
+    </nav>
+    
+    <script>
+        function redirigir(selectElement) {
+            var url = selectElement.value;
+            if (url) {
+                window.location.href = url;
+            }
+        }
+    </script>
+    
+    <script>
+        // Agregar el evento a todos los enlaces con clase 'link'
+        document.querySelectorAll('.link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault(); // Evita que el link se cargue inmediatamente
+                const url = this.href; // Captura la URL del enlace
+
+                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
+                document.body.classList.add('fade-out');
+
+                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
+                setTimeout(function () {
+                    window.location.href = url; // Cambia a la nueva URL después de la animación
+                }, 200); // Espera 500 ms para redirigir
+            });
+        });
+    </script>
+    <script src="resources/js/Animaciones.js"></script>
+    <section class="content02"></section>
+    <h1 class="fotos">FORMULARIO ELIMINAR USUARIO DE COORDINADOR</h1>
+</body>
+</html>
