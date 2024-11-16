@@ -55,5 +55,36 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <h1 class="fotos">FORMULARIO ESTADISTICAS DE PITCHEO</h1>
+
+    <form action="">
+
+        <label for="categoria">Selecciona la Categoría:</label>
+        <select name="categoria" id="categoria" required>
+            
+        </select>
+
+        <label for="equipo">Nombre del Equipo:</label>
+        <select name="equipo" required>
+        </select>
+
+        <label for="jugador">Nombre del Jugador:</label>
+        <select name="jugador" required>
+        </select>
+
+        <label for="lanzamientos">Lanzamientos:</label>
+        <input type="number" name="lanzamientos" placeholder="Digite los lanzamientos">
+        
+        <label for="basesBola">Bases por bola:</label>
+        <input type="number" name="basesBola" placeholder="Digite los base por bola">
+
+        <label for="carrerasLimpias">Carreras limpias:</label>
+        <input type="number" name="carrerasLimpias" placeholder="Digite las carreras limpias">
+
+        <label for="resultado">Resultado del partido:</label>
+        <div><label for="resultado">Ganado</label>
+        <input type="radio" name="resultado" value="Ganado"></div>
+        <div><label for="resultado">Perdido</label>
+        <input type="radio" name="resultado" value="Perdido"></div>
+    </form>
 </body>
 </html>

@@ -67,10 +67,25 @@
         <select name="equipo" required>
             
         </select>
+        <label for="carrerasFavor">Carreras a favor:</label>
+        <input type="number" name="carrerasFavor" placeholder="Escriba el digito de carreras a favor">
+        <label for="carrerasContra">Carreras en contra:</label>
+        <input type="number" name="carrerasContra" placeholder="Escriba el digito de carreras en contra">
+        <label for="erorres">Errores</label>
+        <input type="number" name="erorres" placeholder="Escriba el digito de erorres">
+        <label for="resultado">Resultado del partido:</label>
+        <div><label for="resultado">Ganado</label>
+        <input type="radio" name="resultado" value="Ganado"></div>
+        <div><label for="resultado">Perdido</label>
+        <input type="radio" name="resultado" value="Perdido"></div>
+        <div><label for="resultado">Empatado</label>
+        <input type="radio" name="resultado" value="Empatado"></div>
+        
+        
 
         
 
-        <input type="submit" value="Subir Fotos" onclick="mostrarMensaje()">
+        <input type="submit" value="Subir" onclick="mostrarMensaje()">
         
     </form>
 
