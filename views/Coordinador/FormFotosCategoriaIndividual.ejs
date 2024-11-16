@@ -67,18 +67,7 @@
     <h1 class="fotos">FORMULARIO PARA SUBIR FOTOS</h1>
     
     <form action="/formAdmin" method="POST" enctype="multipart/form-data">
-        <label for="categoria">Selecciona la Categoría:</label>
-        <select name="categoria" id="categoria" required>
-            <option value="3-4 Años">3-4 Años</option>
-            <option value="5-6 Años">5-6 Años</option>
-            <option value="7-8 Años">7-8 Años</option>
-            <option value="9-10 Años">9-10 Años</option>
-            <option value="11-12 Años">11-12 Años</option>
-            <option value="13-14 Años">13-14 Años</option>
-            <option value="15-16 Años">15-16 Años</option>
-        </select>
-
-
+        
         <label for="fotoCategoria">Subir Foto de la Categoría:</label>
         <input type="file" name="fotoCategoria" id="fotoCategoria" accept="image/*" required>
         <input type="submit" value="Subir Fotos">

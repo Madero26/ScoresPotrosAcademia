@@ -149,22 +149,22 @@ router.get('/formCoordinadores', authControlador.isAuthenticated, (req, res) => 
     res.render('Coordinador/FormFotosEquipos', { usuario: req.user})
 })
 router.get('/CoordAgregar', authControlador.isAuthenticated,(req, res)=>{
-    res.render('FormularioAgregarJugador', { usuario: req.user})
+    res.render('Coordinador/FormularioAgregarJugador', { usuario: req.user})
 })
 router.get('/CoordEliminar',  authControlador.isAuthenticated,(req, res)=>{
-    res.render('FormularioEliminarJugador', { usuario: req.user})
+    res.render('Coordinador/FormularioEliminarJugador', { usuario: req.user})
 })
 router.get('/CoordActualizar', authControlador.isAuthenticated,(req, res)=>{
-    res.render('FormularioActualizarJugador', { usuario: req.user})
+    res.render('Coordinador/FormularioActualizarJugador', { usuario: req.user})
 })
 router.get('/CoordPagos', authControlador.isAuthenticated,(req, res)=>{
-    res.render('FormsPagos', { usuario: req.user})
+    res.render('Coordinador/FormsPagos', { usuario: req.user})
 })
 router.get('/CoordContraNueva', authControlador.isAuthenticated, (req, res)=>{
     res.render('Coordinador/contraNuevaCoordinadores', { usuario: req.user})
 })
 router.get('/CoordFotoCate', authControlador.isAuthenticated,(req, res)=>{
-    res.render('FormFotosCategoriaIndividual', { usuario: req.user})
+    res.render('Coordinador/FormFotosCategoriaIndividual', { usuario: req.user})
 })
 
 //---------------------Formularios------------------------------
