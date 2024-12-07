@@ -25,6 +25,7 @@
             <form>
                 <select name="agregar" id="agregar" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>CREAR</option>
                         <option value="/formCrearCategoria">CREAR CATEGORIAS</option>
                         <option value="/formCrearEquipos">CREAR EQUIPOS</option>
                         <option value="/formCrearUsuarioCoordinador">CREAR USUARIO PARA COORDINADOR</option>
@@ -43,6 +44,7 @@
             <form>
                 <select name="eliminar" id="eliminar" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>ELIMINAR</option>
                         <option value="/formEliminarCategoria">ELIMINAR CATEGORIA</option>
                         <option value="/formEliminarEquipo">ELIMINAR EQUIPO</option>
                         <option value="/formEliminarUsuarioCoordinador">ELIMINAR USUARIO COORDINADOR</option>
@@ -61,6 +63,7 @@
             <form>
                 <select name="actualizar" id="actualizar" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>ACTUALIZAR</option>
                         <option value="/formActualizarCategoria">ACTUALIZAR DATOS DE CATEGORIA</option>
                         <option value="/formActualizarEquipo">ACTUALIZAR DATOS DE EQUIPO</option>
                         <option value="/formActualizarUsuarioCoordinador">ACTUALIZAR USUARIO PARA COORDINADOR</option>
@@ -79,6 +82,7 @@
             <form>
                 <select name="fotos" id="fotos" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>FOTOS</option>
                         <option value="/formAdmin">SUBIR FOTO CATEGORIA</option>
                         <option value="/formFotoEquipo">SUBIR FOTO EQUIPO</option>
                         <option value="/formFotoCoordinador">SUBIR FOTO COORDINADOR</option>
@@ -125,5 +129,11 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <h1 class="fotos">FORMULARIO ACTUALIZAR DATOS DE USUARIO COORDINADOR</h1>
+    <form>
+        <label for="usuario">Seleccione el usuario:</label>
+        <select name="usuario">
+        </select>
+        <input type="submit" value="Actualizar">
+    </form>
 </body>
 </html>

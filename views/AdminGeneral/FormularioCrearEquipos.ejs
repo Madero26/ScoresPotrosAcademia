@@ -25,6 +25,7 @@
             <form>
                 <select name="agregar" id="agregar" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>CREAR</option>
                         <option value="/formCrearCategoria">CREAR CATEGORIAS</option>
                         <option value="/formCrearEquipos">CREAR EQUIPOS</option>
                         <option value="/formCrearUsuarioCoordinador">CREAR USUARIO PARA COORDINADOR</option>
@@ -43,6 +44,7 @@
             <form>
                 <select name="eliminar" id="eliminar" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>ELIMINAR</option>
                         <option value="/formEliminarCategoria">ELIMINAR CATEGORIA</option>
                         <option value="/formEliminarEquipo">ELIMINAR EQUIPO</option>
                         <option value="/formEliminarUsuarioCoordinador">ELIMINAR USUARIO COORDINADOR</option>
@@ -61,6 +63,7 @@
             <form>
                 <select name="actualizar" id="actualizar" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>ACTUALIZAR</option>
                         <option value="/formActualizarCategoria">ACTUALIZAR DATOS DE CATEGORIA</option>
                         <option value="/formActualizarEquipo">ACTUALIZAR DATOS DE EQUIPO</option>
                         <option value="/formActualizarUsuarioCoordinador">ACTUALIZAR USUARIO PARA COORDINADOR</option>
@@ -79,6 +82,7 @@
             <form>
                 <select name="fotos" id="fotos" onchange="redirigir(this)">
                     <optgroup label="Categorias">
+                        <option>FOTOS</option>
                         <option value="/formAdmin">SUBIR FOTO CATEGORIA</option>
                         <option value="/formFotoEquipo">SUBIR FOTO EQUIPO</option>
                         <option value="/formFotoCoordinador">SUBIR FOTO COORDINADOR</option>
@@ -125,5 +129,20 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <h1 class="fotos">FORMULARIO CREAR EQUIPOS</h1>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <label for="categoria">Selecciona la Categoría:</label>
+        <select name="categoria" id="categoria" required>
+        </select>
+        <label for="name">Escriba el nombre:</label>
+        <input name="nombre" type="text" placeholder="Potrillos, broncos, etc" required>
+        <label for="color">Escriba el color representativo</label>
+        <input name="color" type="text" placeholder="Rojo, Verde, Amarillos, etc" required>
+        <label for="couch">Seleccione el Manager para este equipo</label>
+        <select name="couch" id="couch" required>
+        </select>
+        <label for="fotoEquipo">Subir Foto del Equipo:</label>
+        <input type="file" name="fotoEquipo" id="fotoEquipo" accept="image/*" required>
+        <input type="submit" value="Subir">
+    </form>
 </body>
 </html>
