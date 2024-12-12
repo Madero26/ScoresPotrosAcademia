@@ -203,3 +203,56 @@ exports.logout = (req, res)=> {
     return res.redirect('/login')
 }
 
+
+
+// Controlador para manejar el formulario de categorías
+exports.crearCategoria = [
+    uploadCategorias.single('fotoCategoria'), // Middleware para manejar la subida del archivo
+    async (req, res) => {
+        const usuario = req.usuario
+        try {
+            const { nombre, rango, inferior, superior } = req.body;
+
+            // Validación de la foto
+            if (!req.file) {
+                return res.status(400).send("Error: No se subió la foto de la categoría.");
+            }
+
+            const urlFoto = `/public/imgs/Categorias/${req.file.filename}`; // Ruta relativa de la foto
+
+            // Insertar los datos en la base de datos
+            const queryInsertCategoria = `
+                INSERT INTO Categorias (url_foto, rango_edad, rango_inferior, rango_superior, nombre_categoria) 
+                VALUES (?, ?, ?, ?, ?)
+            `;
+            await new Promise((resolve, reject) => {
+                coneccion.query(
+                    queryInsertCategoria,
+                    [urlFoto, rango, inferior, superior, nombre],
+                    (err, result) => {
+                        if (err) return reject(err);
+                        resolve(result);
+                    }
+                );
+            });
+
+            // Respuesta exitosa
+            res.render('AdminGeneral/FormularioCrearCategoria', {
+                alert: true,
+                usuario: usuario,
+                alertTitle: "¡Éxito!",
+                alertMessage: "Categoría creada exitosamente.",
+                alertIcon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+                ruta: 'formCrearCategoria'
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Error al crear la categoría.");
+        }
+    }
+];
+
+
+

@@ -179,6 +179,8 @@ router.post('/formAdmin', authControlador.formAdmin) // Referencia correcta
 
 router.post('/login', authControlador.inicio) // Referencia correcta
 router.get('/logout', authControlador.logout)
+router.post('/crearCategoria', authControlador.crearCategoria);
+
 
 
 

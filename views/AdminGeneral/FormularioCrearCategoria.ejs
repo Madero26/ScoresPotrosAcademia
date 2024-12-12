@@ -130,11 +130,11 @@
     <section class="content02"></section>
     <h1 class="fotos">FORMULARIO CREAR CATEGORIA</h1>
 
-    <form action="/" method="POST" enctype="multipart/form-data">
+    <form action="/crearCategoria" method="POST" enctype="multipart/form-data">
         <label for="nombre">Escriba nombre categoria:</label>
         <input type="text" name="nombre" placeholder="3-4 años o 5-6 años" required>
         <label for="rango">Escriba el rango de edad:</label>
-        <input type="number" name="rango" placeholder="3-4 , 5-6, 7-8" required>
+        <input type="text" name="rango" placeholder="3-4 , 5-6, 7-8" required>
         <label for="nombre">Seleccione el rango de fechas para esta categoria:</label><br>
         <label>Desde:</label>
         <input type="date" name="inferior" required>
@@ -145,6 +145,22 @@
         <input type="file" name="fotoCategoria" id="fotoCategoria" accept="image/*" required>
         <input type="submit" value="Subir">
     </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert !="undefined" ) { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %> ,
+                timer: <%= timer %>
+            }).then(() => {
+                    window.location = '/<%= ruta %>'
+                })
+        </script>
+
+        <% } %>
 
 </body>
 </html>
