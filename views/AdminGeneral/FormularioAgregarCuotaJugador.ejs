@@ -134,7 +134,9 @@
         <input type="number" name="semana" placeholder="Numero de la semana de pago" required>
         <label for="name">Elige el jugador:</label>
         <select name="jugador" id="juagdor" required>
-            
+            <% jugadores.forEach(jugador => { %>
+                <option value="<%= jugador.id_jugador %>"> <%= jugador.nombres %> </option>
+                <% }); %>
         </select>
 
         <label for="pago">Seleccione la opcion:</label>

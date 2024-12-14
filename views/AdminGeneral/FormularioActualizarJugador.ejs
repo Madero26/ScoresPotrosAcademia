@@ -132,10 +132,11 @@
     <form>
         <label for="categoria">Seleccione la categoria:</label>
         <select name="categoria">
+            <% categorias.forEach(categoria => { %>
+                <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
+                <% }); %>
         </select>
-        <label for="jugador">Seleccione al jugador:</label>
-        <select name="jugador">
-        </select>
+        
         <input type="submit" value="Actualizar">
     </form>
 </body>

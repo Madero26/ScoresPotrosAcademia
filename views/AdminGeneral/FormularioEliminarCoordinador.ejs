@@ -132,6 +132,9 @@
     <form>
         <label for="coordinador">Seleccione al coordinador:</label>
         <select name="coordinador">
+            <% coordinadores.forEach(coordinador => { %>
+                <option value="<%= coordinador.id_coordinador %>">  <%= coordinador.nombres %> </option>
+                <% }); %>
         </select>
         <input type="submit" value="Eliminar">
     </form>

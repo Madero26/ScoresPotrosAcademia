@@ -129,14 +129,18 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <h1 class="fotos">FORMULARIO CREAR COORDINADORES</h1>
-    <form action="/" method="POST" enctype="multipart/form-data">
+    <form action="/crearCoordinador" method="POST" enctype="multipart/form-data">
         <label for="categoria">Selecciona la Categoría:</label>
         <select name="categoria" id="categoria" required>
-          
+            <% categorias.forEach(categoria => { %>
+                <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
+                <% }); %>
         </select>
         <label for="usuario">Selecciona el usuario asignado para este coordinador:</label>
         <select name="usuario" id="usuario" required>
-          
+            <% userCoordinador.forEach(user => { %>
+                <option value="<%= user.id_usuario %>"> <%= user.usuario %> </option>
+                <% }); %>
         </select>
         <label>Escriba el nombre completo:</label><br>
         <label for="nombre">Nombres:</label>
@@ -149,5 +153,20 @@
         <input type="file" name="fotoCoordinador" id="fotoCoordinador" accept="image/*" required>
         <input type="submit" value="Subir">
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert !="undefined" ) { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %> ,
+                timer: <%= timer %>
+            }).then(() => {
+                    window.location = '/<%= ruta %>'
+                })
+        </script>
+
+        <% } %>
 </body>
 </html>

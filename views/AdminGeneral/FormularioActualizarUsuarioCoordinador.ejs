@@ -132,6 +132,9 @@
     <form>
         <label for="usuario">Seleccione el usuario:</label>
         <select name="usuario">
+            <% userCoordinador.forEach(user => { %>
+                <option value="<%= user.id_usuario %>"> <%= user.usuario %> </option>
+                <% }); %>
         </select>
         <input type="submit" value="Actualizar">
     </form>

@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const coneccion = require('../database/conexion')
+
 
 const authControlador = require('../Controlador/authControlador') // Asegúrate que el nombre sea correcto
 
@@ -63,75 +65,249 @@ router.get('/formFotoJugador', authControlador.isAuthenticated,  (req, res)=>{
 
                 //Actualizar
 router.get('/formActualizarCategoria', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarCategoria', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioActualizarCategoria', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formActualizarCoordinador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarCoordinador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Coordinadores", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioActualizarCoordinador', { usuario: req.user, coordinadores: rows }) 
+        }
+    }
+    );
 })
 router.get('/formActualizarEntrenador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarEntrenador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioActualizarEntrenador', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formActualizarEquipo', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarEquipo', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioActualizarEquipo', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formActualizarJugador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarJugador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioActualizarJugador', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formActualizarPago', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarPagoSemanal', { usuario: req.user })
+    coneccion.query("SELECT * FROM Jugadores", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioActualizarPagoSemanal', { usuario: req.user, jugadores: rows }) 
+        }
+    }
+    );
 })
 router.get('/formActualizarUsuarioCoordinador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarUsuarioCoordinador', { usuario: req.user })
+    coneccion.query("SELECT * FROM UsuarioAdministradores WHERE rol = 'Coordinador' ", function(errores, row){
+        if(errores){
+            throw errores;
+        }else{
+            res.render('AdminGeneral/FormularioActualizarUsuarioCoordinador', { usuario: req.user, userCoordinador: row });
+        }   
+    });
 })
 router.get('/formActualizarUsuarioJugador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioActualizarUsuarioJugador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioActualizarUsuarioJugador', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
                 //Eliminar
 router.get('/formEliminarCategoria', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarCategoria', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioEliminarCategoria', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formEliminarCoordinador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarCoordinador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Coordinadores", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioEliminarCoordinador', { usuario: req.user, coordinadores: rows }) 
+        }
+    }
+    );
 })
 router.get('/formEliminarEntrenador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarEntrenador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioEliminarEntrenador', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formEliminarEquipo', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarEquipo', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioEliminarEquipo', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formEliminarJugador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarJugador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioEliminarJugador', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formEliminarPago', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarPagoSemanal', { usuario: req.user })
+    coneccion.query("SELECT * FROM jugadores", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+            res.render('AdminGeneral/FormularioEliminarPagoSemanal', { usuario: req.user, jugadores: rows})        
+        }
+    }
+    );
 })
 router.get('/formEliminarUsuarioCoordinador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarUsuarioCoordinador', { usuario: req.user })
+    coneccion.query("SELECT * FROM UsuarioAdministradores WHERE rol = 'Coordinador' ", function(errores, row){
+        if(errores){
+            throw errores;
+        }else{
+            res.render('AdminGeneral/FormularioEliminarUsuarioCoordinador', { usuario: req.user, userCoordinador: row });
+        }   
+    });
 })
 router.get('/formEliminarUsuarioJugador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioEliminarUsuarioJugador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioEliminarUsuarioJugador', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
                 //Crear o Agregar
 router.get('/formAgregarPago', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioAgregarCuotaJugador', { usuario: req.user })
+    coneccion.query("SELECT * FROM jugadores", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+            res.render('AdminGeneral/FormularioAgregarCuotaJugador', { usuario: req.user, jugadores: rows})        
+        }
+    }
+    );
 })
 router.get('/formCrearCategoria', authControlador.isAuthenticated,  (req, res)=>{
     res.render('AdminGeneral/FormularioCrearCategoria', { usuario: req.user })
 })
 router.get('/formCrearCoordinadores', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioCrearCoordinadores', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+            coneccion.query("SELECT * FROM UsuarioAdministradores WHERE rol = 'Coordinador' ", function(errores, row){
+                if(error){
+                    throw error;
+                }else{
+                    res.render('AdminGeneral/FormularioCrearCoordinadores', { usuario: req.user, categorias: rows, userCoordinador: row });
+                }   
+            });
+             
+        }
+    }
+
+
+    );
+    
 })
 router.get('/formCrearEntrenadores', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioCrearEntrenadores', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioCrearEntrenadores', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
+    
 })
 router.get('/formCrearEquipos', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioCrearEquipos', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+            coneccion.query("SELECT * FROM entrenadores", function(errores, row){
+                if(error){
+                    throw error;
+                }else{
+                    res.render('AdminGeneral/FormularioCrearEquipos', { usuario: req.user , categorias: rows, entrenadores: row});
+                }   
+            });
+             
+        }
+    }
+
+
+    );
+    
 })
 router.get('/formCrearJugador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioCrearJugador', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormularioCrearJugador', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formCrearUsuarioJugador', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormularioCrearUsuarioJugador', { usuario: req.user })
+    coneccion.query("SELECT * FROM jugadores", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+            res.render('AdminGeneral/FormularioCrearUsuarioJugador', { usuario: req.user, jugadores: rows})        
+        }
+    }
+    );
+    
 })
 router.get('/formCrearUsuarioCoordinador', authControlador.isAuthenticated,  (req, res)=>{
     res.render('AdminGeneral/FormularioCrearUsuarioCoordinador', { usuario: req.user })
@@ -180,6 +356,12 @@ router.post('/formAdmin', authControlador.formAdmin) // Referencia correcta
 router.post('/login', authControlador.inicio) // Referencia correcta
 router.get('/logout', authControlador.logout)
 router.post('/crearCategoria', authControlador.crearCategoria);
+router.post('/crearEquipo', authControlador.crearEquipo)
+router.post('/crearUsuario', authControlador.crearUsuario);
+router.post('/crearCoordinador', authControlador.crearCoordinador);
+router.post('/crearEntrenador', authControlador.crearEntrenador);
+router.post('/crearJugador', authControlador.crearJugador);
+router.post('/crearUsuarioJugador', authControlador.crearUsuarioJugador);
 
 
 

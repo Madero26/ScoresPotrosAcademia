@@ -132,8 +132,26 @@
     <form>
         <label for="usuario">Seleccione el usuario:</label>
         <select name="usuario">
+            <% userCoordinador.forEach(user => { %>
+                <option value="<%= user.id_usuario %>"> <%= user.usuario %> </option>
+                <% }); %>
         </select>
         <input type="submit" value="Eliminar">
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert !="undefined" ) { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %> ,
+                timer: <%= timer %>
+            }).then(() => {
+                    window.location = '/<%= ruta %>'
+                })
+        </script>
+
+        <% } %>
 </body>
 </html>

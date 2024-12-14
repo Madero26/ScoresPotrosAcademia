@@ -132,10 +132,11 @@
     <form>
         <label for="jugador">Seleccione al jugador:</label>
         <select name="jugador">
+            <% jugadores.forEach(jugador => { %>
+                <option value="<%= jugador.id_jugador %>"> <%= jugador.nombres %> </option>
+                <% }); %>
         </select>
-        <label for="numeroSemena">Seleccione la semana:</label>
-        <select name="numeroSemana">
-        </select>
+        
         <input type="submit" value="Eliminar">
         
     </form>
