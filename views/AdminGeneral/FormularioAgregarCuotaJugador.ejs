@@ -129,7 +129,7 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <h1 class="fotos">FORMULARIO AGREGAR PAGO SEMANAL JUGADOR</h1>
-    <form action="/datos" method="POST" >
+    <form action="/agregarPago" method="POST">
         <label for="semana">Numero de la semana:</label>
         <input type="number" name="semana" placeholder="Numero de la semana de pago" required>
         <label for="name">Elige el jugador:</label>
@@ -148,12 +148,24 @@
         <input type="number" name="total" placeholder="0 si pago, si no el adeudo total" required>
     
         
-        <input type="submit" value="Subir" onclick="mostrarMensaje()">
-        <script>
-            function mostrarMensaje() {
-                alert("JUGADOR ENCONTRADO CON EXITO");
-            }
-        </script>
+        <input type="submit" value="Subir">
+        
     </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert !="undefined" ) { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %> ,
+                timer: <%= timer %>
+            }).then(() => {
+                    window.location = '/<%= ruta %>'
+                })
+        </script>
+
+        <% } %>
 </body>
 </html>

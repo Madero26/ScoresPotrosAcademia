@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Academia ITSON</title>
+        <link rel="stylesheet" href="resources/styles/styleMain.css">
+        <link rel="stylesheet" href="resources/styles/stylePago.css">
+        <link rel="icon" href="resources/imgs/academia-logo.png">
+    </head>
+<body>
+    <section class="content03">
+        
+        <div class="cardContra">
+            <p>ELIMINAR USUARIO COORDINADOR</p>
+        </div>
+    </section>
+
+    <section class="login-body">
+        <div class="login-container">
+            <form action="/eliminar/<%= user.id_usuario %>" method="POST">
+                <label for="usuario">Escribe el usuario:</label>
+        <input type="text" name="user"  value="<%= user.usuario %>" required>
+        <label for="Contraseña">Escriba la Contraseña:</label>
+        <input  type="text" name="Contraseña" value="<%= user.contra %>" required>
+                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">
+                    Eliminar
+                </button>
+            </form>
+          </div>
+    </section>
+    <div class="regresar">
+    <a href="/formEliminarCategoria"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+</div>
+    
+</body>
+</html>

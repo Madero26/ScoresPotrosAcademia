@@ -218,7 +218,7 @@ exports.crearCategoria = [
                 return res.status(400).send("Error: No se subió la foto de la categoría.");
             }
 
-            const urlFoto = `/public/imgs/Categorias/${req.file.filename}`; // Ruta relativa de la foto
+            const urlFoto = `resources/imgs/Categorias/${req.file.filename}`; // Ruta relativa de la foto
 
             // Insertar los datos en la base de datos
             const queryInsertCategoria = `
@@ -277,7 +277,7 @@ exports.crearEquipo = [
                 return res.status(400).send("Error: No se subió la foto del equipo.");
             }
 
-            const urlFoto = `/public/imgs/Equipos/${req.file.filename}`; // Ruta relativa de la foto
+            const urlFoto = `resources/imgs/Equipos/${req.file.filename}`; // Ruta relativa de la foto
 
             // Insertar los datos en la base de datos
             const queryInsertEquipo = `
@@ -400,7 +400,7 @@ exports.crearCoordinador = [
                 return res.status(400).send("Error: No se subió la foto del coordinador.");
             }
 
-            const urlFoto = `/public/imgs/Coordinadores/${req.file.filename}`; // Ruta relativa de la foto
+            const urlFoto = `resources/imgs/Coordinadores/${req.file.filename}`; // Ruta relativa de la foto
 
             // Insertar los datos del coordinador en la base de datos
             const queryInsertCoordinador = `
@@ -534,7 +534,7 @@ exports.crearJugador = [
             }
 
             // Ruta de la foto
-            const urlFoto = `/public/imgs/Jugadores/${file.filename}`;
+            const urlFoto = `resources/imgs/Jugadores/${file.filename}`;
 
             // Insertar los datos en la base de datos
             const queryInsertJugador = `
@@ -630,5 +630,68 @@ exports.crearUsuarioJugador = async (req, res) => {
     } catch (error) {
         console.error("Error al crear el usuario:", error);
         res.status(500).send("Error al crear el usuario.");
+    }
+};
+exports.registrarPago = async (req, res) => {
+    try {
+        // Desestructurar los datos del formulario
+        const { semana, jugador, pago, total } = req.body;
+
+        // Validar los campos del formulario
+        if (!semana || !jugador || !pago || total === undefined) {
+            return res.status(400).send("Todos los campos son obligatorios.");
+        }
+
+        // Determinar el estatus del pago y el adeudo
+        let estatus_pago = pago === 'si' ? 'Pagado' : 'Pendiente';
+        let total_adeudo = pago === 'si' ? 0 : parseInt(total, 10);
+
+        if (pago === 'no' && total_adeudo <= 0) {
+            return res.status(400).send("El adeudo debe ser mayor a 0 si no se realizó el pago.");
+        }
+
+        // Obtener la fecha actual
+        const fechaActual = new Date().toISOString().split('T')[0]; // Formato: YYYY-MM-DD
+
+        // Insertar los datos en la tabla `pagos`
+        const queryInsertPago = `
+            INSERT INTO pagos (numero_semana, estatus_pago, total_adeudo, fecha, id_jugador)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        await new Promise((resolve, reject) => {
+            coneccion.query(
+                queryInsertPago,
+                [semana, estatus_pago, total_adeudo, fechaActual, jugador],
+                (err, result) => {
+                    if (err) return reject(err);
+                    resolve(result);
+                }
+            );
+        });
+
+        // Recargar jugadores para el renderizado
+        coneccion.query("SELECT * FROM Jugadores", (error, jugadores) => {
+            if (error) {
+                console.error("Error al obtener jugadores:", error);
+                return res.status(500).send("Error al recargar jugadores.");
+            }
+
+            // Renderizar la vista con mensaje de éxito
+            res.render('AdminGeneral/FormularioAgregarCuotaJugador', {
+                alert: true,
+                usuario: req.user,
+                alertTitle: "¡Éxito!",
+                alertMessage: "Pago registrado exitosamente.",
+                alertIcon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+                ruta: 'formAgregarPago',
+                jugadores: jugadores
+            });
+        });
+
+    } catch (error) {
+        console.error("Error al registrar el pago:", error);
+        res.status(500).send("Error al registrar el pago.");
     }
 };

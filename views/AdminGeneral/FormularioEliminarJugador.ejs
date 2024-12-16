@@ -129,9 +129,9 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <h1 class="fotos">FORMULARIO ELIMINAR JUGADOR</h1>
-    <form>
+    <form action="/eliminarJugador" method="GET">
         <label for="categoria">Seleccione la categoria:</label>
-        <select name="categoria">
+        <select name="categoriaID">
             <% categorias.forEach(categoria => { %>
                 <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
                 <% }); %>

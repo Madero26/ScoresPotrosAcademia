@@ -320,6 +320,134 @@ router.get('/AdminContra', authControlador.isAuthenticated, (req, res) => {
     res.render('AdminGeneral/contraNuevaAdmin', { usuario: req.user})
 })
 
+router.get('/eliminarCategoria', authControlador.isAuthenticated, (req, res) => {
+    const categoriaID = req.query.categoriaID; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM Categorias WHERE id_categoria = ?", [categoriaID], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionCategoria', { usuario: req.user, categoria: rows[0] });
+        }
+    });
+});
+router.get('/eliminarEntrenador', authControlador.isAuthenticated, (req, res) => {
+    const categoriaID = req.query.categoriaID; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM entrenadores WHERE id_categoria = ?", [categoriaID], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionEntrenador', { usuario: req.user, entrenadores: rows });
+        }
+    });
+});
+router.get('/eliminarEquipo', authControlador.isAuthenticated, (req, res) => {
+    const categoriaID = req.query.categoriaID; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM equipos WHERE id_categoria = ?", [categoriaID], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionEquipo', { usuario: req.user, equipos: rows });
+        }
+    });
+});
+router.get('/eliminarJugador', authControlador.isAuthenticated, (req, res) => {
+    const categoriaID = req.query.categoriaID; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM jugadores WHERE id_categoria = ?", [categoriaID], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionJugador', { usuario: req.user, jugadores: rows });
+        }
+    });
+});
+router.get('/eliminarUsuarioJugador', authControlador.isAuthenticated, (req, res) => {
+    const categoriaID = req.query.categoriaID; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM jugadores WHERE id_categoria = ?", [categoriaID], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionUsuarioJugador', { usuario: req.user, jugadores: rows });
+        }
+    });
+});
+router.get('/eliminarCoordinador', authControlador.isAuthenticated, (req, res) => {
+    const coordinador = req.query.coordinador; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM Coordinadores WHERE id_coordinador = ?", [coordinador], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionCoordinador', { usuario: req.user, coordinador: rows[0] });
+        }
+    });
+});
+router.get('/eliminarCategoria', authControlador.isAuthenticated, (req, res) => {
+    const usuario = req.query.usuario; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM UsuarioAdministradores WHERE id_usuario = ?", [usuario], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionUsuarioCoordinador', { usuario: req.user, usuario: rows[0] });
+        }
+    });
+});
+router.get('/eliminarPagoSemanal', authControlador.isAuthenticated, (req, res) => {
+    const jugador = req.query.jugador; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM jugadores WHERE id_jugador = ?", [jugador], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionPagoSemanal', { usuario: req.user, jugadores: rows[0] });
+        }
+    });
+});
+router.get('/eliminarUsuarioCoordinador', authControlador.isAuthenticated, (req, res) => {
+    const usuario = req.query.usuario; 
+    // Consulta la base de datos para obtener los datos de la categoría
+    coneccion.query("SELECT * FROM UsuarioAdministradores WHERE id_usuario = ?", [usuario], (error, rows) => {
+        if (error) {
+            console.error('Error al consultar la categoría:', error);
+            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
+        
+        } else {
+            // Renderiza la vista con los datos de la categoría
+            res.render('AdminGeneral/EliminarConfirmacionUsuarioCoordinador', { usuario: req.user, user: rows[0] });
+        }
+    });
+});
+
+
 //RUTAS DE NAVEGADOR COORDINADORES
 router.get('/formCoordinadores', authControlador.isAuthenticated, (req, res) => {
     res.render('Coordinador/FormFotosEquipos', { usuario: req.user})
@@ -350,11 +478,6 @@ router.get('/CoordFotoCate', authControlador.isAuthenticated,(req, res)=>{
 
 //Formularios Admin General
 router.post('/formAdmin', authControlador.formAdmin) // Referencia correcta
-//Formularios Coordinadores
-
-
-router.post('/login', authControlador.inicio) // Referencia correcta
-router.get('/logout', authControlador.logout)
 router.post('/crearCategoria', authControlador.crearCategoria);
 router.post('/crearEquipo', authControlador.crearEquipo)
 router.post('/crearUsuario', authControlador.crearUsuario);
@@ -362,6 +485,14 @@ router.post('/crearCoordinador', authControlador.crearCoordinador);
 router.post('/crearEntrenador', authControlador.crearEntrenador);
 router.post('/crearJugador', authControlador.crearJugador);
 router.post('/crearUsuarioJugador', authControlador.crearUsuarioJugador);
+router.post('/agregarPago', authControlador.registrarPago);
+//Formularios Coordinadores
+
+
+router.post('/login', authControlador.inicio) // Referencia correcta
+router.get('/logout', authControlador.logout)
+router.post('/eliminarCategoria')
+
 
 
 
