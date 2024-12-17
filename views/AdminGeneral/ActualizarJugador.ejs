@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Academia ITSON</title>
+        <link rel="stylesheet" href="resources/styles/styleForms.css">
+
+        <link rel="icon" href="resources/imgs/academia-logo.png">
+    </head>
+<body>
+    <section class="content03">
+        
+        <div class="cardContra">
+            <h1 class="fotos">ACTUALIZAR JUGADOR</h1>
+        </div>
+    </section>
+
+    <section class="login-body">
+        <div class="login-container">
+            <form action="/crearJugador" method="POST" enctype="multipart/form-data">
+                <label for="name">Nombre Completo Del Jugador:</label>
+                <input type="text" name="nombres" value="<%= jugadores.nombres %>" required>
+                <input type="text" name="apellidoPaterno" value="<%= jugadores.apellido_paterno %>" required>
+                <input type="text" name="apellidoMaterno" value="<%= jugadores.apellido_materno %>" required>
+                <label for="date">Fecha De Nacimiento:</label>
+                <input type="date" name="fechaNacimiento" required>
+                <label for="categoria">Selecciona La Categoría:</label>
+                <select name="categoria" id="categoria" required>
+                    <% categorias.forEach(categoria => { %>
+                        <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
+                        <% }); %>
+                </select>
+                <label for="equipo">Selecciona el equipo:</label>
+
+                <select name="equipo">
+                    <% equipos.forEach(equipo => { %>
+                        <option value="<%= equipo.id_equipo %>"> <%= equipo.nombre %> </option>
+                        <% }); %>
+                </select>
+                <label for="fotoJugador">Subir Foto Del Jugador:</label>
+                <input type="file" name="fotoJugador" id="fotoJugador" accept="image/*">
+        
+                <input type="submit" value="Actualizar" onclick="return confirm('¿Estás seguro de que deseas actualizar esta jugador?');">
+            </form>
+          </div>
+    </section>
+    <div class="regresar">
+    <a href="/formActualizarJugador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+</div>
+    
+</body>
+</html>

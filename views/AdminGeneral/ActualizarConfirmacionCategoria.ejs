@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Academia ITSON</title>
+        <link rel="stylesheet" href="resources/styles/styleMain.css">
+        <link rel="stylesheet" href="resources/styles/stylePago.css">
+        <link rel="icon" href="resources/imgs/academia-logo.png">
+    </head>
+<body>
+    <section class="content03">
+        
+        <div class="cardContra">
+            <p>ACTUALIZAR CATEGORIA</p>
+        </div>
+    </section>
+
+    <section class="login-body">
+        <div class="login-container">
+            <form action="/eliminar/<%= categoria.id_categoria %>" method="POST">
+                <label>Nombre de la categoría:</label>
+                <input type="text" value="<%= categoria.nombre_categoria %>" >
+                
+                <label>Rango de edad:</label>
+                <input type="text" value="<%= categoria.rango_edad %>" >
+                
+                <label>Rango de fechas:</label><br>
+                <label>Hasta</label>
+                <input type="text" value="Desde: <%= categoria.rango_inferior %>" >
+                <label>Desde</label>
+                <input type="text" value="Hasta: <%= categoria.rango_superior %>" >
+                
+                <label>Foto de la categoría:</label><br>
+                <img src="<%= categoria.url_foto %>" alt="Foto de la categoría" style="width:200px;"><br>
+                
+                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas actualizar esta categoría?');">
+                    Eliminar
+                </button>
+            </form>
+          </div>
+    </section>
+    <div class="regresar">
+    <a href="/formActualizarCategoria"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+</div>
+    
+</body>
+</html>

@@ -12,7 +12,7 @@
     <section class="content03">
         
         <div class="cardContra">
-            <p>ELIMINAR COORDINADOR</p>
+            <p>ACTUALIZAR COORDINADOR</p>
         </div>
     </section>
 
@@ -21,30 +21,30 @@
             <form action="/eliminarCoordinador/<%= coordinador.id_coordinador %>" method="POST" enctype="multipart/form-data">
                 <label>Nombre del Coordinador:</label><br>
                 <label for="nombre">Nombres:</label>
-                <input type="text" name="nombre" value="<%= coordinador.nombres %>" readonly>
+                <input type="text" name="nombre" value="<%= coordinador.nombres %>" >
                 <br>
                 
                 <label for="apellidoPaterno">Apellido Paterno:</label>
-                <input type="text" name="apellidoPaterno" value="<%= coordinador.apellido_paterno %>" readonly>
+                <input type="text" name="apellidoPaterno" value="<%= coordinador.apellido_paterno %>" >
                 <br>
             
                 <label for="apellidoMaterno">Apellido Materno:</label>
-                <input type="text" name="apellidoMaterno" value="<%= coordinador.apellido_materno %>" readonly>
+                <input type="text" name="apellidoMaterno" value="<%= coordinador.apellido_materno %>" >
                 <br>
             
                 <label for="categoria">Categoría Asignada:</label>
-                <input type="text" value="<%= coordinador.id_categoria %>" readonly>
+                <input type="text" value="<%= coordinador.id_categoria %>" >
                 <br>
                 
                 <label for="usuario">Usuario Asignado:</label>
-                <input type="text" value="<%= coordinador.id_usuario %>" readonly>
+                <input type="text" value="<%= coordinador.id_usuario %>" >
                 <br>
             
                 <label>Foto del Coordinador:</label><br>
                 <img src="<%= coordinador.url_foto %>" alt="Foto del Coordinador" style="width: 150px; height: 150px;">
                 <br>
             
-                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este coordinador?');">
+                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas actualizar este coordinador?');">
                     Eliminar Coordinador
                 </button>
             </form>
@@ -52,7 +52,7 @@
           </div>
     </section>
     <div class="regresar">
-    <a href="/formEliminarCoordinador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+    <a href="/formActualizarCoordinador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
 </div>
     
 </body>

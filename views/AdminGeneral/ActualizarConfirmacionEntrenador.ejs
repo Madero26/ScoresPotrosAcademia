@@ -12,25 +12,23 @@
     <section class="content03">
         
         <div class="cardContra">
-            <h1 class="fotos">ELIMINAR JUGADOR</h1>
+            <h1 class="fotos">ACTUALIZAR ENTRENADOR</h1>
         </div>
     </section>
 
     <section class="login-body">
         <div class="login-container">
-            <form action="/eliminarJugadorNuevo" method="GET">
-                <select name="equipo">
-                    <% jugadores.forEach(jugador => { %>
-                        <option value="<%= jugador.id_jugador %>"> <%= jugador.nombres %> </option>
+            <form action="/actualizaEntrenadorNuevo" method="GET">
+                <select name="entrenador">
+                    <% entrenadores.forEach(entrenador => { %>
+                        <option value="<%= entrenador.id_entrenador %>"> <%= entrenador.nombres %> </option>
                         <% }); %>
                 </select>
                 <input type="submit" name="eliminar" value="Elimnar">
             </form>
           </div>
     </section>
-    <div class="regresar">
-    <a href="/formEliminarJugador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
-</div>
+    <a href="/formActualizarEntrenador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
     
 </body>
 </html>

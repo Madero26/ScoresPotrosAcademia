@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Academia ITSON</title>
+        <link rel="stylesheet" href="resources/styles/styleForms.css">
+
+        <link rel="icon" href="resources/imgs/academia-logo.png">
+    </head>
+<body>
+    <section class="content03">
+        
+        <div class="cardContra">
+            <h1 class="fotos">ACTUALIZAR PAGO SEMANAL</h1>
+        </div>
+    </section>
+
+    <section class="login-body">
+        <div class="login-container">
+            <form action="/agregarPago" method="POST">
+                <label for="semana">Número de la semana:</label>
+                <input type="number" name="semana" value="<%= semana.numero_semana %>" required>
+            
+                <label for="pago">Seleccione la opción:</label>
+                <label for="si">Sí, pagó</label>
+                <input type="radio" name="pago" value="Pagado" required>
+                <label for="no">No, no pagó</label>
+                <input type="radio" name="pago" value="Pendiente" required>
+            
+                <label for="total">Total de adeudo:</label>
+                <input type="number" name="total" value="<%= semana.total_adeudo %>" required>
+            
+                <input type="submit" value="Actualizar" onclick="return confirm('¿Estás seguro de que deseas actualizar esta semana?');">
+            </form>
+            
+          </div>
+    </section>
+    <div class="regresar">
+    <a href="/formActualizarPago"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+</div>
+    
+</body>
+</html>

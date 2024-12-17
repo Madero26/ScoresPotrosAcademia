@@ -18,17 +18,18 @@
 
     <section class="login-body">
         <div class="login-container">
-            <form action="" method="POST">
+            <form action="/eliminarUsuarioJugadorNuevo" method="GET">
                 <select name="equipo">
                     <% jugadores.forEach(jugador => { %>
                         <option value="<%= jugador.id_jugador %>"> <%= jugador.nombres %> </option>
                         <% }); %>
                 </select>
+                <input type="submit" name="eliminar" value="Elimnar">
             </form>
           </div>
     </section>
     <div class="regresar">
-    <a href="/formEliminarCategoria"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+    <a href="/formEliminarUsuarioJugador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
 </div>
     
 </body>

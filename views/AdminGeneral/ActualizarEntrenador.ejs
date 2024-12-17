@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Academia ITSON</title>
+        
+        <link rel="stylesheet" href="resources/styles/styleForms.css">
+
+
+        <link rel="icon" href="resources/imgs/academia-logo.png">
+    </head>
+<body>
+    <section class="content03">
+        
+        <div class="cardContra">
+            <h1 class="fotos">ACTUALIZAR ENTRENADOR</h1>
+        </div>
+    </section>
+
+    <section class="login-body">
+        <div class="login-container">
+            <form action="/actualizarEntrenador/<%= entrenadores.id_entrenador %>" method="POST">
+                <label for="categoria">Selecciona la Categoría:</label>
+                <select name="categoriaID">
+                    <% categorias.forEach(categoria => { %>
+                        <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
+                        <% }); %>
+                </select>
+            
+                <label>Escriba el nombre completo del entrenador:</label><br>
+                <label for="nombre">Nombres:</label>
+                <input type="text" name="nombre" value="<%= entrenadores.nombres %>" placeholder="Ismael Eduardo" required>
+            
+                <label for="apellidoPaterno">Apellido Paterno:</label>
+                <input type="text" name="apellidoPaterno" value="<%= entrenadores.apellido_paterno %>" placeholder="Agüero" required>
+            
+                <label for="apellidoMaterno">Apellido Materno:</label>
+                <input type="text" name="apellidoMaterno" value="<%= entrenadores.apellido_materno %>" placeholder="Madero" required>
+            
+                <input type="submit" value="Actualizar" onclick="return confirm('¿Estás seguro de que deseas actualizar este entrenador?');">
+            </form>
+          </div>
+    </section>
+    <div class="regresar">
+    <a href="/formActualizarEntrenador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+</div>
+    
+</body>
+</html>

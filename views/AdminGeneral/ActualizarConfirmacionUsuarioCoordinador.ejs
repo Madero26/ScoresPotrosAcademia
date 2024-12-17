@@ -12,7 +12,7 @@
     <section class="content03">
         
         <div class="cardContra">
-            <p>ELIMINAR USUARIO COORDINADOR</p>
+            <p>ACTUALIZAR USUARIO COORDINADOR</p>
         </div>
     </section>
 
@@ -20,17 +20,17 @@
         <div class="login-container">
             <form action="/eliminar/<%= user.id_usuario %>" method="POST">
                 <label for="usuario">Escribe el usuario:</label>
-        <input type="text" name="user"  value="<%= user.usuario %>" readonly>
+        <input type="text" name="user"  value="<%= user.usuario %>" >
         <label for="Contraseña">Escriba la Contraseña:</label>
-        <input  type="text" name="Contraseña" value="<%= user.contra %>" readonly>
-                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">
+        <input  type="text" name="Contraseña" value="<%= user.contra %>" >
+                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas actualizar este Usuario?');">
                     Eliminar
                 </button>
             </form>
           </div>
     </section>
     <div class="regresar">
-    <a href="/formEliminarUsuarioCoordinador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
+    <a href="/formActualizarUsuarioCoordinador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
 </div>
     
 </body>
