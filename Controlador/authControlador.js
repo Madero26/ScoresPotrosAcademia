@@ -23,48 +23,35 @@ exports.formAdmin = [
     async (req, res) => {
         try {
             const usuario = req.usuario
-            const categoria = req.body.categoria;
+            const categoria = req.body.categoriaID;
 
             // Verificar que la foto de la categoría fue subida correctamente
             if (!req.file) {
                 return res.status(400).send("No se subió correctamente la foto de la categoría");
             }
 
-            const urlFotoCategoria = req.file.path;
+            const urlFotoCategoria = `resources/imgs/Categorias/${req.file.filename}`; // Ruta relativa de la foto
 
-            // Obtener el ID de la categoría en base al nombre
-            const queryCategoria = 'SELECT id_categoria FROM Categorias WHERE nombre_categoria = ?';
-            const categoriaId = await new Promise((resolve, reject) => {
-                coneccion.query(queryCategoria, [categoria], (err, result) => {
-                    if (err) return reject(err);
-                    if (result.length > 0) {
-                        resolve(result[0].id_categoria);
-                    } else {
-                        res.render('FormFotosCategoria', {
-                            usuario: usuario,
-                            alert: true,
-                            alertTitle: "ADVERTENCIA",
-                            alertMessage: "Categoria no encontrada",
-                            alertIcon: 'info',
-                            showConfirmButton: true,
-                            timer: false,
-                            ruta: ''
-                        });
-                    }
-                });
-            });
+            
 
             // Actualizar la URL de la foto de la categoría en la base de datos
             const queryUpdateCategoria = 'UPDATE Categorias SET url_foto = ? WHERE id_categoria = ?';
             await new Promise((resolve, reject) => {
-                coneccion.query(queryUpdateCategoria, [urlFotoCategoria, categoriaId], (err, result) => {
+                coneccion.query(queryUpdateCategoria, [urlFotoCategoria, categoria], (err, result) => {
                     if (err) return reject(err);
                     resolve(result);
                 });
             });
+            coneccion.query("SELECT * FROM Categorias", (error, row) => {
+                if (error) {
+                    console.error("Error al obtener categorías:", error);
+                    return res.status(500).send("Error al recargar categorías.");
+                } 
+            
 
-            res.render('FormFotosCategoria', {
+            res.render('AdminGeneral/FormFotosCategoria', {
                 usuario: usuario,
+                categorias: row,
                 alert: true,
                 alertTitle: "SUBIDA DE FOTOS",
                 alertMessage: "!Se subieron los datos con éxito!",
@@ -73,6 +60,8 @@ exports.formAdmin = [
                 timer: 1500,
                 ruta: 'formAdmin'
             });
+
+        });
 
         } catch (error) {
             console.error(error);

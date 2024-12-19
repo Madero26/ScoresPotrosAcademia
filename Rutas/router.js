@@ -14,8 +14,46 @@ router.get('/login', (req, res)=>{
     res.render('Login')
 })
 router.get('/Estadisticas', (req, res)=>{
-    res.render('Estadisticas')
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('Estadisticas', { categorias: rows }) 
+        }
+    }
+    );
 })
+router.get('/api/equipos/:id_categoria', (req, res) => {
+    const idCategoria = req.params.id_categoria;
+
+    const query = 'SELECT * FROM Equipos WHERE id_categoria = ?';
+    coneccion.query(query, [idCategoria], (error, equipos) => {
+        if (error) {
+            console.error('Error al obtener equipos:', error);
+            return res.status(500).json({ error: 'Error del servidor' });
+        }
+
+        res.json({ equipos });
+    });
+});
+
+router.get('/estadisticas:id_equipo', (req, res) => {
+    const idEquipo = req.params.id_equipo;
+
+    const query = 'SELECT * FROM jugadores WHERE id_equipo = ?';
+    coneccion.query(query, [idEquipo], (error, equipo) => {
+        if (error) {
+            console.error('Error al obtener equipo:', error);
+            return res.status(500).send('Error del servidor');
+        }
+
+        if (equipo.length > 0) {
+            res.render('EstadisticasEquipo', { jugadores: equipo });
+        } else {
+            res.status(404).send('Equipo no encontrado');
+        }
+    });
+});
 router.get('/JugadoresD', (req, res)=>{
     res.render('JugadoresD')
 })
@@ -48,7 +86,14 @@ router.get('/formContraNuevaEstadisticas', authControlador.isAuthenticated, (req
 //RUTAS DE NAVEGADOR ADMINISTRADOR GENERAL
                 //FOTOS
 router.get('/formAdmin', authControlador.isAuthenticated,  (req, res)=>{
-    res.render('AdminGeneral/FormFotosCategoria', { usuario: req.user })
+    coneccion.query("SELECT * FROM Categorias", function(error, rows){
+        if(error){
+            throw error;
+        }else{
+                    res.render('AdminGeneral/FormFotosCategoria', { usuario: req.user, categorias: rows }) 
+        }
+    }
+    );
 })
 router.get('/formFotoCoordinador', authControlador.isAuthenticated,  (req, res)=>{
     res.render('AdminGeneral/FormFotoCoordinador', { usuario: req.user })
@@ -385,7 +430,7 @@ router.get('/eliminarEquipoNuevo', authControlador.isAuthenticated, (req, res) =
         
         } else {
             // Renderiza la vista con los datos de la categoría
-            res.render('AdminGeneral/AEliminarEquipo', { usuario: req.user, equipos: rows[0] });
+            res.render('AdminGeneral/EliminarEquipos', { usuario: req.user, equipos: rows[0] });
         }
     });
 });
@@ -782,7 +827,7 @@ router.get('/CoordFotoCate', authControlador.isAuthenticated,(req, res)=>{
 //Formularios Estadisticas
 
 //Formularios Admin General
-router.post('/formAdmin', authControlador.formAdmin) // Referencia correcta
+router.post('/nuevaFotoCategoria', authControlador.formAdmin) // Referencia correcta
 router.post('/crearCategoria', authControlador.crearCategoria);
 router.post('/crearEquipo', authControlador.crearEquipo)
 router.post('/crearUsuario', authControlador.crearUsuario);

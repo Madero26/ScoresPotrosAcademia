@@ -62,19 +62,57 @@
     </section>
     
     <section class="categorias-container">
-        <div  class="categorias">
-            <a href="Equipos_3-4.ejs"><img src="resources/imgs/logo.png" alt="Categoria 3-4 años"></a>
-            <a href="Equipos_5-6.ejs"><img src="resources/imgs/logo.png" alt="Categoria 5-6 años"></a>
-            <a href="Equipos_7-8.ejs"><img src="resources/imgs/logo.png" alt="Categoria 7-8 años"></a>
+        <div id="categorias">
+            <% categorias.forEach(categoria => { %>
+                <div class="categoria">
+                    <img src="<%= categoria.url_foto %>" alt="<%= categoria.nombre_categoria %>" width="200">
+                    <a href="#equipos"><button onclick="cargarEquipos(<%= categoria.id_categoria %>)">
+                        Ver Equipos de <%= categoria.nombre_categoria %>
+                    </button>
+                </a>
+                </div>
+            <% }) %>
         </div>
-        <div  class="categorias02">
-            <a href="Equipos_9-10.ejs"><img src="resources/imgs/logo.png" alt="Categoria 9-10 años"></a>
-            <a href="Equipos_11-12.ejs"><img src="resources/imgs/logo.png" alt="Categoria 11-12 años"></a>
-            <a href="Equipos_13-14.ejs"><img src="resources/imgs/logo.png" alt="Categoria 13-14 años"></a>
-            <a href="Equipos_15-16.ejs"><img src="resources/imgs/logo.png" alt="Categoria 15-16 años"></a>
-            
+        </section>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        
+        <div id="equipos">
+            <!-- Aquí se cargarán los equipos dinámicamente -->
         </div>
-    </section>
+    
+        
+        <script>
+            async function cargarEquipos(idCategoria) {
+                try {
+                    const response = await fetch(`/api/equipos/${idCategoria}`);
+                    const data = await response.json();
+                    const equiposDiv = document.getElementById('equipos');
+                    equiposDiv.innerHTML = '';
+    
+                    if (data.equipos.length > 0) {
+                        data.equipos.forEach(equipo => {
+                            const equipoDiv = document.createElement('div');
+                            equipoDiv.className = 'equipo';
+                            equipoDiv.innerHTML = `
+                                <img src="${equipo.url_foto}" alt="${equipo.nombre}" width="200">
+                                <h3>${equipo.nombre}</h3>
+                                <p>Colores: ${equipo.colores}</p>
+                                <a href="/estadisticas${equipo.id_equipo} ">Ver Estadisticas</a>
+                                <div id="#equipos"></div>
+                            `;
+                            equiposDiv.appendChild(equipoDiv);
+                        });
+                    } else {
+                        equiposDiv.innerHTML = '<p>No hay equipos para esta categoría.</p>';
+                    }
+                } catch (error) {
+                    console.error('Error al cargar equipos:', error);
+                }
+            }
+        </script>
 
 </body>
 
