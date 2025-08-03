@@ -4,6 +4,8 @@ const coneccion = require('../database/conexion')
 
 
 const authControlador = require('../Controlador/authControlador') // Asegúrate que el nombre sea correcto
+const estadisticasControlador = require('../Controlador/estadisticasControlador')
+
 
 router.get('/', (req, res)=> {
     res.render('index')
@@ -13,16 +15,9 @@ router.get('/', (req, res)=> {
 router.get('/login', (req, res)=>{
     res.render('Login')
 })
-router.get('/Estadisticas', (req, res)=>{
-    coneccion.query("SELECT * FROM Categorias", function(error, rows){
-        if(error){
-            throw error;
-        }else{
-                    res.render('Estadisticas', { categorias: rows }) 
-        }
-    }
-    );
-})
+router.get('/Estadisticas', authControlador.verCategorias);
+router.get('/categorias/:id/equipos', authControlador.verEquiposPorCategoria);
+
 router.get('/api/equipos/:id_categoria', (req, res) => {
     const idCategoria = req.params.id_categoria;
 
@@ -37,23 +32,30 @@ router.get('/api/equipos/:id_categoria', (req, res) => {
     });
 });
 
-router.get('/estadisticas:id_equipo', (req, res) => {
+router.get('/estadisticas/:id_equipo', (req, res) => {
     const idEquipo = req.params.id_equipo;
 
-    const query = 'SELECT * FROM jugadores WHERE id_equipo = ?';
-    coneccion.query(query, [idEquipo], (error, equipo) => {
+    const query = 'SELECT * FROM Jugadores WHERE id_equipo = ?';
+    coneccion.query(query, [idEquipo], (error, jugadores) => {
         if (error) {
-            console.error('Error al obtener equipo:', error);
+            console.error('Error al obtener jugadores del equipo:', error);
             return res.status(500).send('Error del servidor');
         }
 
-        if (equipo.length > 0) {
-            res.render('EstadisticasEquipo', { jugadores: equipo });
-        } else {
-            res.status(404).send('Equipo no encontrado');
-        }
+        res.render('categorias/EstadisticasEquipo', { jugadores });
     });
 });
+
+// Estadísticas generales del equipo
+router.get('/equipos/:id_equipo/estadisticas', authControlador.verEstadisticasEquipo);
+
+// Estadísticas individuales de los jugadores del equipo
+router.get('/equipos/:id_equipo/jugadores', authControlador.verJugadoresDelEquipo);
+
+router.get('/categoria/:id/buscar', authControlador.buscarJugadorPorNombre);
+
+
+
 router.get('/JugadoresD', (req, res)=>{
     res.render('JugadoresD')
 })
@@ -159,6 +161,17 @@ router.get('/formActualizarJugador', authControlador.isAuthenticated,  (req, res
     }
     );
 })
+router.post('/actualizarJugador/:id', authControlador.actualizarJugador);
+
+router.get('/equiposPorCategoria/:idCategoria', (req, res) => {
+    const idCategoria = req.params.idCategoria;
+    coneccion.query('SELECT * FROM Equipos WHERE id_categoria = ?', [idCategoria], (err, equipos) => {
+        if (err) return res.status(500).json({ error: err });
+        res.json(equipos);
+    });
+});
+
+
 router.get('/formActualizarPago', authControlador.isAuthenticated,  (req, res)=>{
     coneccion.query("SELECT * FROM Jugadores", function(error, rows){
         if(error){

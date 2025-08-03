@@ -5,16 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academia ITSON</title>
-    <link rel="stylesheet" href="resources/styles/styleMain.css">
-    <link rel="icon" href="resources/imgs/academia-logo.png">
-    <link rel="stylesheet" href="resources/styles/styleEstadisticas.css">
+    <link rel="stylesheet" href="/resources/styles/styleMain.css">
+    <link rel="icon" href="/resources/imgs/academia-logo.png">
+    <link rel="stylesheet" href="/resources/styles/styleEstadisticasEquipo.css">
 </head>
 
 <body>
     
     <section class="content01"></section>
     <nav>
-        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
+        <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
         <div>
             <a href="/" class="link">INICIO</a>
         </div>
@@ -33,7 +33,7 @@
         <div>
             <a href="/Standing" class="link">STANDING</a>
         </div>
-        <img src="resources/imgs/logo.png" alt="Logo">
+        <img src="/resources/imgs/logo.png" alt="Logo">
     
     </nav>
     <script>
@@ -56,25 +56,23 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <section class="content03">
-        <div class="card">
-            <p>EQUIPOS</p>
-        </div>
-            <form action="">
-                <input type="text">
-                <input type="submit" value="Buscar">
-            </form>
-    </section>
-        <section class="equipos">
-            <div>
-                <% jugadores.forEach(jugador => { %>
-                    <div>
-                        <img src="<%= jugador.url_foto %>" alt="<%= jugador.nombres %>" width="200">
-                        <p>Nombre: <%= jugador.nombres %></p>
-                    </div>
-                <% }); %>
-            </div>
-        </section>
-        
+        <section class="equipos-section">
+  <h1>Estadísticas del equipo <%= equipoNombre %></h1>
+  <% if (estadisticas) { %>
+    <div class="estadisticas-box">
+      <div><strong>Carreras a favor:</strong> <%= estadisticas.carreras_a_favor %></div>
+      <div><strong>Carreras en contra:</strong> <%= estadisticas.carreras_en_contra %></div>
+      <div><strong>Ganados:</strong> <%= estadisticas.ganados %></div>
+      <div><strong>Perdidos:</strong> <%= estadisticas.perdidos %></div>
+      <div><strong>Empatados:</strong> <%= estadisticas.empatados %></div>
+      <div><strong>Puntos:</strong> <%= estadisticas.puntos %></div>
+      <div><strong>Errores:</strong> <%= estadisticas.errores %></div>
+    </div>
+  <% } else { %>
+    <p class="sin-estadisticas">Este equipo aún no tiene estadísticas registradas.</p>
+  <% } %>
+</section>
+
         
 </body>
 

@@ -1,21 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+.equipos-section {
+  background: #fff;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
 
-.content03{
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+.estadisticas-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  font-size: 1.1rem;
 }
-.card{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    justify-content: center;
-    width: 34%;
-    border-radius: 4.5rem;
-}
-.card p{
-    margin: 0;
-    padding: 1rem;
-    font-family: "Anton", sans-serif;
-    font-size: 56px;
-    color: #0E5688;
+
+.sin-estadisticas {
+  font-style: italic;
+  color: #555;
 }

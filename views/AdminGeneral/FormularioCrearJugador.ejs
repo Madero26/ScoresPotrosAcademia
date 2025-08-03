@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="resources/styles/styleForms.css">
     <link rel="icon" href="resources/imgs/academia-logo.png">
 </head>
+
 <body>
     <section class="content01">
         <div class="regreso">
@@ -99,7 +101,7 @@
         </div>
         <img src="resources/imgs/logo.png" alt="Logo">
     </nav>
-    
+
     <script>
         function redirigir(selectElement) {
             var url = selectElement.value;
@@ -108,7 +110,7 @@
             }
         }
     </script>
-    
+
     <script>
         // Agregar el evento a todos los enlaces con clase 'link'
         document.querySelectorAll('.link').forEach(function (link) {
@@ -138,10 +140,40 @@
         <input type="date" name="fechaNacimiento" required>
         <label for="categoria">Selecciona La Categoría:</label>
         <select name="categoria" id="categoria" required>
-            <% categorias.forEach(categoria => { %>
-                <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
+            <% categorias.forEach(categoria=> { %>
+                <option value="<%= categoria.id_categoria %>">
+                    <%= categoria.nombre_categoria %>
+                </option>
                 <% }); %>
         </select>
+
+        <select name="equipo" id="equipo">
+            <option value="">(Ninguno)</option>
+        </select>
+
+        <script>
+            document.getElementById("categoria").addEventListener("change", function () {
+                const categoriaId = this.value;
+                const equipoSelect = document.getElementById("equipo");
+                equipoSelect.innerHTML = '<option value="">Cargando...</option>';
+
+                fetch(`/equiposPorCategoria/${categoriaId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        equipoSelect.innerHTML = '<option value="">(Ninguno)</option>';
+                        data.forEach(equipo => {
+                            const option = document.createElement("option");
+                            option.value = equipo.id_equipo;
+                            option.textContent = equipo.nombre;
+                            equipoSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        equipoSelect.innerHTML = '<option value="">Error al cargar</option>';
+                        console.error("Error al cargar equipos:", error);
+                    });
+            });
+        </script>
 
 
         <label for="fotoJugador">Subir Foto Del Jugador:</label>
@@ -149,7 +181,7 @@
 
         <input type="submit" value="AGREGAR">
     </form>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <% if(typeof alert !="undefined" ) { %>
         <script>
             Swal.fire({
@@ -164,6 +196,7 @@
         </script>
 
         <% } %>
-    
+
 </body>
+
 </html>

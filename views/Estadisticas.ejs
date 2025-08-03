@@ -55,64 +55,23 @@
     </script>
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
-    <section class="content03">
-        <div class="card">
-            <p>CATEGORIAS:</p>
+    <section class="categorias-section">
+  <h1 class="titulo">Categorías</h1>
+
+  <div class="categorias-grid">
+    <% categorias.forEach(categoria => { %>
+      <div class="categoria-card">
+        <img src="/<%= categoria.url_foto %>" alt="Foto categoría" class="categoria-img">
+        <div class="categoria-info">
+          <h2><%= categoria.nombre_categoria %></h2>
+          <a href="/categorias/<%= categoria.id_categoria %>/equipos" class="boton-ir">Ver equipos</a>
         </div>
-    </section>
-    
-    <section class="categorias-container">
-        <div id="categorias">
-            <% categorias.forEach(categoria => { %>
-                <div class="categoria">
-                    <img src="<%= categoria.url_foto %>" alt="<%= categoria.nombre_categoria %>" width="200">
-                    <a href="#equipos"><button onclick="cargarEquipos(<%= categoria.id_categoria %>)">
-                        Ver Equipos de <%= categoria.nombre_categoria %>
-                    </button>
-                </a>
-                </div>
-            <% }) %>
-        </div>
-        </section>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        
-        <div id="equipos">
-            <!-- Aquí se cargarán los equipos dinámicamente -->
-        </div>
-    
-        
-        <script>
-            async function cargarEquipos(idCategoria) {
-                try {
-                    const response = await fetch(`/api/equipos/${idCategoria}`);
-                    const data = await response.json();
-                    const equiposDiv = document.getElementById('equipos');
-                    equiposDiv.innerHTML = '';
-    
-                    if (data.equipos.length > 0) {
-                        data.equipos.forEach(equipo => {
-                            const equipoDiv = document.createElement('div');
-                            equipoDiv.className = 'equipo';
-                            equipoDiv.innerHTML = `
-                                <img src="${equipo.url_foto}" alt="${equipo.nombre}" width="200">
-                                <h3>${equipo.nombre}</h3>
-                                <p>Colores: ${equipo.colores}</p>
-                                <a href="/estadisticas${equipo.id_equipo} ">Ver Estadisticas</a>
-                                <div id="#equipos"></div>
-                            `;
-                            equiposDiv.appendChild(equipoDiv);
-                        });
-                    } else {
-                        equiposDiv.innerHTML = '<p>No hay equipos para esta categoría.</p>';
-                    }
-                } catch (error) {
-                    console.error('Error al cargar equipos:', error);
-                }
-            }
-        </script>
+      </div>
+    <% }); %>
+  </div>
+</section>
+
+
 
 </body>
 

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="/resources/styles/styleMain.css">
+    <link rel="icon" href="/resources/imgs/academia-logo.png">
+    <link rel="stylesheet" href="/resources/styles/styleEstadisticas.css">
+    <link rel="stylesheet" href="/resources/styles/styleEstadisticasJugadores.css">
+</head>
+
+<body>
+    
+    <section class="content01"></section>
+    <nav>
+        <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
+        <div>
+            <a href="/" class="link">INICIO</a>
+        </div>
+        <div>
+            <a href="/Estadisticas" class="link">ESTADISTICAS</a>
+        </div>
+        <div>
+            <a href="/JugadoresD" class="link">JUGADORES DESTACADOS</a>
+        </div>
+        <div>
+            <a href="/Pagos" class="link">PAGOS</a>
+        </div>
+        <div>
+            <a href="/Coord" class="link">COORDINADORES</a>
+        </div>
+        <div>
+            <a href="/Standing" class="link">STANDING</a>
+        </div>
+        <img src="/resources/imgs/logo.png" alt="Logo">
+    
+    </nav>
+    <script>
+        // Agregar el evento a todos los enlaces con clase 'link'
+        document.querySelectorAll('.link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Evita que el link se cargue inmediatamente
+                const url = this.href; // Captura la URL del enlace
+
+                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
+                document.body.classList.add('fade-out');
+
+                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
+                setTimeout(function() {
+                    window.location.href = url; // Cambia a la nueva URL después de la animación
+                }, 90); // Espera 500 ms para redirigir
+            });
+        });
+    </script>
+    <script src="resources/js/Animaciones.js"></script>
+    <section class="content02"></section>
+    <section class="content03">
+        <h1>Jugadores del equipo</h1>
+<div class="submenu">
+  <button class="tab-button active" onclick="toggleTab('bateo')">Estadísticas de Bateo</button>
+  <button class="tab-button" onclick="toggleTab('pitcheo')">Estadísticas de Pitcheo</button>
+</div>
+
+<div class="jugadores-grid">
+  <% jugadores.forEach(j => { %>
+    <div class="jugador-card">
+      <img src="/<%= j.url_foto %>" alt="Jugador">
+      <h2><%= j.nombres %> <%= j.apellido_paterno %> <%= j.apellido_materno %></h2>
+      <div class="bateo-tab tab-content active">
+        <p><strong>Hits:</strong> <%= j.hits %></p>
+        <p><strong>Promedio:</strong> <%= j.promedio_bateo %></p>
+      </div>
+      <div class="pitcheo-tab tab-content">
+        <p><strong>Efectividad:</strong> <%= j.efectividad %></p>
+        <p><strong>Ponches:</strong> <%= j.ponches %></p>
+      </div>
+    </div>
+  <% }); %>
+</div>
+
+<script>
+  function toggleTab(tab) {
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-content').forEach(div => {
+      div.classList.remove('active');
+    });
+    document.querySelector(`.tab-button[onclick*="${tab}"]`).classList.add('active');
+    document.querySelectorAll(`.${tab}-tab`).forEach(div => div.classList.add('active'));
+  }
+</script>
+
+
+    </section>
+
+        
+        
+</body>
+
+</html>

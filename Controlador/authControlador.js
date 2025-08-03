@@ -32,7 +32,7 @@ exports.formAdmin = [
 
             const urlFotoCategoria = `resources/imgs/Categorias/${req.file.filename}`; // Ruta relativa de la foto
 
-            
+
 
             // Actualizar la URL de la foto de la categoría en la base de datos
             const queryUpdateCategoria = 'UPDATE Categorias SET url_foto = ? WHERE id_categoria = ?';
@@ -46,22 +46,22 @@ exports.formAdmin = [
                 if (error) {
                     console.error("Error al obtener categorías:", error);
                     return res.status(500).send("Error al recargar categorías.");
-                } 
-            
+                }
 
-            res.render('AdminGeneral/FormFotosCategoria', {
-                usuario: usuario,
-                categorias: row,
-                alert: true,
-                alertTitle: "SUBIDA DE FOTOS",
-                alertMessage: "!Se subieron los datos con éxito!",
-                alertIcon: 'success',
-                showConfirmButton: false,
-                timer: 1500,
-                ruta: 'formAdmin'
+
+                res.render('AdminGeneral/FormFotosCategoria', {
+                    usuario: usuario,
+                    categorias: row,
+                    alert: true,
+                    alertTitle: "SUBIDA DE FOTOS",
+                    alertMessage: "!Se subieron los datos con éxito!",
+                    alertIcon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    ruta: 'formAdmin'
+                });
+
             });
-
-        });
 
         } catch (error) {
             console.error(error);
@@ -70,11 +70,11 @@ exports.formAdmin = [
     }
 ];
 
-exports.inicio = async(req, res)=>{
+exports.inicio = async (req, res) => {
     try {
         const usuario = req.body.user
         const contra = req.body.pass
-        if(!usuario || !contra ){
+        if (!usuario || !contra) {
             res.render('login', {
                 alert: true,
                 alertTitle: "ADVERTENCIA",
@@ -85,9 +85,9 @@ exports.inicio = async(req, res)=>{
                 ruta: 'Login'
             });
             //(await bcryptjs.compare(contra, result[0].contra))
-        }else{
-            coneccion.query('SELECT * FROM UsuarioAdministradores WHERE usuario = ?', [usuario], async (error, result)=>{
-                if(result.length == 0 || ! contra == result[0].contra ){
+        } else {
+            coneccion.query('SELECT * FROM UsuarioAdministradores WHERE usuario = ?', [usuario], async (error, result) => {
+                if (result.length == 0 || !contra == result[0].contra) {
                     res.render('login', {
                         alert: true,
                         alertTitle: "ADVERTENCIA",
@@ -96,20 +96,20 @@ exports.inicio = async(req, res)=>{
                         showConfirmButton: true,
                         timer: false,
                         ruta: 'Login'
-                    }); 
-                }else{
+                    });
+                } else {
                     const id = result[0].id_usuario
-                    const token = jwt.sign({id:id}, process.env.JWT_SECRETO, {
+                    const token = jwt.sign({ id: id }, process.env.JWT_SECRETO, {
                         expiresIn: process.env.JWT_TIEMPO_EXPIRA
 
                     })
 
                     const cookieOptions = {
-                        expires: new Date(Date.now()+process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+                        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
                         httpOnly: true
                     }
-                   
-                    if(result[0].rol == 'AdministradorEstadisticas'){
+
+                    if (result[0].rol == 'AdministradorEstadisticas') {
                         res.cookie('jwt', token, cookieOptions)
                         res.render('login', {
                             alert: true,
@@ -120,7 +120,7 @@ exports.inicio = async(req, res)=>{
                             timer: 800,
                             ruta: 'formEstadisticas'
                         })
-                    }else if(result[0].rol == 'AdministradorGeneral'){
+                    } else if (result[0].rol == 'AdministradorGeneral') {
                         res.cookie('jwt', token, cookieOptions)
                         res.render('login', {
                             alert: true,
@@ -131,7 +131,7 @@ exports.inicio = async(req, res)=>{
                             timer: 800,
                             ruta: 'formAdmin'
                         })
-                    }else if(result[0].rol == 'Coordinador'){
+                    } else if (result[0].rol == 'Coordinador') {
                         res.cookie('jwt', token, cookieOptions)
                         res.render('login', {
                             alert: true,
@@ -143,51 +143,52 @@ exports.inicio = async(req, res)=>{
                             ruta: 'formCoordinadores'
                         })
                     }
-                    
+
                 }
-            
-        })
+
+            })
         }
-        
+
     } catch (error) {
         console.log(error)
     }
 }
 
-exports.isAuthenticated = async (req, res, next) =>{
-    if(req.cookies.jwt){
+exports.isAuthenticated = async (req, res, next) => {
+    if (req.cookies.jwt) {
         try {
             const decodificada = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRETO)
-            coneccion.query('SELECT * FROM UsuarioAdministradores WHERE id_usuario = ?', [decodificada.id], (error, results) =>{
-                if(!results){return next()}
-                if(results[0].rol == 'Coordinador'){
-                coneccion.query('SELECT * FROM Coordinadores WHERE id_usuario = ?', [decodificada.id], (error, coordinadorResult) => {
-                    if (error) {
-                        console.error(error);
-                        return res.status(500).send("Error al consultar coordinador");
-                    }
-                    // Verifica que se haya encontrado el coordinador
-                    if (coordinadorResult.length > 0) {
-                        req.user = coordinadorResult[0]; // Almacena el objeto coordinador en req.user
-                        return next()
-                    } else {
-                        console.warn("Coordinador no encontrado");
-            }})
-        }else{
-                req.user = results[0]
-                return next()
-        }
-                
+            coneccion.query('SELECT * FROM UsuarioAdministradores WHERE id_usuario = ?', [decodificada.id], (error, results) => {
+                if (!results) { return next() }
+                if (results[0].rol == 'Coordinador') {
+                    coneccion.query('SELECT * FROM Coordinadores WHERE id_usuario = ?', [decodificada.id], (error, coordinadorResult) => {
+                        if (error) {
+                            console.error(error);
+                            return res.status(500).send("Error al consultar coordinador");
+                        }
+                        // Verifica que se haya encontrado el coordinador
+                        if (coordinadorResult.length > 0) {
+                            req.user = coordinadorResult[0]; // Almacena el objeto coordinador en req.user
+                            return next()
+                        } else {
+                            console.warn("Coordinador no encontrado");
+                        }
+                    })
+                } else {
+                    req.user = results[0]
+                    return next()
+                }
+
             })
         } catch (error) {
             console.log(error)
         }
-    }else{
+    } else {
         res.redirect('/login')
     }
 }
 
-exports.logout = (req, res)=> {
+exports.logout = (req, res) => {
     res.clearCookie('jwt')
     return res.redirect('/login')
 }
@@ -289,12 +290,12 @@ exports.crearEquipo = [
                 if (error) {
                     console.error("Error al obtener categorías:", error);
                     return res.status(500).send("Error al recargar categorías.");
-                } 
+                }
                 coneccion.query("SELECT * FROM entrenadores", (errores, entrenadores) => {
                     if (errores) {
                         console.error("Error al obtener entrenadores:", errores);
                         return res.status(500).send("Error al recargar entrenadores.");
-                    } 
+                    }
                     res.render('AdminGeneral/FormularioCrearEquipos', {
                         alert: true,
                         usuario: req.user,
@@ -323,7 +324,7 @@ exports.crearUsuario = async (req, res) => {
         const usuario = req.usuario
         const { user, Contraseña } = req.body;
 
-        
+
         // Insertar los datos en la base de datos
         const queryInsertUsuario = `
             INSERT INTO UsuarioAdministradores (usuario, contra, rol) 
@@ -412,7 +413,7 @@ exports.crearCoordinador = [
                 if (error) {
                     console.error("Error al obtener categorías:", error);
                     return res.status(500).send("Error al recargar categorías.");
-                } 
+                }
 
                 coneccion.query("SELECT * FROM UsuarioAdministradores WHERE rol = 'Coordinador'", (errores, userCoordinador) => {
                     if (errores) {
@@ -470,7 +471,7 @@ exports.crearEntrenador = async (req, res) => {
             if (error) {
                 console.error("Error al obtener categorías:", error);
                 return res.status(500).send("Error al recargar categorías.");
-            } 
+            }
 
             // Renderizar la vista con mensaje de éxito
             res.render('AdminGeneral/FormularioCrearEntrenadores', {
@@ -506,7 +507,7 @@ const uploadJugadores = multer({ storage: storageJugadores });
 
 // Controlador para manejar el formulario de jugadores
 exports.crearJugador = [
-    
+
     uploadJugadores.single('fotoJugador'), // Middleware para manejar la subida del archivo
     async (req, res) => {
         try {
@@ -515,7 +516,7 @@ exports.crearJugador = [
             const { nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, categoria } = req.body;
             const { file } = req;
 
-            
+
 
             // Validación de la foto
             if (!file) {
@@ -530,7 +531,7 @@ exports.crearJugador = [
                 INSERT INTO Jugadores (url_foto, nombres, apellido_paterno, apellido_materno, fecha_nacimiento,id_equipo,  id_categoria) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             `;
-            
+
             await new Promise((resolve, reject) => {
                 coneccion.query(
                     queryInsertJugador,
@@ -547,7 +548,7 @@ exports.crearJugador = [
                 if (error) {
                     console.error("Error al obtener categorías:", error);
                     return res.status(500).send("Error al recargar categorías.");
-                } 
+                }
 
                 // Redirigir al formulario con un mensaje de éxito
                 res.render('AdminGeneral/FormularioCrearJugador', {
@@ -576,9 +577,9 @@ exports.crearUsuarioJugador = async (req, res) => {
         // Desestructurar los datos del formulario
         const { user, Contraseña, jugador } = req.body;
 
-       
 
-        
+
+
         // Insertar los datos en la base de datos
         const queryInsertUsuario = `
             INSERT INTO UsuarioFamiliarPago (usuario, contra, id_jugador) 
@@ -601,7 +602,7 @@ exports.crearUsuarioJugador = async (req, res) => {
             if (error) {
                 console.error("Error al obtener jugadores:", error);
                 return res.status(500).send("Error al recargar jugadores.");
-            } 
+            }
 
             // Redirigir con un mensaje de éxito
             res.render('AdminGeneral/FormularioCrearUsuarioJugador', {
@@ -684,3 +685,189 @@ exports.registrarPago = async (req, res) => {
         res.status(500).send("Error al registrar el pago.");
     }
 };
+
+
+exports.verCategorias = (req, res) => {
+    coneccion.query('SELECT * FROM Categorias', (error, categorias) => {
+        if (error) return res.status(500).send("Error al obtener categorías.");
+        res.render('Estadisticas', { categorias });
+    });
+};
+
+exports.verEquiposPorCategoria = (req, res) => {
+    const idCategoria = req.params.id;
+
+    const queryEquipos = `
+        SELECT 
+            e.*, 
+            c.nombre_categoria 
+        FROM Equipos e
+        JOIN Categorias c ON e.id_categoria = c.id_categoria
+        WHERE e.id_categoria = ?
+    `;
+
+    coneccion.query(queryEquipos, [idCategoria], (error, equipos) => {
+        if (error) {
+            console.error("Error al obtener equipos:", error);
+            return res.status(500).send("Error al obtener equipos.");
+        }
+
+        res.render('categorias/equiposPorCategoria', {
+            equipos,
+            categoriaNombre: equipos[0]?.nombre_categoria || 'Categoría',
+            categoriaId: idCategoria
+        });
+    });
+};
+
+
+// Estadísticas generales del equipo
+exports.verEstadisticasEquipo = (req, res) => {
+    const idEquipo = req.params.id_equipo;
+
+    const queryEquipo = 'SELECT nombre FROM Equipos WHERE id_equipo = ?';
+    const queryEstadisticas = 'SELECT * FROM EstadisticasEquipo WHERE id_equipo = ?';
+
+    coneccion.query(queryEquipo, [idEquipo], (error1, equipo) => {
+        if (error1) return res.status(500).send('Error al obtener el equipo.');
+
+        coneccion.query(queryEstadisticas, [idEquipo], (error2, estadisticas) => {
+            if (!estadisticas || estadisticas.length === 0) {
+                return res.render('categorias/EstadisticasEquipo', {
+                    equipoNombre: equipo[0]?.nombre || 'Equipo',
+                    estadisticas: null
+                });
+            }
+
+            res.render('categorias/EstadisticasEquipo', {
+                equipoNombre: equipo[0]?.nombre || 'Equipo',
+                estadisticas: estadisticas[0]
+            });
+
+        });
+    });
+};
+
+// Jugadores del equipo (con estadísticas si las necesitas)
+exports.verJugadoresDelEquipo = (req, res) => {
+    const idEquipo = req.params.id_equipo;
+
+    const query = `
+    SELECT j.*, 
+           eb.turnos, eb.hits, eb.carreras, eb.promedio_bateo,
+           ep.victorias, ep.derrotas, ep.efectividad, ep.ponches
+    FROM Jugadores j
+    LEFT JOIN EstadisticasBateo eb ON j.id_jugador = eb.id_jugador
+    LEFT JOIN EstadisticasPitcheo ep ON j.id_jugador = ep.id_jugador
+    WHERE j.id_equipo = ?
+  `;
+
+    coneccion.query(query, [idEquipo], (error, jugadores) => {
+        if (error) return res.status(500).send('Error al obtener jugadores.');
+
+        res.render('categorias/jugadoresEquipo', { jugadores });
+    });
+};
+
+exports.buscarJugadorPorNombre = async (req, res) => {
+  const categoriaId = req.params.id;
+  const nombreBuscado = req.query.nombre;
+
+  try {
+    const jugadores = await new Promise((resolve, reject) => {
+      coneccion.query(`
+        SELECT j.*, e.nombre AS equipo_nombre, e.url_foto AS equipo_foto
+        FROM Jugadores j
+        JOIN Equipos e ON j.id_equipo = e.id_equipo
+        WHERE j.id_categoria = ? AND 
+              CONCAT(j.nombres, ' ', j.apellido_paterno, ' ', j.apellido_materno) LIKE ?
+        LIMIT 1
+      `, [categoriaId, `%${nombreBuscado}%`], (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+    });
+
+    if (jugadores.length === 0) {
+      return res.send("Jugador no encontrado en esta categoría.");
+    }
+
+    const jugador = jugadores[0];
+
+    res.render('categorias/perfilJugador', {
+      jugador: jugador
+    });
+
+  } catch (error) {
+    console.error("Error al buscar jugador:", error);
+    res.status(500).send("Error al buscar jugador.");
+  }
+};
+
+
+
+
+// Al inicio asegúrate que ya tienes:
+
+
+// ACTUALIZAR JUGADOR
+exports.actualizarJugador = [
+    uploadJugadores.single('fotoJugador'),
+    async (req, res) => {
+        try {
+            const id = req.params.id;
+            const usuario = req.usuario;
+            const { nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, categoria, equipo } = req.body;
+            const { file } = req;
+
+            let queryUpdate = `
+                UPDATE Jugadores 
+                SET nombres = ?, apellido_paterno = ?, apellido_materno = ?, fecha_nacimiento = ?, id_categoria = ?, id_equipo = ?
+            `;
+            let params = [nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, categoria || null, equipo || null];
+
+            if (file) {
+                const urlFoto = `resources/imgs/Jugadores/${file.filename}`;
+                queryUpdate += `, url_foto = ?`;
+                params.push(urlFoto);
+            }
+
+            queryUpdate += ` WHERE id_jugador = ?`;
+            params.push(id);
+
+            await new Promise((resolve, reject) => {
+                coneccion.query(queryUpdate, params, (err, result) => {
+                    if (err) return reject(err);
+                    resolve(result);
+                });
+            });
+
+            // Obtener datos para renderizar después
+            coneccion.query("SELECT * FROM Categorias", (error, categorias) => {
+                if (error) {
+                    console.error("Error al obtener categorías:", error);
+                    return res.status(500).send("Error al cargar categorías.");
+                }
+
+                res.render('AdminGeneral/FormularioActualizarJugador', {
+                    alert: true,
+                    usuario: usuario,
+                    alertTitle: "¡Actualizado!",
+                    alertMessage: "Jugador actualizado exitosamente.",
+                    alertIcon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    ruta: 'formActualizarJugador',
+                    categorias: categorias
+                });
+            });
+
+        } catch (error) {
+            console.error("Error al actualizar jugador:", error);
+            res.status(500).send("Error al actualizar jugador.");
+        }
+    }
+];
+
+
+

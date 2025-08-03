@@ -1,0 +1,124 @@
+.equipos-section {
+  padding: 2rem;
+  background-color: #0070b8;
+  min-height: 100vh;
+}
+
+.titulo {
+  color: white;
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.equipos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.equipo-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+.equipo-card:hover {
+  transform: scale(1.03);
+}
+
+.equipo-img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  background: #f9f9f9;
+  padding: 1rem;
+}
+
+.equipo-info {
+  padding: 1rem;
+  text-align: center;
+}
+
+.equipo-info h2 {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #000;
+}
+
+.botones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #EC2227;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.btn:hover {
+  background-color: #ff4d4f;
+}
+
+.btn-secundario {
+  background-color: #555;
+}
+.btn-secundario:hover {
+  background-color: #777;
+}
+
+.busqueda-form {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.busqueda-input {
+  padding: 0.5rem 1rem;
+  border: 2px solid #004a87;
+  border-radius: 5px 0 0 5px;
+  width: 300px;
+  font-size: 1rem;
+}
+
+.busqueda-btn {
+  padding: 0.5rem 1rem;
+  background-color: #004a87;
+  color: #fff;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.busqueda-btn:hover {
+  background-color: #0066c0;
+}
+
+
+@media (max-width: 768px) {
+  .equipos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(80%, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .equipo-card {
+    min-width: 80%;
+    scroll-snap-align: center;
+  }
+}
