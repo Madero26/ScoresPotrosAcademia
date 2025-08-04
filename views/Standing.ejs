@@ -6,7 +6,7 @@
     <title>Academia ITSON</title>
     <link rel="stylesheet" href="resources/styles/styleMain.css">
     <link rel="icon" href="resources/imgs/academia-logo.png">
-    <link rel="stylesheet" href="resources/styles/styleStanding.css">
+    <link rel="stylesheet" href="resources/styles/styleCategorias.css">
 </head>
 <body>
 
@@ -53,26 +53,21 @@
     </script>
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
-        <section class="content03">
-            <div class="card">
-                <p>CATEGORIAS:</p>
-            </div>
-        </section>
+       <section class="categorias-section">
+  <h1 class="titulo">Categorías</h1>
 
-        <section class="categorias-container">
-            <div  class="categorias">
-                <a href="Standing 3-4.ejs"><img src="resources/imgs/logo.png" alt="Categoria 3-4 años"></a>
-                <a href="Standing 5-6.ejs"><img src="resources/imgs/logo.png" alt="Categoria 5-6 años"></a>
-                <a href="Standing 7-8.ejs"><img src="resources/imgs/logo.png" alt="Categoria 7-8 años"></a>
-            </div>
-            <div  class="categorias02">
-                <a href="Standing 9-10.ejs"><img src="resources/imgs/logo.png" alt="Categoria 9-10 años"></a>
-                <a href="Standing 11-12.ejs"><img src="resources/imgs/logo.png" alt="Categoria 11-12 años"></a>
-                <a href="Standing 13-14.ejs"><img src="resources/imgs/logo.png" alt="Categoria 13-14 años"></a>
-                <a href="Standing 15-16.ejs"><img src="resources/imgs/logo.png" alt="Categoria 15-16 años"></a>
-                
-            </div>
-        </section>
+  <div class="categorias-grid">
+    <% categorias.forEach(categoria => { %>
+      <div class="categoria-card">
+        <img src="/<%= categoria.url_foto %>" alt="Foto categoría" class="categoria-img">
+        <div class="categoria-info">
+          <h2><%= categoria.nombre_categoria %></h2>
+          <a href="/categorias/<%= categoria.id_categoria %>/equipos" class="boton-ir">Ver equipos</a>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</section>
 
     
 </body>

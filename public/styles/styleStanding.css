@@ -1,21 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+.titulo-coordinadores {
+  text-align: center;
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 2rem;
+}
 
-.content03{
-    padding-top: 1rem;
-    padding-bottom: 2rem;
+.coordinadores-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 1rem;
 }
-.card{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    justify-content: center;
-    width: 21%;
-    border-radius: 4.5rem;
+
+.coordinador-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
-.card p{
-    margin: 0;
-    padding: 1rem;
-    font-family: "Anton", sans-serif;
-    font-size: 56px;
-    color: #0E5688;
+
+.coordinador-foto {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.coordinador-card h3 {
+  font-size: 1.2rem;
+  color: #000;
+  margin-bottom: 0.3rem;
+}
+
+.coordinador-card p {
+  font-size: 1rem;
+  color: #333;
 }

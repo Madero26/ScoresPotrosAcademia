@@ -52,22 +52,73 @@ router.get('/equipos/:id_equipo/estadisticas', authControlador.verEstadisticasEq
 // Estadísticas individuales de los jugadores del equipo
 router.get('/equipos/:id_equipo/jugadores', authControlador.verJugadoresDelEquipo);
 
+router.get('/perfilJugador/:id', (req, res) => {
+  const jugadorId = req.params.id;
+
+  const queryJugador = `
+    SELECT j.*, e.nombre AS equipo_nombre, e.url_foto AS equipo_foto
+    FROM Jugadores j
+    JOIN Equipos e ON j.id_equipo = e.id_equipo
+    WHERE j.id_jugador = ?
+  `;
+
+  coneccion.query(queryJugador, [jugadorId], (err, result) => {
+    if (err || result.length === 0) return res.send("Jugador no encontrado.");
+    
+    const jugador = result[0];
+
+    coneccion.query(`SELECT * FROM EstadisticasBateo WHERE id_jugador = ?`, [jugadorId], (errB, bateo) => {
+      if (errB) return res.send("Error en bateo");
+
+      coneccion.query(`SELECT * FROM EstadisticasPitcheo WHERE id_jugador = ?`, [jugadorId], (errP, pitcheo) => {
+        if (errP) return res.send("Error en pitcheo");
+
+        res.render('categorias/perfilJugador', {
+          jugador: {
+            ...jugador,
+            ...bateo[0],
+            ...pitcheo[0]
+          }
+        });
+      });
+    });
+  });
+});
+
+router.get('/api/sugerencias-jugadores', (req, res) => {
+  const term = req.query.term || ''; // ✅ ESTA LÍNEA DEFINE "term"
+
+  coneccion.query(`
+    SELECT CONCAT(nombres, ' ', apellido_paterno, ' ', apellido_materno) AS nombre_completo
+    FROM Jugadores
+    WHERE CONCAT(nombres, ' ', apellido_paterno, ' ', apellido_materno) LIKE ?
+    LIMIT 10
+  `, [`%${term}%`], (err, result) => {
+    if (err) {
+      console.error("Error en sugerencias:", err);
+      return res.status(500).json([]);
+    }
+    res.json(result);
+  });
+});
+
 router.get('/categoria/:id/buscar', authControlador.buscarJugadorPorNombre);
 
 
 
-router.get('/JugadoresD', (req, res)=>{
-    res.render('JugadoresD')
-})
+
+
+
+router.get('/JugadoresD', authControlador.verCategoriasDestacados);
+router.get('/categorias/:id/secciones', authControlador.verSecciones);
+router.get('/categoria/:id/estadisticas/:tipo', authControlador.estadisticasPorTipo);
+
 router.get('/Pagos', (req, res)=>{
     res.render('Pagos')
 })
-router.get('/Coord', (req, res)=>{
-    res.render('Coordinadores')
-})
-router.get('/Standing', (req, res)=>{
-    res.render('Standing')
-})
+router.get('/Coord', authControlador.verCoordinadores);
+
+router.get('/Standing', authControlador.verCategoriasStanding);
 
 
 

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia ITSON</title>
+    <link rel="stylesheet" href="/resources/styles/styleMain.css">
+    <link rel="icon" href="/resources/imgs/academia-logo.png">
+    <link rel="stylesheet" href="/resources/styles/styleSecciones.css">
+</head>
+<body>
+
+    <section class="content01"></section>
+    <nav>
+        <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
+        <div>
+            <a href="/" class="link">INICIO</a>
+        </div>
+        <div>
+            <a href="/Estadisticas" class="link">ESTADISTICAS</a>
+        </div>
+        <div>
+            <a href="/JugadoresD" class="link">JUGADORES DESTACADOS</a>
+        </div>
+        <div>
+            <a href="/Pagos" class="link">PAGOS</a>
+        </div>
+        <div>
+            <a href="/Coord" class="link">COORDINADORES</a>
+        </div>
+        <div>
+            <a href="/Standing" class="link">STANDING</a>
+        </div>
+        <img src="/resources/imgs/logo.png" alt="Logo">
+    
+    </nav>
+    <script>
+        // Agregar el evento a todos los enlaces con clase 'link'
+        document.querySelectorAll('.link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Evita que el link se cargue inmediatamente
+                const url = this.href; // Captura la URL del enlace
+
+                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
+                document.body.classList.add('fade-out');
+
+                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
+                setTimeout(function() {
+                    window.location.href = url; // Cambia a la nueva URL después de la animación
+                }, 90); // Espera 500 ms para redirigir
+            });
+        });
+    </script>
+    <script src="resources/js/Animaciones.js"></script>
+    <section class="content02"></section>
+    <section class="estadisticas-ninas">
+  <h2>📊 Estadísticas de la categoría <%= categoriaNombre %></h2>
+
+  <!-- Submenú para filtros -->
+  <div class="submenu-estadisticas">
+    <button class="filtro-btn activo" onclick="mostrarSeccion('bateo')">Estadísticas de Bateo</button>
+    <button class="filtro-btn" onclick="mostrarSeccion('pitcheo')">Estadísticas de Pitcheo</button>
+  </div>
+
+  <!-- Sección Bateo -->
+  <div class="tarjetas-grid" id="seccion-bateo">
+    <% const bateo = [
+      { icon: '📈', label: 'Promedio de bateo', ruta: 'promedio' },
+      { icon: '🥎', label: 'Sencillos', ruta: 'sencillos' },
+      { icon: '⚾️⚾️', label: 'Dobles', ruta: 'dobles' },
+      { icon: '3️⃣', label: 'Triples', ruta: 'triples' },
+      { icon: '💥', label: 'Home Runs', ruta: 'homeruns' },
+      { icon: '🏃‍♂️💨', label: 'Bases Robadas', ruta: 'basesrobadas' }
+    ]; %>
+
+    <% bateo.forEach(s => { %>
+      <a href="/categoria/<%= categoriaID %>/estadisticas/<%= s.ruta %>" class="tarjeta-estadistica">
+        <div class="emoji-tarjeta"><%= s.icon %></div>
+        <div class="titulo-tarjeta"><%= s.label %></div>
+        <div class="clic-aqui">👉 Haz clic aquí 👈</div>
+      </a>
+    <% }) %>
+  </div>
+
+  <!-- Sección Pitcheo -->
+  <div class="tarjetas-grid oculto" id="seccion-pitcheo">
+    <% const pitcheo = [
+      { icon: '🎯', label: 'Efectividad', ruta: 'efectividad' },
+      { icon: '🏆', label: 'Victorias', ruta: 'victorias' },
+      { icon: '🔥', label: 'Ponches', ruta: 'ponches' }
+    ]; %>
+
+    <% pitcheo.forEach(s => { %>
+      <a href="/categoria/<%= categoriaID %>/estadisticas/<%= s.ruta %>" class="tarjeta-estadistica">
+        <div class="emoji-tarjeta"><%= s.icon %></div>
+        <div class="titulo-tarjeta"><%= s.label %></div>
+        <div class="clic-aqui">👉 Haz clic aquí 👈</div>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<script>
+  function mostrarSeccion(tipo) {
+    const secciones = ['bateo', 'pitcheo'];
+    secciones.forEach(s => {
+      document.getElementById('seccion-' + s).classList.add('oculto');
+      document.querySelector(`.filtro-btn[onclick*="${s}"]`).classList.remove('activo');
+    });
+    document.getElementById('seccion-' + tipo).classList.remove('oculto');
+    document.querySelector(`.filtro-btn[onclick*="${tipo}"]`).classList.add('activo');
+  }
+</script>
+
+
+
+
+    
+</body>
+</html>

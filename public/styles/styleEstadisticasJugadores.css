@@ -1,16 +1,26 @@
+.titulo-jugadores {
+  text-align: center;
+  color: white;
+  font-size: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
 .submenu {
   text-align: center;
-  margin: 1rem 0;
+  margin-bottom: 1.5rem;
 }
 
 .tab-button {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   margin: 0 0.5rem;
   background: #ddd;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  font-weight: bold;
+  transition: background 0.3s, color 0.3s;
 }
 
 .tab-button.active {
@@ -18,32 +28,66 @@
   color: white;
 }
 
+.tab-button:hover {
+  background-color: #bbb;
+}
+
 .tab-content {
   display: none;
+  animation: fadeIn 0.4s ease-in-out;
 }
 
 .tab-content.active {
   display: block;
 }
 
-.jugadores-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
-}
-
-.jugador-card {
-  background: white;
-  padding: 1rem;
-  border-radius: 12px;
+.titulo-tabla {
+  color: white;
   text-align: center;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  font-size: 1.4rem;
+  margin: 0 auto 0.5rem;
+  border-bottom: 2px solid white;
+  padding-bottom: 0.3rem;
+  display: block;
+  width: fit-content;
 }
 
-.jugador-card img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 50%;
+
+.tabla-container {
+  overflow-x: auto;
+  background-color: #0076c0;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
+
+.tabla-estadisticas {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+.tabla-estadisticas th,
+.tabla-estadisticas td {
+  border: 1px solid white;
+  padding: 0.6rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.tabla-estadisticas a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.tabla-estadisticas a:hover {
+  color: #ffcc00;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+

@@ -54,47 +54,17 @@
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
     <section class="content03">
-        <div class="card">
-            <p>COORDINADORES DE LAS CATEGORIAS</p>
-        </div>
-    </section>
+        <h1 class="titulo-coordinadores">Coordinadores</h1>
 
-    <section class="contenedor-principal">
-        <div class="columna01">
-            <div>
-                <img src="resources/imgs/logo.png" alt="Ricardo Saavedra">
-                <p>Ricardo Saavedra</p>
-                <p>Categoria 3-6</p>
-            </div>
-            <div>
-                <img src="resources/imgs/logo.png" alt="Aldo Hernadez">
-                <p>Aldo Hernandez</p>
-                <p>Categoria 7-8</p>
-            </div>
-            <div>
-                <img src="resources/imgs/logo.png" alt="Miguel Cervantes">
-                <p>Miguel Cervantes</p>
-                <p>Categoria 9-10</p>
-            </div>
+        <div class="coordinadores-container">
+            <% coordinadores.forEach(c => { %>
+                <div class="coordinador-card">
+                    <img src="/<%= c.url_foto %>" alt="Foto de <%= c.nombres %>" class="coordinador-foto">
+                    <h3><%= c.nombres %> <%= c.apellido_paterno %> <%= c.apellido_materno %></h3>
+                    <p><strong>Categoría:</strong> <%= c.nombre_categoria %></p>
+                </div>
+            <% }) %>
         </div>
-        <div class="columna02">
-            <div>
-                <img src="resources/imgs/logo.png" alt="Ismael Agüero">
-                <p>Ismael Agüero</p>
-                <p>Categoria 11-12</p>
-            </div>
-            <div>
-                <img src="resources/imgs/logo.png" alt="Martin Arvizu">
-                <p>Martin Arvizu</p>
-                <p>Categoria 13-14</p>
-            </div>
-            <div>
-                <img src="resources/imgs/logo.png" alt="Martin Arvizu">
-                <p>Martin Arvizu</p>
-                <p>Categoria 13-14</p>
-            </div>
-        </div>
-
     </section>
     
 </body>

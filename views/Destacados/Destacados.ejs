@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academia ITSON</title>
-    <link rel="stylesheet" href="resources/styles/styleMain.css">
-    <link rel="icon" href="resources/imgs/academia-logo.png">
-    <link rel="stylesheet" href="resources/styles/styleCategorias.css">
+    <link rel="stylesheet" href="/resources/styles/styleMain.css">
+    <link rel="icon" href="/resources/imgs/academia-logo.png">
+    <link rel="stylesheet" href="/resources/styles/styleDestacados.css">
 </head>
 <body>
 
     <section class="content01"></section>
     <nav>
-        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
+        <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
         <div>
             <a href="/" class="link">INICIO</a>
         </div>
@@ -31,7 +38,7 @@
         <div>
             <a href="/Standing" class="link">STANDING</a>
         </div>
-        <img src="resources/imgs/logo.png" alt="Logo">
+        <img src="/resources/imgs/logo.png" alt="Logo">
     
     </nav>
     <script>
@@ -53,21 +60,46 @@
     </script>
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
-    <section class="categorias-section">
-  <h1 class="titulo">Categorías</h1>
+     <section class="tabla-estadisticas">
+  <h2><%= tituloEstadistica %>  <%= nombreCategoria %></h2>
 
-  <div class="categorias-grid">
-    <% categorias.forEach(categoria => { %>
-      <div class="categoria-card">
-        <img src="/<%= categoria.url_foto %>" alt="Foto categoría" class="categoria-img">
-        <div class="categoria-info">
-          <h2><%= categoria.nombre_categoria %></h2>
-          <a href="/categorias/<%= categoria.id_categoria %>/secciones" class="boton-ir">Ver jugadores</a>
-        </div>
-      </div>
-    <% }); %>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre del jugador</th>
+        <th><%= tituloEstadistica %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% jugadoresPaginados.forEach((jugador, index) => { %>
+        <% const ranking = (paginaActual - 1) * 20 + index + 1; %>
+        <tr class="<%= ranking === 1 ? 'mvp-row' : '' %>">
+          <td><%= ranking %></td>
+          <td class="<%= ranking === 1 ? 'mvp-text' : (ranking <= 3 ? 'top3-text' : '') %>">
+            <%= jugador.nombre %>
+            <% if (ranking === 1) { %>
+              <span class="emoji-fire">🔥</span>
+            <% } %>
+          </td>
+          <td><%= jugador.valor %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <div class="paginacion">
+    <% for (let i = 1; i <= totalPaginas; i++) { %>
+      <a href="/categoria/<%= categoriaID %>/estadisticas/<%= tipo %>?pagina=<%= i %>"
+         class="<%= i === paginaActual ? 'activo' : '' %>"><%= i %></a>
+    <% } %>
   </div>
 </section>
+
+
+
+
+
     
 </body>
 </html>

@@ -56,45 +56,91 @@
     </script>
     <script src="resources/js/Animaciones.js"></script>
     <section class="content02"></section>
-    <section class="content03">
-        <h1>Jugadores del equipo</h1>
-<div class="submenu">
-  <button class="tab-button active" onclick="toggleTab('bateo')">Estadísticas de Bateo</button>
-  <button class="tab-button" onclick="toggleTab('pitcheo')">Estadísticas de Pitcheo</button>
-</div>
+   <section class="content03">
+  <h1 class="titulo-jugadores">ESTADISTICAS GENERALES</h1>
 
-<div class="jugadores-grid">
-  <% jugadores.forEach(j => { %>
-    <div class="jugador-card">
-      <img src="/<%= j.url_foto %>" alt="Jugador">
-      <h2><%= j.nombres %> <%= j.apellido_paterno %> <%= j.apellido_materno %></h2>
-      <div class="bateo-tab tab-content active">
-        <p><strong>Hits:</strong> <%= j.hits %></p>
-        <p><strong>Promedio:</strong> <%= j.promedio_bateo %></p>
-      </div>
-      <div class="pitcheo-tab tab-content">
-        <p><strong>Efectividad:</strong> <%= j.efectividad %></p>
-        <p><strong>Ponches:</strong> <%= j.ponches %></p>
-      </div>
+  <!-- Submenú mejorado -->
+  <div class="submenu">
+    <button class="tab-button active" onclick="toggleTab('bateo')">Estadísticas de Bateo</button>
+    <button class="tab-button" onclick="toggleTab('pitcheo')">Estadísticas de Pitcheo</button>
+  </div>
+
+  <!-- Tabla de Bateo -->
+  <div class="tab-content bateo-tab active">
+    <h3 class="titulo-tabla">Estadísticas de Bateo</h3>
+    <div class="tabla-container">
+      <table class="tabla-estadisticas">
+        <thead>
+          <tr>
+            <th>#</th><th>Nombre</th><th>Turnos</th><th>Hits</th><th>Sencillos</th><th>Dobles</th><th>Triples</th>
+            <th>HR</th><th>Robadas</th><th>BB</th><th>Carreras</th><th>Impulsadas</th><th>AVG</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% jugadores.forEach(j => { %>
+            <tr>
+              <td><%= j.numero || '-' %></td>
+              <td><a href="/perfilJugador/<%= j.id_jugador %>"><%= j.nombres %> <%= j.apellido_paterno %> <%= j.apellido_materno %></a></td>
+              <td><%= j.turnos || 0 %></td>
+              <td><%= j.hits || 0 %></td>
+              <td><%= j.sencillos || 0 %></td>
+              <td><%= j.dobles || 0 %></td>
+              <td><%= j.triples || 0 %></td>
+              <td><%= j.homeruns || 0 %></td>
+              <td><%= j.bases_robadas || 0 %></td>
+              <td><%= j.bases_bola || 0 %></td>
+              <td><%= j.carreras || 0 %></td>
+              <td><%= j.carreras_impulsadas || 0 %></td>
+              <td><%= j.promedio_bateo || "0.000" %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
     </div>
-  <% }); %>
-</div>
+  </div>
+
+  <!-- Tabla de Pitcheo -->
+  <div class="tab-content pitcheo-tab">
+    <h3 class="titulo-tabla">Estadísticas de Pitcheo</h3>
+    <div class="tabla-container">
+      <table class="tabla-estadisticas">
+        <thead>
+          <tr>
+            <th>#</th><th>Nombre</th><th>Innings</th><th>BB</th><th>K</th><th>Victorias</th><th>Derrotas</th><th>Efectividad</th><th>%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% jugadores.forEach(j => { %>
+            <tr>
+              <td><%= j.numero || '-' %></td>
+              <td><a href="/perfilJugador/<%= j.id_jugador %>"><%= j.nombres %> <%= j.apellido_paterno %> <%= j.apellido_materno %></a></td>
+              <td><%= j.innings || 0 %></td>
+              <td><%= j.bb || 0 %></td>
+              <td><%= j.ponches || 0 %></td>
+              <td><%= j.victorias || 0 %></td>
+              <td><%= j.derrotas || 0 %></td>
+              <td><%= j.efectividad || "0.00" %></td>
+              <td><%= j.porcentaje_ganados || "0%" %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
 <script>
   function toggleTab(tab) {
     document.querySelectorAll('.tab-button').forEach(btn => {
       btn.classList.remove('active');
     });
-    document.querySelectorAll('.tab-content').forEach(div => {
-      div.classList.remove('active');
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
     });
     document.querySelector(`.tab-button[onclick*="${tab}"]`).classList.add('active');
-    document.querySelectorAll(`.${tab}-tab`).forEach(div => div.classList.add('active'));
+    document.querySelectorAll(`.${tab}-tab`).forEach(tab => tab.classList.add('active'));
   }
 </script>
-
-
-    </section>
 
         
         

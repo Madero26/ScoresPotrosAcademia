@@ -6,7 +6,7 @@
     <title>Academia ITSON</title>
     <link rel="stylesheet" href="resources/styles/styleMain.css">
     <link rel="icon" href="resources/imgs/academia-logo.png">
-    <link rel="stylesheet" href="resources/styles/styleTablaPosiciones.css">
+    <link rel="stylesheet" href="resources/styles/styleCategorias.css">
 </head>
 <body>
     <section class="content01">_</section>
@@ -33,10 +33,20 @@
         <img src="resources/imgs/logo.png" alt="Logo">
     </nav>
     <section class="content02">_</section>
-    <section class="content03">
-        <div class="card">
-            <p>TABLA DE POSICIONES  </p>
+    <section class="categorias-section">
+  <h1 class="titulo">Categorías</h1>
+
+  <div class="categorias-grid">
+    <% categorias.forEach(categoria => { %>
+      <div class="categoria-card">
+        <img src="/<%= categoria.url_foto %>" alt="Foto categoría" class="categoria-img">
+        <div class="categoria-info">
+          <h2><%= categoria.nombre_categoria %></h2>
+          <a href="/categorias/<%= categoria.id_categoria %>/equipos" class="boton-ir">Ver equipos</a>
         </div>
-    </section>
+      </div>
+    <% }); %>
+  </div>
+</section>
 </body>
 </html>

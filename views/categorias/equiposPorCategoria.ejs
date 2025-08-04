@@ -61,12 +61,31 @@
             <h1 class="titulo">Equipos de <%= categoriaNombre %>
             </h1>
 
-            <!-- BARRA DE BÚSQUEDA -->
             <form action="/categoria/<%= categoriaId %>/buscar" method="GET" class="busqueda-form">
-                <input type="text" name="nombre" placeholder="Buscar jugador por nombre..." class="busqueda-input"
-                    required>
+                <input list="sugerencias" name="nombre" placeholder="Buscar jugador por nombre..."
+                    class="busqueda-input" required>
+                <datalist id="sugerencias"></datalist>
                 <button type="submit" class="busqueda-btn">Buscar</button>
             </form>
+
+            <script>
+                const inputNombre = document.querySelector('input[name="nombre"]');
+                inputNombre.addEventListener('input', () => {
+                    fetch(`/api/sugerencias-jugadores?term=${inputNombre.value}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            const datalist = document.getElementById('sugerencias');
+                            datalist.innerHTML = '';
+                            data.forEach(j => {
+                                const option = document.createElement('option');
+                                option.value = j.nombre_completo;
+                                datalist.appendChild(option);
+                            });
+                        });
+                });
+            </script>
+
+
 
             <div class="equipos-grid">
                 <% equipos.forEach(equipo=> { %>

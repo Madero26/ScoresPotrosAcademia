@@ -2,115 +2,107 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academia ITSON</title>
-    <link rel="stylesheet" href="/resources/styles/styleMain.css">
-    <link rel="icon" href="/resources/imgs/academia-logo.png">
-    <link rel="stylesheet" href="/resources/styles/styleEstadisticasEquipo.css">
-    <link rel="stylesheet" href="/resources/styles/stylePerfilJugador.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia ITSON</title>
+  <link rel="stylesheet" href="/resources/styles/styleMain.css">
+  <link rel="stylesheet" href="/resources/styles/styleEstadisticas.css">
+  <link rel="stylesheet" href="/resources/styles/stylePerfilJugador.css">
+  <link rel="icon" href="/resources/imgs/academia-logo.png">
 </head>
 
 <body>
-    
-    <section class="content01"></section>
-    <nav>
-        <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
-        <div>
-            <a href="/" class="link">INICIO</a>
-        </div>
-        <div>
-            <a href="/Estadisticas" class="link">ESTADISTICAS</a>
-        </div>
-        <div>
-            <a href="/JugadoresD" class="link">JUGADORES DESTACADOS</a>
-        </div>
-        <div>
-            <a href="/Pagos" class="link">PAGOS</a>
-        </div>
-        <div>
-            <a href="/Coord" class="link">COORDINADORES</a>
-        </div>
-        <div>
-            <a href="/Standing" class="link">STANDING</a>
-        </div>
-        <img src="/resources/imgs/logo.png" alt="Logo">
-    
-    </nav>
-    <script>
-        // Agregar el evento a todos los enlaces con clase 'link'
-        document.querySelectorAll('.link').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // Evita que el link se cargue inmediatamente
-                const url = this.href; // Captura la URL del enlace
+  <section class="content01"></section>
+  <nav>
+    <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
+    <div><a href="/" class="link">INICIO</a></div>
+    <div><a href="/Estadisticas" class="link">ESTADISTICAS</a></div>
+    <div><a href="/JugadoresD" class="link">JUGADORES DESTACADOS</a></div>
+    <div><a href="/Pagos" class="link">PAGOS</a></div>
+    <div><a href="/Coord" class="link">COORDINADORES</a></div>
+    <div><a href="/Standing" class="link">STANDING</a></div>
+    <img src="/resources/imgs/logo.png" alt="Logo">
+  </nav>
 
-                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
-                document.body.classList.add('fade-out');
+  <script>
+    document.querySelectorAll('.link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const url = this.href;
+        document.body.classList.add('fade-out');
+        setTimeout(() => window.location.href = url, 90);
+      });
+    });
+  </script>
 
-                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
-                setTimeout(function() {
-                    window.location.href = url; // Cambia a la nueva URL después de la animación
-                }, 90); // Espera 500 ms para redirigir
-            });
-        });
-    </script>
-    <script src="resources/js/Animaciones.js"></script>
-    <section class="content02"></section>
-    <section class="content03">
-        <section class="perfil-jugador">
-  <div class="jugador-info-box">
-    <div class="jugador-foto-box">
-      <img src="/<%= jugador.url_foto %>" alt="Foto del jugador" class="jugador-foto">
-    </div>
-    <div class="jugador-datos">
-      <h2><%= jugador.nombres %> <%= jugador.apellido_paterno %> <%= jugador.apellido_materno %> (#<%= jugador.numero %>)</h2>
-      <p class="posicion"><%= jugador.posicion %></p>
-      <p><strong>Fecha de nacimiento:</strong> <%= jugador.fecha_nacimiento.toLocaleDateString() %></p>
-      <p><strong>Ciudad:</strong> <%= jugador.ciudad %></p>
-      <p><strong>Categoría:</strong> <%= jugador.id_categoria %></p>
-      <p><strong>Equipo:</strong> <%= jugador.equipo_nombre %></p>
-    </div>
-  </div>
+  <script src="/resources/js/Animaciones.js"></script>
 
-  <div class="estadisticas-jugador">
-    <h3>ESTADÍSTICAS DE BATEO</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Turnos</th><th>Hits</th><th>Sencillos</th><th>Dobles</th><th>Triples</th><th>Home Runs</th>
-          <th>Bases Robadas</th><th>Bases x Bola</th><th>Carreras</th><th>Impulsadas</th><th>AVG</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><%= jugador.turnos %></td><td><%= jugador.hits %></td><td><%= jugador.sencillos %></td>
-          <td><%= jugador.dobles %></td><td><%= jugador.triples %></td><td><%= jugador.homeruns %></td>
-          <td><%= jugador.bases_robadas %></td><td><%= jugador.bases_bola %></td><td><%= jugador.carreras %></td>
-          <td><%= jugador.carreras_impulsadas %></td><td><%= jugador.promedio_bateo %></td>
-        </tr>
-      </tbody>
-    </table>
+  <section class="content02"></section>
 
-    <h3>ESTADÍSTICAS DE PITCHEO</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Innings</th><th>BB</th><th>K</th><th>Victorias</th><th>Derrotas</th><th>Efectividad</th><th>%</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><%= jugador.innings %></td><td><%= jugador.bb %></td><td><%= jugador.ponches %></td>
-          <td><%= jugador.victorias %></td><td><%= jugador.derrotas %></td><td><%= jugador.efectividad %></td>
-          <td><%= jugador.porcentaje_ganados %></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+  <section class="content03">
+    <section class="perfil-jugador">
+      <div class="jugador-info-box">
+        <div class="jugador-foto-box">
+          <img src="/<%= jugador.url_foto %>" alt="Foto del jugador" class="jugador-foto">
+        </div>
+        <div class="jugador-datos">
+          <h2><%= jugador.nombres %> <%= jugador.apellido_paterno %> <%= jugador.apellido_materno %> (#<%= jugador.numero || '-' %>)</h2>
+          <p class="posicion"><%= jugador.posicion %></p>
+          <p><strong>Fecha de nacimiento:</strong> <%= jugador.fecha_nacimiento ? jugador.fecha_nacimiento.toLocaleDateString() : 'N/D' %></p>
+          <p><strong>Ciudad:</strong> <%= jugador.ciudad || 'N/D' %></p>
+          <p><strong>Categoría:</strong> <%= jugador.id_categoria %></p>
+          <p><strong>Equipo:</strong> <%= jugador.equipo_nombre %></p>
+        </div>
+      </div>
 
+      <div class="estadisticas-jugador">
+        <h3>ESTADÍSTICAS DE BATEO</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Turnos</th><th>Hits</th><th>Sencillos</th><th>Dobles</th><th>Triples</th><th>Home Runs</th>
+              <th>Bases Robadas</th><th>Bases x Bola</th><th>Carreras</th><th>Impulsadas</th><th>AVG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= jugador.turnos || 0 %></td>
+              <td><%= jugador.hits || 0 %></td>
+              <td><%= jugador.sencillos || 0 %></td>
+              <td><%= jugador.dobles || 0 %></td>
+              <td><%= jugador.triples || 0 %></td>
+              <td><%= jugador.homeruns || 0 %></td>
+              <td><%= jugador.bases_robadas || 0 %></td>
+              <td><%= jugador.bases_bola || 0 %></td>
+              <td><%= jugador.carreras || 0 %></td>
+              <td><%= jugador.carreras_impulsadas || 0 %></td>
+              <td><%= jugador.promedio_bateo || "0.000" %></td>
+            </tr>
+          </tbody>
+        </table>
 
-        
+        <h3>ESTADÍSTICAS DE PITCHEO</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Innings</th><th>BB</th><th>K</th><th>Victorias</th><th>Derrotas</th><th>Efectividad</th><th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= jugador.innings || 0 %></td>
+              <td><%= jugador.bb || 0 %></td>
+              <td><%= jugador.ponches || 0 %></td>
+              <td><%= jugador.victorias || 0 %></td>
+              <td><%= jugador.derrotas || 0 %></td>
+              <td><%= jugador.efectividad || "0.00" %></td>
+              <td><%= jugador.porcentaje_ganados || "0%" %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
 </body>
-
 </html>
+

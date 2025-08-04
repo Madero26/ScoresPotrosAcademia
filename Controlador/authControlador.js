@@ -688,11 +688,35 @@ exports.registrarPago = async (req, res) => {
 
 
 exports.verCategorias = (req, res) => {
-    coneccion.query('SELECT * FROM Categorias', (error, categorias) => {
-        if (error) return res.status(500).send("Error al obtener categorías.");
-        res.render('Estadisticas', { categorias });
-    });
+    coneccion.query(
+        "SELECT * FROM Categorias ORDER BY CAST(SUBSTRING_INDEX(nombre_categoria, '-', 1) AS UNSIGNED)",
+        (error, categorias) => {
+            if (error) return res.status(500).send("Error al obtener categorías.");
+            res.render('Estadisticas', { categorias });
+        }
+    );
 };
+
+exports.verCategoriasStanding = (req, res) => {
+    coneccion.query(
+        "SELECT * FROM Categorias ORDER BY CAST(SUBSTRING_INDEX(nombre_categoria, '-', 1) AS UNSIGNED)",
+        (error, categorias) => {
+            if (error) return res.status(500).send("Error al obtener categorías.");
+            res.render('Standing', { categorias });
+        }
+    );
+};
+
+exports.verCategoriasDestacados = (req, res) => {
+    coneccion.query(
+        "SELECT * FROM Categorias ORDER BY CAST(SUBSTRING_INDEX(nombre_categoria, '-', 1) AS UNSIGNED)",
+        (error, categorias) => {
+            if (error) return res.status(500).send("Error al obtener categorías.");
+            res.render('JugadoresD', { categorias });
+        }
+    );
+};
+
 
 exports.verEquiposPorCategoria = (req, res) => {
     const idCategoria = req.params.id;
@@ -769,40 +793,46 @@ exports.verJugadoresDelEquipo = (req, res) => {
     });
 };
 
-exports.buscarJugadorPorNombre = async (req, res) => {
+exports.buscarJugadorPorNombre = (req, res) => {
   const categoriaId = req.params.id;
   const nombreBuscado = req.query.nombre;
 
-  try {
-    const jugadores = await new Promise((resolve, reject) => {
-      coneccion.query(`
-        SELECT j.*, e.nombre AS equipo_nombre, e.url_foto AS equipo_foto
-        FROM Jugadores j
-        JOIN Equipos e ON j.id_equipo = e.id_equipo
-        WHERE j.id_categoria = ? AND 
-              CONCAT(j.nombres, ' ', j.apellido_paterno, ' ', j.apellido_materno) LIKE ?
-        LIMIT 1
-      `, [categoriaId, `%${nombreBuscado}%`], (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
+  const queryJugador = `
+    SELECT j.*, e.nombre AS equipo_nombre, e.url_foto AS equipo_foto
+    FROM Jugadores j
+    JOIN Equipos e ON j.id_equipo = e.id_equipo
+    WHERE j.id_categoria = ? AND 
+          CONCAT(j.nombres, ' ', j.apellido_paterno, ' ', j.apellido_materno) LIKE ?
+    LIMIT 1
+  `;
 
-    if (jugadores.length === 0) {
+  coneccion.query(queryJugador, [categoriaId, `%${nombreBuscado}%`], (err, jugadores) => {
+    if (err || jugadores.length === 0) {
       return res.send("Jugador no encontrado en esta categoría.");
     }
 
     const jugador = jugadores[0];
 
-    res.render('categorias/perfilJugador', {
-      jugador: jugador
-    });
+    // Obtener estadísticas (ambas) de forma anidada
+    coneccion.query(`SELECT * FROM EstadisticasBateo WHERE id_jugador = ?`, [jugador.id_jugador], (errBateo, bateo) => {
+      if (errBateo) return res.send("Error en estadísticas de bateo");
 
-  } catch (error) {
-    console.error("Error al buscar jugador:", error);
-    res.status(500).send("Error al buscar jugador.");
-  }
+      coneccion.query(`SELECT * FROM EstadisticasPitcheo WHERE id_jugador = ?`, [jugador.id_jugador], (errPitcheo, pitcheo) => {
+        if (errPitcheo) return res.send("Error en estadísticas de pitcheo");
+
+        res.render('categorias/perfilJugador', {
+          jugador: {
+            ...jugador,
+            ...bateo[0],
+            ...pitcheo[0]
+          }
+        });
+      });
+    });
+  });
 };
+
+
 
 
 
@@ -870,4 +900,108 @@ exports.actualizarJugador = [
 ];
 
 
+exports.verCoordinadores = (req, res) => {
+    const sql = `
+        SELECT c.id_coordinador, c.nombres, c.apellido_paterno, c.apellido_materno, 
+               c.url_foto, cat.nombre_categoria 
+        FROM Coordinadores c
+        INNER JOIN Categorias cat ON c.id_categoria = cat.id_categoria
+    `;
+
+    coneccion.query(sql, (error, coordinadores) => {
+        if (error) return res.status(500).send("Error al obtener coordinadores.");
+        res.render('Coordinadores', { coordinadores }); // Asegúrate que exista esta vista
+    });
+};
+
+exports.verSecciones = (req, res) => {
+    const categoriaID = req.params.id;
+    coneccion.query(
+        'SELECT nombre_categoria FROM Categorias WHERE id_categoria = ?',
+        [categoriaID],
+        (err, result) => {
+            if (err || result.length === 0) {
+                return res.status(500).send('Error al obtener la categoría.');
+            }
+
+            const categoriaNombre = result[0].nombre_categoria;
+            res.render('Destacados/seccionesEstadisticas', { categoriaID, categoriaNombre });
+        }
+    );
+};
+
+// Controlador
+
+const obtenerConfiguracionEstadistica = (tipo) => {
+    const configuraciones = {
+        promedio: { campo: 'promedio_bateo', tabla: 'EstadisticasBateo', titulo: 'Promedio de bateo' },
+        sencillos: { campo: 'sencillos', tabla: 'EstadisticasBateo', titulo: 'Sencillos' },
+        dobles: { campo: 'dobles', tabla: 'EstadisticasBateo', titulo: 'Dobles' },
+        triples: { campo: 'triples', tabla: 'EstadisticasBateo', titulo: 'Triples' },
+        home_runs: { campo: 'home_runs', tabla: 'EstadisticasBateo', titulo: 'Home Runs' },
+        bases_robadas: { campo: 'bases_robadas', tabla: 'EstadisticasBateo', titulo: 'Bases Robadas' },
+        efectividad: { campo: 'efectividad', tabla: 'EstadisticasPitcheo', titulo: 'Efectividad' },
+        victorias: { campo: 'victorias', tabla: 'EstadisticasPitcheo', titulo: 'Victorias' },
+        ponches: { campo: 'ponches', tabla: 'EstadisticasPitcheo', titulo: 'Ponches' }
+    };
+    return configuraciones[tipo];
+};
+
+exports.estadisticasPorTipo = (req, res) => {
+    const { id, tipo } = req.params;
+    const paginaActual = parseInt(req.query.pagina) || 1;
+    const porPagina = 20;
+
+    const estadisticasMap = {
+        promedio: { campo: 'eb.promedio_bateo', titulo: 'Promedio de bateo' },
+        sencillos: { campo: 'eb.sencillos', titulo: 'Sencillos conectados' },
+        dobles: { campo: 'eb.dobles', titulo: 'Dobles conectados' },
+        triples: { campo: 'eb.triples', titulo: 'Triples conectados' },
+        homeruns: { campo: 'eb.home_runs', titulo: 'Home runs' },
+        robadas: { campo: 'eb.bases_robadas', titulo: 'Bases robadas' },
+    };
+
+    const config = estadisticasMap[tipo];
+    if (!config) return res.status(400).send("Tipo de estadística inválido.");
+
+    const sqlCategoria = `SELECT nombre_categoria FROM Categorias WHERE id_categoria = ?`;
+    coneccion.query(sqlCategoria, [id], (err, resultCat) => {
+        if (err) return res.status(500).send("Error al obtener nombre de la categoría");
+        const nombreCategoria = resultCat[0]?.nombre_categoria || `Categoría ${id}`;
+
+        const sqlJugadores = `
+            SELECT j.id_jugador, 
+                   CONCAT(j.nombres, ' ', j.apellido_paterno, ' ', j.apellido_materno) AS nombre, 
+                   COALESCE(${config.campo}, 0) AS valor
+            FROM Jugadores j
+            LEFT JOIN EstadisticasBateo eb ON j.id_jugador = eb.id_jugador
+            WHERE j.id_categoria = ?
+            ORDER BY valor DESC
+            LIMIT ? OFFSET ?
+        `;
+
+        const offset = (paginaActual - 1) * porPagina;
+        coneccion.query(sqlJugadores, [id, porPagina, offset], (err, jugadores) => {
+            if (err) return res.status(500).send("Error al obtener estadísticas: " + err);
+
+            const countSql = `SELECT COUNT(*) AS total FROM Jugadores WHERE id_categoria = ?`;
+            coneccion.query(countSql, [id], (err, result) => {
+                if (err) return res.status(500).send("Error al contar jugadores.");
+
+                const total = result[0].total;
+                const totalPaginas = Math.ceil(total / porPagina);
+
+                res.render("Destacados/Destacados", {
+                    jugadoresPaginados: jugadores,
+                    totalPaginas,
+                    paginaActual,
+                    categoriaID: id,
+                    nombreCategoria,
+                    tipo,
+                    tituloEstadistica: config.titulo,
+                });
+            });
+        });
+    });
+};
 
