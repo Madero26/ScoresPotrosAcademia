@@ -143,7 +143,7 @@ router.get('/formAdmin', authControlador.isAuthenticated,  (req, res)=>{
         if(error){
             throw error;
         }else{
-                    res.render('AdminGeneral/FormFotosCategoria', { usuario: req.user, categorias: rows }) 
+                    res.render('AdminGeneral/FormularioCrearCategoria', { usuario: req.user, categorias: rows }) 
         }
     }
     );
@@ -192,6 +192,21 @@ router.get('/formActualizarEntrenador', authControlador.isAuthenticated,  (req, 
     }
     );
 })
+// router.js
+router.get('/api/entrenadores',
+  authControlador.isAuthenticated,
+  authControlador.listarEntrenadoresPorCategoria
+);
+router.get('/actualizaEntrenador',
+  authControlador.isAuthenticated,
+  authControlador.mostrarActualizarEntrenador
+);
+router.post('/actualizarEntrenador/:id',
+  authControlador.isAuthenticated,
+  authControlador.actualizarEntrenador
+);
+
+
 router.get('/formActualizarEquipo', authControlador.isAuthenticated,  (req, res)=>{
     coneccion.query("SELECT * FROM Categorias", function(error, rows){
         if(error){
@@ -202,6 +217,21 @@ router.get('/formActualizarEquipo', authControlador.isAuthenticated,  (req, res)
     }
     );
 })
+
+router.get('/api/equipos',
+  authControlador.isAuthenticated,
+  authControlador.listarEquiposPorCategoria
+);
+
+router.get('/actualizaEquipo',
+  authControlador.isAuthenticated,
+  authControlador.mostrarActualizarEquipo
+);
+
+router.post('/actualizarEquipo/:id',
+  authControlador.isAuthenticated,
+  authControlador.actualizarEquipo
+);
 router.get('/formActualizarJugador', authControlador.isAuthenticated,  (req, res)=>{
     coneccion.query("SELECT * FROM Categorias", function(error, rows){
         if(error){
@@ -212,7 +242,21 @@ router.get('/formActualizarJugador', authControlador.isAuthenticated,  (req, res
     }
     );
 })
-router.post('/actualizarJugador/:id', authControlador.actualizarJugador);
+
+router.get('/api/equipos',    authControlador.isAuthenticated, authControlador.listarEquiposPorCategoria);
+router.get('/api/jugadores',  authControlador.isAuthenticated, authControlador.listarJugadoresPorEquipo);
+router.get('/api/jugadoresByCategoria',  authControlador.isAuthenticated, authControlador.listarJugadoresPorCategoria);
+
+
+router.get('/actualizaJugador',
+  authControlador.isAuthenticated,
+  authControlador.mostrarActualizarJugador
+);
+router.post('/actualizarJugador/:id',
+  authControlador.isAuthenticated,
+  authControlador.actualizarJugador
+);
+
 
 router.get('/equiposPorCategoria/:idCategoria', (req, res) => {
     const idCategoria = req.params.idCategoria;
@@ -242,6 +286,20 @@ router.get('/formActualizarUsuarioCoordinador', authControlador.isAuthenticated,
         }   
     });
 })
+
+// router.js
+router.get('/actualizaUsuarioCoordinador',
+  authControlador.isAuthenticated,
+  authControlador.mostrarActualizarUsuarioCoordinador
+);
+
+// router.js
+router.post('/actualizarUsuarioCoordinador/:id',
+  authControlador.isAuthenticated,
+  authControlador.actualizarUsuarioCoordinador
+);
+
+
 router.get('/formActualizarUsuarioJugador', authControlador.isAuthenticated,  (req, res)=>{
     coneccion.query("SELECT * FROM Categorias", function(error, rows){
         if(error){
@@ -790,20 +848,60 @@ router.get('/actualizaUsuarioJugadorNuevo', authControlador.isAuthenticated, (re
         }
     });
 });
+// /actualizaCoordinador?coordinador=ID
 router.get('/actualizaCoordinador', authControlador.isAuthenticated, (req, res) => {
-    const coordinador = req.query.coordinador; 
-    // Consulta la base de datos para obtener los datos de la categoría
-    coneccion.query("SELECT * FROM Coordinadores WHERE id_coordinador = ?", [coordinador], (error, rows) => {
-        if (error) {
-            console.error('Error al consultar la categoría:', error);
-            res.status(500).send('Hubo un problema al obtener los datos de la categoría.');
-        
-        } else {
-            // Renderiza la vista con los datos de la categoría
-            res.render('AdminGeneral/ActualizarConfirmacionCoordinador', { usuario: req.user, coordinador: rows[0] });
+  const id = req.query.coordinador;
+
+  // 1) Traer el coordinador seleccionado
+  coneccion.query(
+    "SELECT * FROM Coordinadores WHERE id_coordinador = ?",
+    [id],
+    (err, coordRows) => {
+      if (err) {
+        console.error('Error al consultar coordinador:', err);
+        return res.status(500).send('Error al obtener el coordinador.');
+      }
+      const coordinador = coordRows[0];
+
+      // 2) Traer categorías
+      coneccion.query(
+        "SELECT id_categoria, nombre_categoria FROM Categorias ORDER BY nombre_categoria",
+        (err2, categorias) => {
+          if (err2) {
+            console.error('Error al consultar categorías:', err2);
+            return res.status(500).send('Error al obtener categorías.');
+          }
+
+          // 3) Traer usuarios con rol Coordinador (ajusta el nombre de tabla si difiere)
+          coneccion.query(
+            "SELECT id_usuario, usuario FROM UsuarioAdministradores WHERE rol = 'Coordinador' ORDER BY usuario",
+            (err3, userCoordinador) => {
+              if (err3) {
+                console.error('Error al consultar usuarios:', err3);
+                return res.status(500).send('Error al obtener usuarios.');
+              }
+
+              // Render con todo lo necesario
+              res.render('AdminGeneral/ActualizarConfirmacionCoordinador', {
+                usuario: req.user,
+                coordinador,
+                categorias,
+                userCoordinador
+              });
+            }
+          );
         }
-    });
+      );
+    }
+  );
 });
+
+router.post(
+  '/actualizarCoordinador/:id',
+  authControlador.isAuthenticated,
+  authControlador.actualizarCoordinador
+);
+
 router.get('/actualizaCategoria', authControlador.isAuthenticated, (req, res) => {
     const usuario = req.query.usuario; 
     // Consulta la base de datos para obtener los datos de la categoría
@@ -818,6 +916,8 @@ router.get('/actualizaCategoria', authControlador.isAuthenticated, (req, res) =>
         }
     });
 });
+router.post('/actualizarCategoria/:id',authControlador.isAuthenticated, authControlador.actualizarCategoria);
+
 router.get('/actualizaPagoSemanal', authControlador.isAuthenticated, (req, res) => {
     const jugador = req.query.jugador; 
     // Consulta la base de datos para obtener los datos de la categoría
@@ -887,6 +987,9 @@ router.get('/CoordFotoCate', authControlador.isAuthenticated,(req, res)=>{
 
 //---------------------Formularios------------------------------
 
+// router.js
+router.get('/AdminContra', authControlador.isAuthenticated, authControlador.verCambiarContrasena);
+router.post('/cambiarContrasena', authControlador.isAuthenticated, authControlador.cambiarContrasena);
 
 //Formularios Estadisticas
 

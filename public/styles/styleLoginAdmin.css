@@ -1,103 +1,140 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+/* Encabezado del login */
+.login-header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+.login-title-badge {
+  display: inline-block;
+  background: #fff;
+  border-radius: 4rem;
+  padding: 0.8rem 2rem;
+}
+.login-title-text {
+  margin: 0;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(28px, 4vw, 48px);
+  color: #0E5688;
+}
 
-.content03{
-    padding-top: 1rem;
-    padding-bottom: 2rem;
-}
-.card{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    justify-content: center;
-    width: 25%;
-    border-radius: 4.5rem;
-}
-.card p{
-    margin: 0;
-    padding: 1rem;
-    font-family: "Anton", sans-serif;
-    font-size: 56px;
-    color: #0E5688;
-}
-.cardContra{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    justify-content: center;
-    width: 33%;
-    border-radius: 4.5rem;
-}
-.cardContra p{
-    margin: 0;
-    padding: 1rem;
-    font-family: "Anton", sans-serif;
-    font-size: 56px;
-    color: #0E5688;
-}
+/* Contenedor principal */
 .login-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-font-size: 24px;
-    min-height: 50vh;
-    
-  }
-  
-  .login-container {
-    width: 500px;
-    padding: 50px;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .login-container input {
-    width: 100%;
-    margin-bottom: 30px;
-    font-size: 24px;
-    padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
-  .login-container input[type="submit"] {
-    width: 100%;
-    padding: 30px;
-    border: none;
-    border-radius: 5px;
-    font-size: 24px;
-    background-color: #0a3871;
-    color: #fff;
-    cursor: pointer;
-  }
-  
-  .login-container button:hover {
-    background-color: #0b4a85;
-  }
-  
-  .login-container p {
-    margin-top: 20px;
-    text-align: center;
-    color: #495057;
-  }
-  
-  .login-container a {
-    color: #0a3871;
-    text-decoration: none;
-  }
-  
-  .login-container a:hover {
-    text-decoration: underline;
-  }
-  .regresar img{
-    padding-top: 1rem;
-    width: 3%;
-    display: flex;
-    margin: auto;
-    align-items: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .regresar img:hover {
-    transform: scale(1.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 70vh;
+  background: linear-gradient(180deg, #0170b7 0%, #0066a4 100%);
 }
+
+/* Tarjeta de login */
+.login-card {
+  background: #f4f9fd;
+  border-radius: 12px;
+  padding: 2rem;
+  width: min(380px, 92vw);
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
+}
+
+.login-heading {
+  margin-top: 0;
+  color: #0E5688;
+  font-size: 1.5rem;
+}
+.login-subheading {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* Campos */
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+.field label {
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+.field input {
+  padding: 0.7rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.field input:focus {
+  border-color: #0E5688;
+  outline: none;
+}
+
+/* Fila inferior */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.form-row a {
+  color: #0a3871;
+  text-decoration: none;
+}
+.form-row a:hover {
+  text-decoration: underline;
+}
+
+/* Botón */
+.btn-primary {
+  width: 100%;
+  padding: 0.8rem;
+  background: #0a3871;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #0c4a91;
+}
+
+/* Regresar */
+.back-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #0a3871;
+  font-size: 0.9rem;
+}
+.back-link:hover {
+  text-decoration: underline;
+}
+/* Fila inferior del login (no afecta nada más) */
+.form-row-login{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:.75rem;
+  margin: 4px 0 16px;
+  font-size: 14px;
+}
+
+.remember{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  color:#274e68;
+}
+.remember input{
+  width:16px;
+  height:16px;
+}
+
+.forgot-link{
+  color:#0a3871;
+  text-decoration:none;
+}
+.forgot-link:hover{
+  text-decoration:underline;
+}
+

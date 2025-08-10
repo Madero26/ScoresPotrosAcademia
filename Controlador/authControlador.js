@@ -244,6 +244,66 @@ exports.crearCategoria = [
     }
 ];
 
+// === ACTUALIZAR CATEGORIA ===
+exports.actualizarCategoria = [
+  uploadCategorias.single('fotoCategoria'), // foto opcional
+  async (req, res) => {
+    try {
+      const usuario = req.user || req.usuario;            // por si vienes con isAuthenticated
+      const id = req.params.id;                            // /actualizarCategoria/:id
+      const { nombre, rango, inferior, superior } = req.body;
+      const file = req.file;
+
+      // Armamos SET dinámico si hay foto nueva
+      let setParts = [
+        'nombre_categoria = ?',
+        'rango_edad = ?',
+        'rango_inferior = ?',
+        'rango_superior = ?'
+      ];
+      const params = [nombre, rango, inferior, superior];
+
+      if (file) {
+        const urlFoto = `resources/imgs/Categorias/${file.filename}`;
+        setParts.push('url_foto = ?');
+        params.push(urlFoto);
+      }
+
+      const sql = `UPDATE Categorias SET ${setParts.join(', ')} WHERE id_categoria = ?`;
+      params.push(id);
+
+      await new Promise((resolve, reject) => {
+        coneccion.query(sql, params, (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        });
+      });
+
+      // Volvemos a cargar categorías para que el admin siga trabajando
+      coneccion.query("SELECT * FROM Categorias", (error, categorias) => {
+        if (error) return res.status(500).send("Error al recargar categorías.");
+
+        res.render('AdminGeneral/FormularioActualizarCategoria', {
+          usuario,
+          categorias,
+          alert: true,
+          alertTitle: "¡Actualizado!",
+          alertMessage: "La categoría se actualizó correctamente.",
+          alertIcon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          ruta: 'formActualizarCategoria'
+        });
+      });
+
+    } catch (e) {
+      console.error("Error al actualizar la categoría:", e);
+      res.status(500).send("Error al actualizar la categoría.");
+    }
+  }
+];
+
+
 const storageEquipos = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './public/imgs/Equipos'); // Carpeta donde se guardarán las fotos de los equipos
@@ -444,6 +504,63 @@ exports.crearCoordinador = [
     }
 ];
 
+// Controlador: ACTUALIZAR COORDINADOR
+exports.actualizarCoordinador = [
+  uploadCoordinadores.single('fotoCoordinador'), // foto opcional
+  (req, res) => {
+    const id = req.params.id;
+    const { nombre, apellidoPaterno, apellidoMaterno, categoria, usuario } = req.body;
+
+    // Armamos UPDATE dinámico si hay foto nueva
+    let setParts = [
+      'nombres = ?',
+      'apellido_paterno = ?',
+      'apellido_materno = ?',
+      'id_categoria = ?',
+      'id_usuario = ?'
+    ];
+    const params = [nombre, apellidoPaterno, apellidoMaterno, categoria || null, usuario || null];
+
+    if (req.file) {
+      setParts.push('url_foto = ?');
+      params.push(`resources/imgs/Coordinadores/${req.file.filename}`);
+    }
+
+    const sql = `UPDATE Coordinadores SET ${setParts.join(', ')} WHERE id_coordinador = ?`;
+    params.push(id);
+
+    coneccion.query(sql, params, (err) => {
+      if (err) {
+        console.error('Error al actualizar coordinador:', err);
+        return res.status(500).send('Error al actualizar coordinador.');
+      }
+
+      // Tras actualizar, recargamos la lista para la pantalla de selección
+      coneccion.query('SELECT * FROM Coordinadores', (error, coordinadores) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).send('Error al recargar coordinadores.');
+        }
+
+        // Mandamos variables del Swal AL EJS
+        return res.render('AdminGeneral/FormularioActualizarCoordinador', {
+          usuario: req.user,               // para tu header
+          coordinadores,                   // lista para seleccionar de nuevo
+          alert: true,
+          alertTitle: '¡Actualizado!',
+          alertMessage: `El coordinador «${nombre}» se actualizó correctamente.`,
+          alertIcon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          ruta: 'formActualizarCoordinador' // a dónde regresar después del popup
+        });
+      });
+    });
+  }
+];
+
+
+
 // Controlador para manejar el formulario de entrenadores
 exports.crearEntrenador = async (req, res) => {
     try {
@@ -492,6 +609,77 @@ exports.crearEntrenador = async (req, res) => {
         res.status(500).send("Error al crear el entrenador.");
     }
 };
+
+exports.listarEntrenadoresPorCategoria = (req, res) => {
+  const { categoriaID } = req.query;
+  if (!categoriaID) return res.status(400).json({ ok:false, message:'categoriaID requerido' });
+
+  const sql = `
+    SELECT id_entrenador,
+           CONCAT(nombres,' ',apellido_paterno,' ',apellido_materno) AS nombre
+    FROM Entrenadores
+    WHERE id_categoria = ?
+    ORDER BY nombres, apellido_paterno, apellido_materno
+  `;
+  coneccion.query(sql, [categoriaID], (err, rows) => {
+    if (err) return res.status(500).json({ ok:false, message:'Error al obtener entrenadores' });
+    res.json({ ok:true, data: rows });
+  });
+};
+exports.mostrarActualizarEntrenador = (req, res) => {
+  const id = req.query.entrenadorID || req.query.entrenador;
+  if (!id) return res.status(400).send('Falta entrenadorID');
+
+  coneccion.query('SELECT * FROM Entrenadores WHERE id_entrenador=?', [id], (err, entRows) => {
+    if (err) return res.status(500).send('Error al obtener entrenador');
+    if (!entRows.length) return res.status(404).send('Entrenador no encontrado');
+
+    const entrenador = entRows[0];
+    coneccion.query('SELECT id_categoria, nombre_categoria FROM Categorias ORDER BY nombre_categoria', (e2, categorias) => {
+      if (e2) return res.status(500).send('Error al obtener categorías');
+
+      res.render('AdminGeneral/ActualizarConfirmacionEntrenador', {
+        usuario: req.user,
+        entrenador,
+        categorias
+      });
+    });
+  });
+};
+exports.actualizarEntrenador = (req, res) => {
+  const id = req.params.id;
+  const { nombres, apellidoPaterno, apellidoMaterno, categoria } = req.body;
+
+  const sql = `
+    UPDATE Entrenadores
+    SET nombres=?, apellido_paterno=?, apellido_materno=?, id_categoria=?
+    WHERE id_entrenador=?`;
+  const params = [nombres, apellidoPaterno, apellidoMaterno, categoria || null, id];
+
+  coneccion.query(sql, params, (err) => {
+    if (err) {
+      console.error('Error al actualizar entrenador:', err);
+      return res.status(500).send('Error al actualizar entrenador');
+    }
+
+    // recarga categorías para el EJS de selección y manda el Swal
+    coneccion.query('SELECT * FROM Categorias', (e, categorias) => {
+      if (e) return res.status(500).send('Error al recargar categorías');
+      res.render('AdminGeneral/FormularioActualizarEntrenador', {
+        usuario: req.user,
+        categorias,
+        alert: true,
+        alertTitle: '¡Actualizado!',
+        alertMessage: `El entrenador «${nombres}» se actualizó correctamente.`,
+        alertIcon: 'success',
+        showConfirmButton: false,
+        timer: 1500,
+        ruta: 'formActualizarEntrenador'
+      });
+    });
+  });
+};
+
 
 // Configuración de multer para subir fotos de jugadores
 const storageJugadores = multer.diskStorage({
@@ -840,64 +1028,66 @@ exports.buscarJugadorPorNombre = (req, res) => {
 // Al inicio asegúrate que ya tienes:
 
 
-// ACTUALIZAR JUGADOR
+// ACTUALIZAR JUGADOR (pulido)
 exports.actualizarJugador = [
-    uploadJugadores.single('fotoJugador'),
-    async (req, res) => {
-        try {
-            const id = req.params.id;
-            const usuario = req.usuario;
-            const { nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, categoria, equipo } = req.body;
-            const { file } = req;
+  // si tienes multer para jugadores, déjalo; si no, cambia a (req,res,next)=>next()
+  uploadJugadores?.single ? uploadJugadores.single('fotoJugador') : (req,res,next)=>next(),
+  async (req, res) => {
+    try {
+      const id = req.params.id;
+      const usuario = req.user || req.usuario;
 
-            let queryUpdate = `
-                UPDATE Jugadores 
-                SET nombres = ?, apellido_paterno = ?, apellido_materno = ?, fecha_nacimiento = ?, id_categoria = ?, id_equipo = ?
-            `;
-            let params = [nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, categoria || null, equipo || null];
+      // normaliza/trim
+      const nombres         = (req.body.nombres || '').trim();
+      const apellidoPaterno = (req.body.apellidoPaterno || '').trim();
+      const apellidoMaterno = (req.body.apellidoMaterno || '').trim();
+      const categoria       = req.body.categoria || null;
+      const equipo          = req.body.equipo || null;
 
-            if (file) {
-                const urlFoto = `resources/imgs/Jugadores/${file.filename}`;
-                queryUpdate += `, url_foto = ?`;
-                params.push(urlFoto);
-            }
+      // si el input date viene vacío -> null
+      const fechaNacimiento = req.body.fechaNacimiento ? req.body.fechaNacimiento : null;
 
-            queryUpdate += ` WHERE id_jugador = ?`;
-            params.push(id);
+      let sql = `
+        UPDATE Jugadores
+        SET nombres = ?, apellido_paterno = ?, apellido_materno = ?, fecha_nacimiento = ?, id_categoria = ?, id_equipo = ?
+      `;
+      const params = [nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, categoria, equipo];
 
-            await new Promise((resolve, reject) => {
-                coneccion.query(queryUpdate, params, (err, result) => {
-                    if (err) return reject(err);
-                    resolve(result);
-                });
-            });
+      if (req.file) {
+        sql += `, url_foto = ?`;
+        params.push(`resources/imgs/Jugadores/${req.file.filename}`);
+      }
 
-            // Obtener datos para renderizar después
-            coneccion.query("SELECT * FROM Categorias", (error, categorias) => {
-                if (error) {
-                    console.error("Error al obtener categorías:", error);
-                    return res.status(500).send("Error al cargar categorías.");
-                }
+      sql += ` WHERE id_jugador = ?`;
+      params.push(id);
 
-                res.render('AdminGeneral/FormularioActualizarJugador', {
-                    alert: true,
-                    usuario: usuario,
-                    alertTitle: "¡Actualizado!",
-                    alertMessage: "Jugador actualizado exitosamente.",
-                    alertIcon: 'success',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    ruta: 'formActualizarJugador',
-                    categorias: categorias
-                });
-            });
+      await new Promise((resolve, reject) => {
+        coneccion.query(sql, params, (err, result) => err ? reject(err) : resolve(result));
+      });
 
-        } catch (error) {
-            console.error("Error al actualizar jugador:", error);
-            res.status(500).send("Error al actualizar jugador.");
-        }
+      // recargar categorías y mostrar mensajito (igual que en los otros)
+      coneccion.query("SELECT * FROM Categorias", (error, categorias) => {
+        if (error) return res.status(500).send("Error al cargar categorías.");
+        res.render('AdminGeneral/FormularioActualizarJugador', {
+          usuario,
+          categorias,
+          alert: true,
+          alertTitle: "¡Actualizado!",
+          alertMessage: `El jugador «${nombres}» se actualizó correctamente.`,
+          alertIcon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          ruta: 'formActualizarJugador'
+        });
+      });
+
+    } catch (error) {
+      console.error("Error al actualizar jugador:", error);
+      res.status(500).send("Error al actualizar jugador.");
     }
+  }
 ];
+
 
 
 exports.verCoordinadores = (req, res) => {
@@ -1005,3 +1195,373 @@ exports.estadisticasPorTipo = (req, res) => {
     });
 };
 
+exports.listarEquiposPorCategoria = (req, res) => {
+  const { categoriaID } = req.query;
+  if(!categoriaID) return res.status(400).json({ok:false, message:'categoriaID requerido'});
+  const sql = `SELECT id_equipo, nombre FROM Equipos WHERE id_categoria=? ORDER BY nombre`;
+  coneccion.query(sql, [categoriaID], (err, rows)=>{
+    if(err) return res.status(500).json({ok:false, message:'Error al obtener equipos'});
+    res.json({ok:true, data: rows});
+  });
+};
+
+exports.listarJugadoresPorEquipo = (req, res) => {
+  const { equipoID } = req.query;
+  if(!equipoID) return res.status(400).json({ok:false, message:'equipoID requerido'});
+  const sql = `
+    SELECT id_jugador,
+           CONCAT(nombres,' ',apellido_paterno,' ',apellido_materno) AS nombre
+    FROM Jugadores
+    WHERE id_equipo=?
+    ORDER BY nombres, apellido_paterno, apellido_materno`;
+  coneccion.query(sql, [equipoID], (err, rows)=>{
+    if(err) return res.status(500).json({ok:false, message:'Error al obtener jugadores'});
+    res.json({ok:true, data: rows});
+  });
+};
+exports.mostrarActualizarJugador = (req, res) => {
+  const id = req.query.jugadorID || req.query.jugador;
+  if(!id) return res.status(400).send('Falta jugadorID');
+
+  coneccion.query('SELECT * FROM Jugadores WHERE id_jugador=?', [id], (err, rows)=>{
+    if(err) return res.status(500).send('Error al obtener jugador');
+    if(!rows.length) return res.status(404).send('Jugador no encontrado');
+
+    const jugador = rows[0];
+
+    // categorías para select
+    coneccion.query('SELECT id_categoria, nombre_categoria FROM Categorias ORDER BY nombre_categoria', (e2, categorias)=>{
+      if(e2) return res.status(500).send('Error al obtener categorías');
+
+      // equipos de la categoría actual del jugador
+      coneccion.query('SELECT id_equipo, nombre FROM Equipos WHERE id_categoria=? ORDER BY nombre',
+        [jugador.id_categoria],
+        (e3, equipos)=>{
+          if(e3) return res.status(500).send('Error al obtener equipos');
+
+          res.render('AdminGeneral/ActualizarConfirmacionJugador', {
+            usuario: req.user,
+            jugador,
+            categorias,
+            equipos // de la categoría actual, para prellenar
+          });
+        }
+      );
+    });
+  });
+};
+exports.listarEquiposPorCategoria = (req, res) => {
+  const { categoriaID } = req.query;
+  if (!categoriaID) return res.status(400).json({ ok:false, message:'categoriaID requerido' });
+
+  const sql = `SELECT id_equipo, nombre FROM Equipos WHERE id_categoria = ? ORDER BY nombre`;
+  coneccion.query(sql, [categoriaID], (err, rows) => {
+    if (err) return res.status(500).json({ ok:false, message:'Error al obtener equipos' });
+    res.json({ ok:true, data: rows });
+  });
+};
+
+exports.listarJugadoresPorCategoria = (req, res) => {
+  const { categoriaID } = req.query;
+  if (!categoriaID) return res.status(400).json({ ok:false, message:'categoriaID requerido' });
+
+  const sql = `
+    SELECT id_jugador,
+           CONCAT(nombres,' ',apellido_paterno,' ',apellido_materno) AS nombre,
+           id_equipo
+    FROM Jugadores
+    WHERE id_categoria = ?
+    ORDER BY nombres, apellido_paterno, apellido_materno
+  `;
+  coneccion.query(sql, [categoriaID], (err, rows) => {
+    if (err) return res.status(500).json({ ok:false, message:'Error al obtener jugadores' });
+    res.json({ ok:true, data: rows });
+  });
+};
+
+exports.listarEquiposPorCategoria = (req, res) => {
+  const { categoriaID } = req.query;
+  if (!categoriaID) return res.status(400).json({ ok:false, message:'categoriaID requerido' });
+  coneccion.query('SELECT id_equipo, nombre FROM Equipos WHERE id_categoria=? ORDER BY nombre',
+    [categoriaID],
+    (err, rows) => err
+      ? res.status(500).json({ ok:false, message:'Error al obtener equipos' })
+      : res.json({ ok:true, data: rows })
+  );
+};
+
+exports.mostrarActualizarEquipo = (req, res) => {
+  const id = req.query.equipoID || req.query.equipo;
+  if(!id) return res.status(400).send('Falta equipoID');
+
+  coneccion.query('SELECT * FROM Equipos WHERE id_equipo=?', [id], (err, eqRows)=>{
+    if(err) return res.status(500).send('Error al obtener equipo');
+    if(!eqRows.length) return res.status(404).send('Equipo no encontrado');
+
+    const equipo = eqRows[0];
+
+    // categorías para mover equipo si se requiere
+    coneccion.query('SELECT id_categoria, nombre_categoria FROM Categorias ORDER BY nombre_categoria', (e2, categorias)=>{
+      if(e2) return res.status(500).send('Error al obtener categorías');
+
+      // entrenadores de esa categoría para id_couch
+      coneccion.query(
+        `SELECT id_entrenador,
+                CONCAT(nombres,' ',apellido_paterno,' ',apellido_materno) AS nombre
+         FROM Entrenadores
+         WHERE id_categoria = ?
+         ORDER BY nombres, apellido_paterno, apellido_materno`,
+        [equipo.id_categoria],
+        (e3, entrenadores)=>{
+          if(e3) return res.status(500).send('Error al obtener entrenadores');
+
+          res.render('AdminGeneral/ActualizarConfirmacionEquipo', {
+            usuario: req.user,
+            equipo,
+            categorias,
+            entrenadores
+          });
+        }
+      );
+    });
+  });
+};
+
+exports.actualizarEquipo = [
+  (typeof uploadEquipos?.single === 'function' ? uploadEquipos.single('fotoEquipo') : (req,res,next)=>next()),
+  (req, res) => {
+    const id = req.params.id;
+    const usuario = req.user || req.usuario;
+    const nombre  = (req.body.nombre  || '').trim();
+    const colores = (req.body.colores || '').trim();
+    const categoria = req.body.categoria || null;
+    const couch    = req.body.couch || null;
+
+    let sql = `UPDATE Equipos SET nombre=?, colores=?, id_categoria=?, id_couch=?`;
+    const params = [nombre, colores, categoria, couch];
+
+    if (req.file) {
+      sql += `, url_foto=?`;
+      params.push(`resources/imgs/Equipos/${req.file.filename}`);
+    }
+    sql += ` WHERE id_equipo=?`;
+    params.push(id);
+
+    coneccion.query(sql, params, (err)=>{
+      if (err) {
+        console.error('Error al actualizar equipo:', err);
+        return res.status(500).send('Error al actualizar equipo');
+      }
+      // volver a selección con mensajito
+      coneccion.query('SELECT * FROM Categorias', (e, categorias)=>{
+        if(e) return res.status(500).send('Error al recargar categorías');
+        res.render('AdminGeneral/FormularioActualizarEquipo', {
+          usuario,
+          categorias,
+          alert: true,
+          alertTitle: '¡Actualizado!',
+          alertMessage: `El equipo «${nombre}» se actualizó correctamente.`,
+          alertIcon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          ruta: 'formActualizarEquipo'
+        });
+      });
+    });
+  }
+];
+
+// authControlador.js
+exports.mostrarActualizarUsuarioCoordinador = (req, res) => {
+  const id = req.query.usuario; // viene del <select name="usuario">
+  if (!id) return res.status(400).send('Falta usuario');
+
+  coneccion.query(
+    'SELECT id_usuario, usuario, rol FROM UsuarioAdministradores WHERE id_usuario = ?',
+    [id],
+    (err, rows) => {
+      if (err) return res.status(500).send('Error al obtener usuario');
+      if (!rows.length) return res.status(404).send('Usuario no encontrado');
+
+      const user = rows[0];
+      res.render('AdminGeneral/ActualizarConfirmacionUsuarioCoordinador', {
+        usuario: req.user, // para el header
+        user // {id_usuario, usuario, rol}
+      });
+    }
+  );
+};
+// authControlador.js
+const bcrypt = require('bcryptjs'); // si ya usas bcrypt
+
+exports.actualizarUsuarioCoordinador = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const usuarioSesion = req.user || req.usuario;
+
+    const usuarioNuevo = (req.body.usuarioNuevo || '').trim();
+    const rol          = (req.body.rol || 'Coordinador').trim();
+    const nuevaContra  = (req.body.nuevaContra || '').trim();
+
+    if (!usuarioNuevo) return res.status(400).send('Usuario requerido');
+
+    let setParts = ['usuario = ?', 'rol = ?'];
+    const params = [usuarioNuevo, rol];
+
+    if (nuevaContra) {
+      const hash = await bcrypt.hash(nuevaContra, 10); // si NO usas bcrypt, cambia por texto plano (no recomendado)
+      setParts.push('contra = ?');
+      params.push(hash);
+    }
+
+    const sql = `UPDATE UsuarioAdministradores SET ${setParts.join(', ')} WHERE id_usuario = ?`;
+    params.push(id);
+
+    await new Promise((resolve, reject) => {
+      coneccion.query(sql, params, (err, result) => err ? reject(err) : resolve(result));
+    });
+
+    // recargar lista y mostrar SweetAlert en la pantalla de selección
+    coneccion.query(
+      "SELECT id_usuario, usuario FROM UsuarioAdministradores WHERE rol = 'Coordinador' ORDER BY usuario",
+      (e, userCoordinador) => {
+        if (e) return res.status(500).send('Error al recargar usuarios');
+        res.render('AdminGeneral/FormularioActualizarUsuarioCoordinador', {
+          usuario: usuarioSesion,
+          userCoordinador,
+          alert: true,
+          alertTitle: '¡Actualizado!',
+          alertMessage: `El usuario «${usuarioNuevo}» se actualizó correctamente.`,
+          alertIcon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          ruta: 'formActualizarUsuarioCoordinador'
+        });
+      }
+    );
+  } catch (err) {
+    console.error('Error al actualizar usuario coordinador:', err);
+    res.status(500).send('Error al actualizar usuario coordinador.');
+  }
+};
+// authControlador.js
+
+// GET
+exports.verCambiarContrasena = (req, res) => {
+  res.render('AdminGeneral/contraNuevaAdmin', {
+    usuario: req.user, // para mostrar el user en header si quieres
+  });
+};
+
+// POST
+exports.cambiarContrasena = async (req, res) => {
+  try {
+    const user = req.user; // { id_usuario, ... } desde tu middleware
+    const { actual, nueva, confirmar } = req.body;
+
+    if (!actual || !nueva || !confirmar) {
+      return res.render('AdminGeneral/contraNuevaAdmin', {
+        usuario: user,
+        alert: true,
+        alertTitle: 'Campos incompletos',
+        alertMessage: 'Llena los tres campos.',
+        alertIcon: 'warning',
+        showConfirmButton: true,
+        timer: 0,
+        ruta: 'AdminContra'
+      });
+    }
+
+    if (nueva !== confirmar) {
+      return res.render('AdminGeneral/contraNuevaAdmin', {
+        usuario: user,
+        alert: true,
+        alertTitle: 'No coinciden',
+        alertMessage: 'La nueva contraseña y su confirmación no coinciden.',
+        alertIcon: 'error',
+        showConfirmButton: true,
+        timer: 0,
+        ruta: 'AdminContra'
+      });
+    }
+
+    // Reglas mínimas (también se validan en el front)
+    const ok =
+      nueva.length >= 8 &&
+      /[a-z]/.test(nueva) &&
+      /[A-Z]/.test(nueva) &&
+      /[0-9]/.test(nueva) &&
+      /[^A-Za-z0-9]/.test(nueva);
+
+    if (!ok) {
+      return res.render('AdminGeneral/contraNuevaAdmin', {
+        usuario: user,
+        alert: true,
+        alertTitle: 'Contraseña débil',
+        alertMessage: 'Debe tener 8+ caracteres, mayúscula, minúscula, número y símbolo.',
+        alertIcon: 'warning',
+        showConfirmButton: true,
+        timer: 0,
+        ruta: '/AdminContra'
+      });
+    }
+
+    // Traer hash actual
+    const sqlGet = 'SELECT contra FROM UsuarioAdministradores WHERE id_usuario = ?';
+    const hash = await new Promise((resolve, reject) => {
+      coneccion.query(sqlGet, [user.id_usuario], (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows?.[0]?.contra || '');
+      });
+    });
+
+    // Validar actual
+    const coincide = await bcrypt.compare(actual, hash);
+    if (!coincide) {
+      return res.render('AdminGeneral/contraNuevaAdmin', {
+        usuario: user,
+        alert: true,
+        alertTitle: 'Contraseña actual incorrecta',
+        alertMessage: 'Verifícala e intenta de nuevo.',
+        alertIcon: 'error',
+        showConfirmButton: true,
+        timer: 0,
+        ruta: 'AdminContra'
+      });
+    }
+
+    // Guardar nueva
+    const nuevoHash = await bcrypt.hash(nueva, 10);
+    const sqlUpd = 'UPDATE UsuarioAdministradores SET contra=? WHERE id_usuario=?';
+    await new Promise((resolve, reject) => {
+      coneccion.query(sqlUpd, [nuevoHash, user.id_usuario], (err) =>
+        err ? reject(err) : resolve()
+      );
+    });
+
+    // Éxito → re-login opcional: envía a logout o a algún panel
+    res.render('Login', {
+      usuario: user,
+      alert: true,
+      alertTitle: '¡Contraseña actualizada!',
+      alertMessage: 'Por seguridad, inicia sesión de nuevo.',
+      alertIcon: 'success',
+      showConfirmButton: false,
+      timer: 1600,
+      ruta: 'logout' // si prefieres volver al panel: 'formAdmin'
+    });
+
+  } catch (err) {
+    console.error('Error al cambiar contraseña:', err);
+    res.render('AdminGeneral/contraNuevaAdmin', {
+      usuario: req.user,
+      alert: true,
+      alertTitle: 'Error',
+      alertMessage: 'No se pudo cambiar la contraseña.',
+      alertIcon: 'error',
+      showConfirmButton: true,
+      timer: 0,
+      ruta: 'AdminContra'
+    });
+  }
+};

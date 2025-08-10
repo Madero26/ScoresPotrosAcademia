@@ -1,33 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academia ITSON</title>
-    <link rel="stylesheet" href="resources/styles/styleMain.css">
-    <link rel="stylesheet" href="resources/styles/stylePago.css">
-    <link rel="icon" href="resources/imgs/academia-logo.png">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Academia ITSON</title>
+  <link rel="stylesheet" href="/resources/styles/styleMain.css">
+  <link rel="stylesheet" href="/resources/styles/stylePago.css">
+  <link rel="icon" href="/resources/imgs/academia-logo.png">
+  <style>
+    .pwd-wrap { position: relative; }
+    .eye-btn {
+      position:absolute; right:10px; top:50%; transform:translateY(-50%);
+      background:transparent; border:none; cursor:pointer; font-size:16px; opacity:.7;
+    }
+    .strength { height:8px; border-radius:6px; background:#e5e7eb; overflow:hidden; }
+    .strength > div { height:100%; width:0%; transition:width .25s; }
+    .rule-list { font-size:14px; color:#415462; margin:8px 0 0; padding-left:18px; }
+    .rule-list li.pass { color:#0b7d2a; }
+  </style>
 </head>
-<body>
+<body class="admin-bg">
+  <section class="content03">
+    <div class="badge-title"><p>CAMBIAR CONTRASEÑA</p></div>
+  </section>
 
-    
-    <section class="content03">
-        <div class="cardContra">
-            <p>CAMBIAR CONTRASEÑA</p>
+  <section class="login-body">
+    <div class="login-container form-card">
+      <form id="formContra" method="POST" action="/cambiarContrasena">
+        <div class="field pwd-wrap">
+          <label>Contraseña actual:</label>
+          <input type="password" name="actual" id="actual" required>
+          <button class="eye-btn" type="button" data-eye="actual">👁️</button>
         </div>
-    </section>
 
-    <section class="login-body">
-        <div class="login-container">
-            <form id="login-form" method="post" action="">
-              <input type="text" name= "username" placeholder="Contraseña anterior" required>
-              <input type="password" name="password" placeholder="Contraseña nueva" required>
-              <button type="submit" name="iniciar">Cambiar </button><!-- Botón para iniciar sesión -->
-            </form>
-          </div>
-    </section>
-    <div class="regresar">
-    <a href="/formAdmin"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
-</div>
+        <div class="field pwd-wrap">
+          <label>Nueva contraseña:</label>
+          <input type="password" name="nueva" id="nueva" required>
+          <button class="eye-btn" type="button" data-eye="nueva">👁️</button>
+          <div class="strength" aria-hidden="true"><div id="bar"></div></div>
+          <ul class="rule-list" id="rules">
+            <li id="r-len">8+ caracteres</li>
+            <li id="r-upper">Mayúscula</li>
+            <li id="r-lower">Minúscula</li>
+            <li id="r-num">Número</li>
+            <li id="r-sym">Símbolo</li>
+          </ul>
+        </div>
+
+        <div class="field pwd-wrap">
+          <label>Confirmar nueva contraseña:</label>
+          <input type="password" name="confirmar" id="confirmar" required>
+          <button class="eye-btn" type="button" data-eye="confirmar">👁️</button>
+          <small id="matchHelp" class="row-help"></small>
+        </div>
+
+        <div class="actions">
+          <button id="btnCambiar" type="submit">Cambiar</button>
+          <a class="back-cta" href="/formAdmin">⟵ Volver</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+    <script>
+      Swal.fire({
+        title: '<%= alertTitle %>',
+        text: '<%= alertMessage %>',
+        icon: '<%= alertIcon %>',
+        showConfirmButton: <%= showConfirmButton %>,
+        timer: <%= timer %>
+      }).then(()=>{ window.location='/<%= ruta %>'; });
+    </script>
+  <% } %>
+
+  <script>
+    // Mostrar/ocultar
+    document.querySelectorAll('.eye-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.eye;
+        const inp = document.getElementById(id);
+        inp.type = (inp.type==='password' ? 'text' : 'password');
+      });
+    });
+
+    const nueva = document.getElementById('nueva');
+    const confirmar = document.getElementById('confirmar');
+    const bar = document.getElementById('bar');
+    const rules = {
+      len:   document.getElementById('r-len'),
+      upper: document.getElementById('r-upper'),
+      lower: document.getElementById('r-lower'),
+      num:   document.getElementById('r-num'),
+      sym:   document.getElementById('r-sym')
+    };
+    const matchHelp = document.getElementById('matchHelp');
+    const btn = document.getElementById('btnCambiar');
+
+    function score(pwd){
+      let s = 0;
+      if (pwd.length >= 8) s++;
+      if (/[A-Z]/.test(pwd)) s++;
+      if (/[a-z]/.test(pwd)) s++;
+      if (/[0-9]/.test(pwd)) s++;
+      if (/[^A-Za-z0-9]/.test(pwd)) s++;
+      return s; // 0..5
+    }
+
+    function updateUI(){
+      const pwd = nueva.value || '';
+      const sc = score(pwd);
+
+      // reglas
+      rules.len.classList.toggle('pass', pwd.length >= 8);
+      rules.upper.classList.toggle('pass', /[A-Z]/.test(pwd));
+      rules.lower.classList.toggle('pass', /[a-z]/.test(pwd));
+      rules.num.classList.toggle('pass', /[0-9]/.test(pwd));
+      rules.sym.classList.toggle('pass', /[^A-Za-z0-9]/.test(pwd));
+
+      // barra
+      const pct = (sc/5)*100;
+      bar.style.width = pct + '%';
+      bar.style.background = sc<=2 ? '#f87171' : sc<=4 ? '#f59e0b' : '#22c55e';
+
+      // confirmación
+      if (confirmar.value) {
+        const ok = confirmar.value === pwd;
+        matchHelp.textContent = ok ? 'Las contraseñas coinciden.' : 'No coinciden.';
+        matchHelp.style.color = ok ? '#0b7d2a' : '#b91c1c';
+      } else {
+        matchHelp.textContent = '';
+      }
+
+      // habilitar botón en front (igual validamos en server)
+      btn.disabled = !(sc===5 && confirmar.value === pwd);
+    }
+
+    nueva.addEventListener('input', updateUI);
+    confirmar.addEventListener('input', updateUI);
+    updateUI();
+
+    // Confirmación antes de enviar
+    document.getElementById('formContra').addEventListener('submit', function(e){
+      if (btn.disabled) { e.preventDefault(); return; }
+      e.preventDefault();
+      Swal.fire({
+        title:'¿Confirmar cambio?',
+        text:'Se cerrará tu sesión por seguridad.',
+        icon:'question',
+        showCancelButton:true,
+        confirmButtonText:'Sí, cambiar',
+        cancelButtonText:'Cancelar',
+        reverseButtons:true
+      }).then(r=>{
+        if(r.isConfirmed){
+          Swal.fire({title:'Actualizando…', allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+          e.target.submit();
+        }
+      });
+    });
+  </script>
 </body>
 </html>

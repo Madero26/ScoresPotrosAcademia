@@ -2,71 +2,90 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academia ITSON</title>
-    <link rel="stylesheet" href="resources/styles/styleMain.css">
-    
-    <link rel="icon" href="resources/imgs/academia-logo.png">
+    <%- include('partials/head') %>
 </head>
 
 <body>
 
-    <section class="content01">
-        <a href="/login" onclick="mostrarMensaje()">Login</a>
-        <script>
-            function mostrarMensaje() {
-                alert("Este apartado es únicamente para administradores, favor de salir si no eres administrador");
-            }
-        </script>
-    </section>
-    <nav>
-        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
-        <div>
-            <a href="/" class="link">INICIO</a>
-        </div>
-        <div>
-            <a href="/Estadisticas" class="link">ESTADISTICAS</a>
-        </div>
-        <div>
-            <a href="/JugadoresD" class="link">JUGADORES DESTACADOS</a>
-        </div>
-        <div>
-            <a href="/Pagos" class="link">PAGOS</a>
-        </div>
-        <div>
-            <a href="/Coord" class="link">COORDINADORES</a>
-        </div>
-        <div>
-            <a href="/Standing" class="link">STANDING</a>
-        </div>
-        <img src="resources/imgs/logo.png" alt="Logo">
+
+
+
+     <section class="content01">
+  <button class="login-ghost" id="btnLoginGhost" aria-haspopup="dialog" aria-controls="loginModal">
+    Iniciar sesión
+  </button>
+</section>
+
+<div class="modal-overlay" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="modal-card" role="document">
+    <h3>Área restringida</h3>
+    <p>Este apartado es únicamente para ADMINISTRADORES. Si continúas, serás redirigido a la página de acceso.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelLogin">Cancelar</button>
+      <a class="btn btn-primary" href="/Login">Continuar</a>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // Control del modal de login
+  (function () {
+    const btnOpen = document.getElementById('btnLoginGhost');
+    const modal   = document.getElementById('loginModal');
+    const btnCancel = document.getElementById('cancelLogin');
+
+    if (!btnOpen || !modal || !btnCancel) return;
+
+    const open = () => {
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+    const close = () => {
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    btnOpen.addEventListener('click', open);
+    btnCancel.addEventListener('click', close);
+
+    // Cerrar al hacer click fuera del cuadro
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) close();
+    });
+
+    // Cerrar con Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+        close();
+      }
+    });
+  })();
+</script>
+
+<nav>
+  <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
+  <div><a href="/" class="link <%= currentPath === '/' ? 'active' : '' %>">INICIO</a></div>
+  <div><a href="/Estadisticas" class="link <%= currentPath.startsWith('/Estadisticas') ? 'active' : '' %>">ESTADISTICAS</a></div>
+  <div><a href="/JugadoresD" class="link <%= currentPath.startsWith('/JugadoresD') ? 'active' : '' %>">JUGADORES DESTACADOS</a></div>
+  <div><a href="/Coord" class="link <%= currentPath.startsWith('/Coord') ? 'active' : '' %>">COORDINADORES</a></div>
+  <div><a href="/Standing" class="link <%= currentPath.startsWith('/Standing') ? 'active' : '' %>">STANDING</a></div>
+  <img src="/resources/imgs/logo.png" alt="Logo">
+</nav>
+
+<script src="/resources/js/Animaciones.js"></script>
+<section class="content02"></section>
+      
+
     
-    </nav>
-    <script>
-        // Agregar el evento a todos los enlaces con clase 'link'
-        document.querySelectorAll('.link').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // Evita que el link se cargue inmediatamente
-                const url = this.href; // Captura la URL del enlace
-
-                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
-                document.body.classList.add('fade-out');
-
-                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
-                setTimeout(function() {
-                    window.location.href = url; // Cambia a la nueva URL después de la animación
-                }, 90); // Espera 500 ms para redirigir
-            });
-        });
-    </script>
-    <script src="resources/js/Animaciones.js"></script>
-    <section class="content02"></section>
+     
+   
     <section class="content03">
         <div class="card">
             <h1>ACADEMIA DE BEISBOL POTROS ITSON</h1>
         </div>
     </section>
+
 </body>
 
 </html>

@@ -1,36 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Academia ITSON</title>
-        <link rel="stylesheet" href="resources/styles/styleForms.css">
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Academia ITSON</title>
+  <link rel="stylesheet" href="/resources/styles/styleMain.css">
+  <link rel="stylesheet" href="/resources/styles/stylePago.css">
+  <link rel="icon" href="/resources/imgs/academia-logo.png">
+</head>
+<body class="admin-bg">
+  <section class="content03">
+    <div class="badge-title"><p>ACTUALIZAR EQUIPO</p></div>
+  </section>
 
-        <link rel="icon" href="resources/imgs/academia-logo.png">
-    </head>
-<body>
-    <section class="content03">
-        
-        <div class="cardContra">
-            <h1 class="fotos">ACTUALIZAR EQUIPO</h1>
+  <section class="login-body">
+    <div class="login-container form-card">
+      <form id="formActualizar" action="/actualizarEquipo/<%= equipo.id_equipo %>" method="POST" enctype="multipart/form-data">
+        <div class="field">
+          <label>Nombre del equipo:</label>
+          <input type="text" name="nombre" value="<%= equipo.nombre %>" required>
         </div>
-    </section>
+        <div class="field">
+          <label>Colores:</label>
+          <input type="text" name="colores" value="<%= equipo.colores %>" required>
+        </div>
 
-    <section class="login-body">
-        <div class="login-container">
-            <form action="/actualizaEquipoNuevo" method="GET">
-                <select name="equipo">
-                    <% equipos.forEach(equipo => { %>
-                        <option value="<%= equipo.id_equipo %>"> <%= equipo.nombre %> </option>
-                        <% }); %>
-                </select>
-                <input type="submit" name="eliminar" value="Elimnar">
-            </form>
+        <div class="grid-2">
+          <div class="field">
+            <label>Categoría:</label>
+            <select id="catEdit" name="categoria" required>
+              <% categorias.forEach(c=>{ %>
+                <option value="<%= c.id_categoria %>" <%= c.id_categoria===equipo.id_categoria ? 'selected':'' %>><%= c.nombre_categoria %></option>
+              <% }) %>
+            </select>
           </div>
-    </section>
-    <div class="regresar">
-    <a href="/formActualizarEquipo"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
-</div>
-    
+          <div class="field">
+            <label>Entrenador (couch):</label>
+            <select id="couchEdit" name="couch">
+              <option value="">— Sin entrenador —</option>
+              <% entrenadores.forEach(en=>{ %>
+                <option value="<%= en.id_entrenador %>" <%= en.id_entrenador===equipo.id_couch ? 'selected':'' %>><%= en.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Foto actual:</label><br>
+          <% if (equipo.url_foto) { %>
+            <img class="preview" src="/<%= equipo.url_foto %>" alt="Foto del equipo" style="max-width:220px">
+          <% } else { %>
+            <p class="row-help">Este equipo no tiene foto.</p>
+          <% } %>
+        </div>
+        <div class="field">
+          <label>Subir nueva foto (opcional):</label>
+          <input type="file" name="fotoEquipo" accept="image/*">
+        </div>
+
+        <div class="actions">
+          <button type="submit">Actualizar</button>
+          <a class="back-cta" href="/formActualizarEquipo">⟵ Volver a selección</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // Confirm antes de enviar
+    const form = document.getElementById('formActualizar');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      Swal.fire({
+        title:'¿Actualizar equipo?',
+        text:'Se guardarán los cambios de «<%= equipo.nombre %>».',
+        icon:'question',
+        showCancelButton:true,
+        confirmButtonText:'Sí, actualizar',
+        cancelButtonText:'Cancelar',
+        reverseButtons:true,
+        focusCancel:true
+      }).then(r=>{
+        if(r.isConfirmed){
+          Swal.fire({title:'Actualizando…', allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+          form.submit();
+        }
+      });
+    });
+
+    // Si cambian la categoría en edición, recargo entrenadores de esa categoría
+    const catEdit = document.getElementById('catEdit');
+    const couchEdit = document.getElementById('couchEdit');
+    catEdit.addEventListener('change', async (e)=>{
+      couchEdit.innerHTML = '<option value="">Cargando…</option>';
+      couchEdit.disabled = true;
+      try{
+        const r = await fetch(`/api/entrenadores?categoriaID=${encodeURIComponent(e.target.value)}`, {credentials:'same-origin'});
+        const js = await r.json();
+        if(!js.ok){
+          couchEdit.innerHTML = '<option value="">— Error —</option>'; return;
+        }
+        couchEdit.innerHTML = '<option value="">— Sin entrenador —</option>' +
+          (js.data||[]).map(en => `<option value="${en.id_entrenador}">${en.nombre}</option>`).join('');
+        couchEdit.disabled = false;
+      }catch(err){
+        console.error(err);
+        couchEdit.innerHTML = '<option value="">— Error —</option>';
+      }
+    });
+  </script>
 </body>
 </html>

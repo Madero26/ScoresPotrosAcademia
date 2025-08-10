@@ -2,59 +2,14 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academia ITSON</title>
-    <link rel="stylesheet" href="resources/styles/styleMain.css">
-    <link rel="icon" href="resources/imgs/academia-logo.png">
+    <%- include('partials/head') %>
     <link rel="stylesheet" href="resources/styles/styleCategorias.css">
 </head>
 
 <body>
 
-    <section class="content01"></section>
-    <nav>
-        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
-        <div>
-            <a href="/" class="link">INICIO</a>
-        </div>
-        <div>
-            <a href="/Estadisticas" class="link">ESTADISTICAS</a>
-        </div>
-        <div>
-            <a href="/JugadoresD" class="link">JUGADORES DESTACADOS</a>
-        </div>
-        <div>
-            <a href="/Pagos" class="link">PAGOS</a>
-        </div>
-        <div>
-            <a href="/Coord" class="link">COORDINADORES</a>
-        </div>
-        <div>
-            <a href="/Standing" class="link">STANDING</a>
-        </div>
-        <img src="resources/imgs/logo.png" alt="Logo">
-    
-    </nav>
-    <script>
-        // Agregar el evento a todos los enlaces con clase 'link'
-        document.querySelectorAll('.link').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // Evita que el link se cargue inmediatamente
-                const url = this.href; // Captura la URL del enlace
-
-                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
-                document.body.classList.add('fade-out');
-
-                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
-                setTimeout(function() {
-                    window.location.href = url; // Cambia a la nueva URL después de la animación
-                }, 90); // Espera 500 ms para redirigir
-            });
-        });
-    </script>
-    <script src="resources/js/Animaciones.js"></script>
-    <section class="content02"></section>
+    <%- include('partials/navbar') %>
+    <%- include('partials/footer') %>
     <section class="categorias-section">
   <h1 class="titulo">Categorías</h1>
 

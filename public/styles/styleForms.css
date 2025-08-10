@@ -1,205 +1,151 @@
-/* Estilos generales */
-body {
-    background-color: #0079C2;
-    padding: 0;
-    margin: 0;
-    transition: opacity 0.5s ease-in-out;
+/* =========================
+   Tokens
+========================= */
+:root{
+  --blue-500:#0079C2;
+  --blue-700:#0E5688;
+  --ink:#0b1b2b;
+  --paper:#fff;
+  --accent:#e11d48;
+  --radius-lg:3rem;
+  --shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-.fotos, .act, .eliminar, .agg, .conf-eliminar, .conf-actualizar {
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    margin-top: 1rem;
-    margin-bottom: 3rem;
-    justify-content: center;
-    width: 80%;
-    max-width: 800px;
-    border-radius: 3rem;
-    font-family: "Anton", sans-serif;
-    font-size: 2.75rem;
-    color: #0E5688;
-    text-align: center;
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--blue-500); color:var(--ink);
+  font-family:"Source Sans 3",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  transition:opacity .35s ease;
+}
+img{max-width:100%;display:block}
+
+/* =========================
+   Banda superior (usuario / salir)
+========================= */
+.content01{
+  position:sticky; top:0; z-index:30;
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--blue-700); color:#fff; padding:.55rem .8rem;
+}
+.regreso a{
+  display:inline-block; text-decoration:none; color:#fff; font-weight:700;
+  background:#0b5aa2; padding:.45rem .75rem; border-radius:.55rem;
+}
+.perfil p{margin:0; font-weight:700}
+
+/* =========================
+   NAV a lo largo (full-width)
+   – barra 100% con contenido espacioso, misma forma
+========================= */
+nav{
+  width:100%;               /* ocupa todo el ancho */
+  margin:0;                 /* sin márgenes */
+  border-radius:0;          /* sin esquinas para barra completa */
+  padding:1rem clamp(16px, 3vw, 48px);
+  background:var(--paper);
+  box-shadow:0 1px 0 rgba(0,0,0,.08);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem;
+  overflow-x:auto; scrollbar-width:none;
+}
+nav::-webkit-scrollbar{display:none}
+nav img{width:70px}
+
+nav select{
+  min-width:240px;
+  background:#fff; border:1px solid #e5e7eb; border-radius:.7rem;
+  padding:.55rem .7rem; font-size:1.05rem; cursor:pointer;
+}
+nav a{
+  font-weight:800; text-decoration:none; color:var(--ink);
+  transition:transform .2s,color .2s;
+  white-space:nowrap;
+}
+nav a:hover{transform:scale(1.05); color:var(--accent)}
+.active{color:var(--accent)}
+
+/* Separador azul bajo el nav (alineado) */
+.content02{background:var(--blue-700); padding:1.1rem 0; margin-top:0}
+
+/* =========================
+   Títulos en “pastilla”
+========================= */
+.fotos,.act,.eliminar,.agg,.conf-eliminar,.conf-actualizar{
+  background:var(--paper);
+  width:min(92%,920px);
+  margin:1.2rem auto 1.8rem;
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);
+  color:var(--blue-700);
+  text-align:center;
+  font-family:"Anton",sans-serif;
+  line-height:1.12;
+  padding:1.1rem 1.4rem;
+  font-size:clamp(1.4rem, 1.8vw + 1rem, 2.6rem);
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    margin: auto;
-    width: 100%;
-    max-width: 450px;
+/* =========================
+   Formularios
+========================= */
+form{
+  width:min(92%,720px);
+  margin:0 auto;
+  display:flex; flex-direction:column; gap:.6rem;
+}
+form label{
+  color:#fff; font-family:"Anton",sans-serif;
+  font-size:clamp(1.05rem,.6vw + .9rem,1.35rem);
+}
+form input, form select{
+  width:100%; border:1px solid #e5e7eb; border-radius:.7rem;
+  padding:.85rem .95rem; font-size:1.05rem; color:var(--blue-700);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.04); outline:none;
+}
+form input:focus, form select:focus{
+  border-color:#9cc3ff; box-shadow:0 0 0 3px rgba(60,130,246,.25)
+}
+form input[type="file"]{font-size:.95rem; color:#fff}
+
+/* Botón principal */
+button[type="submit"], form input[type="submit"]{
+  background:linear-gradient(180deg,#12325f,#0c2b52);
+  color:#fff; border:0; border-radius:.8rem;
+  padding:.95rem 1rem; font-weight:800; letter-spacing:.2px;
+  box-shadow:0 10px 22px rgba(10,56,113,.23);
+  cursor:pointer;
+}
+button[type="submit"]:hover, form input[type="submit"]:hover{filter:brightness(1.06)}
+
+.botones{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:.8rem; align-items:center; justify-content:center;
 }
 
-form label {
-    font-family: "Anton", sans-serif;
-    font-size: 1.875rem;
-    color: #fff;
-    text-align: left;
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 1100px){
+  nav img{width:66px}
+  nav select{min-width:220px}
 }
 
-form input, form select {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    width: 100%;
-    font-size: 1.875rem;
-    color: #0E5688;
+@media (max-width: 860px){
+  /* Nav estilo home: columna centrada, misma forma */
+  nav{flex-direction:column; align-items:center; text-align:center; gap:.7rem}
+  nav img{width:70px}
+  nav select, nav a{width:min(92vw,460px); display:block}
 }
 
-form input[type="file"] {
-    width: 100%;
-    font-size: 1.25rem;
-    color: #fff;
+@media (max-width: 480px){
+  nav img{width:64px}
+  nav a{font-size:.95rem}
+  form{width:min(95%, 420px)}
+  form label{font-size:1.05rem}
+  form input, form select{font-size:1rem}
 }
 
-.botones {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
 
-.botones input[type="submit"], .botones input[type="button"], form input[type="submit"] {
-    width: 100%;
-    max-width: 200px;
-    font-size: 1.75rem;
-    color: #FFF;
-    background-color: red;
-    border-radius: 0.5rem;
-    border: none;
-    padding: 0.5rem 1rem;
-}
-
-.content01 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #0E5688;
-    padding: 0.5rem;
-}
-
-.perfil {
-    background-color: red;
-}
-
-.perfil p {
-    font-family: "Anton", sans-serif;
-    font-size: 1.25rem;
-    color: #fff;
-}
-
-.regreso a {
-    background-color: tomato;
-    font-family: "Source Sans 3", sans-serif;
-    color: #FFF;
-    font-size: 1.25rem;
-    text-align: center;
-    text-decoration: none;
-    padding: 0.5rem 0.8rem;
-}
-
-.content02 {
-    background-color: #0E5688;
-    padding: 2rem 3%;
-}
-
-nav {
-    background-color: #FFF;
-    margin: auto;
-    padding: 2rem 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    overflow-x: auto; /* Scroll horizontal */
-    white-space: nowrap;
-}
-
-img {
-    width: 80px;
-    max-width: 100%;
-}
-
-nav select {
-    background-color: #FFF;
-    border: 1px solid #CCC;
-    border-radius: 5px;
-    padding: 0.3rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-nav a {
-    font-family: "Source Sans 3", sans-serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #000;
-    text-decoration: none;
-    transition: transform 0.3s ease, color 0.3s ease;
-    margin: 0 0.5rem;
-}
-
-nav a:hover {
-    transform: scale(1.1);
-    color: red;
-}
-
-.active {
-    color: red;
-}
-
-.scale {
-    transform: scale(1.2);
-}
-
-.fade-out {
-    opacity: 0;
-}
-
-/* Ajustes de responsividad para dispositivos móviles */
-@media (max-width: 768px) {
-    .fotos, .act, .eliminar, .agg, .conf-eliminar, .conf-actualizar, form {
-        width: 90%;
-        font-size: 2.25rem;
-    }
-
-    .content01 {
-        padding: 1rem;
-    }
-
-    nav {
-        padding: 0.5rem 1rem;
-    }
-
-    nav img {
-        width: 40px;
-    }
-
-    nav a {
-        font-size: 1rem;
-        margin: 0.3rem 0.2rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .fotos, .act, .eliminar, .agg, .conf-eliminar, .conf-actualizar, form {
-        width: 98%;
-        font-size: 1.5rem;
-    }
-
-    nav img {
-        width: 35px;
-    }
-
-    nav a {
-        font-size: 0.875rem;
-        padding: 0.3rem;
-    }
-
-    form label, form input, form select {
-        font-size: 1.25rem;
-    }
-}
 
 
 

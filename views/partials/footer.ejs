@@ -1,0 +1,11 @@
+<script>
+  // Fade-out global para los enlaces de la navbar
+  document.querySelectorAll('.link').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const url = link.href;
+      document.body.classList.add('fade-out');
+      setTimeout(() => window.location.href = url, 90);
+    });
+  });
+</script>

@@ -1,121 +1,165 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+/* Fondo igual que el resto del sitio */
+body.admin-bg{
+  background: linear-gradient(180deg, #0170b7 0%, #0066a4 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
 
-.content03{
-    padding-top: 1rem;
-    padding-bottom: 2rem;
+/* Título en badge (mismo estilo de la pantalla de selección) */
+.badge-title{
+  background:#fff;
+  border-radius: 4.5rem;
+  width: clamp(280px, 60vw, 760px);
+  margin: 1.25rem auto 1.5rem;
+  display:flex; justify-content:center; align-items:center;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
 }
-.card{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    justify-content: center;
-    width: 25%;
-    border-radius: 4.5rem;
+.badge-title p{
+  margin:0; padding:.9rem 1.6rem;
+  font-family:"Anton", sans-serif;
+  font-size: clamp(24px, 5vw, 34px);
+  letter-spacing:.5px;
+  color:#0E5688;
+  text-align:center;
 }
-.card p{
-    margin: 0;
-    padding: 1rem;
-    font-family: "Anton", sans-serif;
-    font-size: 56px;
-    color: #0E5688;
-}
-.cardContra{
-    background-color: #FFF;
-    display: flex;
-    margin: auto;
-    justify-content: center;
-    width: 33%;
-    border-radius: 4.5rem;
-}
-.cardContra p{
-    margin: 0;
-    padding: 1rem;
-    font-family: "Anton", sans-serif;
-    font-size: 56px;
-    color: #0E5688;
-}
-.login-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-font-size: 24px;
-    min-height: 50vh;
-    
-  }
-  
-  .login-container {
-    width: 500px;
-    padding: 50px;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .login-container input {
-    width: 100%;
-    margin-bottom: 30px;
-    font-size: 24px;
-    padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
-  .login-container button {
-    width: 100%;
-    padding: 30px;
-    border: none;
-    border-radius: 5px;
-    font-size: 24px;
-    background-color: #0a3871;
-    color: #fff;
-    cursor: pointer;
-  }
-  
-  .login-container button:hover {
-    background-color: #0b4a85;
-  }
-  
-  .login-container p {
-    margin-top: 20px;
-    text-align: center;
-    color: #495057;
-  }
-  
-  .login-container a {
-    color: #0a3871;
-    text-decoration: none;
-  }
-  
-  .login-container a:hover {
-    text-decoration: underline;
-  }
-  .regresar{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-left: 44%;
-    gap: 4%;
-    margin-top: 1rem;
 
-  }
-  .regresar a{
-    margin: 0;
-    padding: 0;
-  }
-  .regresar p{
-    margin: 0;
-    padding: 0;
-    font-family: "Anton", sans-serif;
-    font-size: 24px;
-    color: #FFF;
-  }
-  .regresar img{
-    margin: 0;
-    padding: 0;
-    width: 10%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .regresar img:hover {
-    transform: scale(1.1);
+/* La tarjeta queda compacta (como dejamos antes) */
+.form-card{
+  width: min(640px, 94vw);
+  padding: clamp(16px, 3vw, 28px);
+  border-radius: 16px;
+  background:#fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.12);
+  border: 1px solid rgba(14,86,136,.06);
+  margin-inline: auto;
 }
+
+/* Orden y responsive del formulario (igual que ya tienes) */
+.grid-2{ display:grid; grid-template-columns:1fr; gap:16px; }
+@media (min-width:760px){ .grid-2{ grid-template-columns:1fr 1fr; } }
+
+.form-card label{ display:block; margin:2px 0 8px; font-weight:700; color:#19384f; }
+.form-card label.sub{ font-weight:600; color:#34556c; margin-bottom:6px; }
+
+.form-card input[type="text"],
+.form-card input[type="date"],
+.form-card input[type="file"]{
+  width:100%; padding:12px 14px; border-radius:12px;
+  border:1.5px solid #d7e1ea; background:#fff; font-size:1rem;
+  outline:none; transition:border-color .18s, box-shadow .18s;
+}
+.form-card input[type="text"]:focus,
+.form-card input[type="date"]:focus{
+  border-color:#0E5688; box-shadow:0 0 0 4px rgba(14,86,136,.12);
+}
+
+/* File input */
+.form-card input[type="file"]{ background:#f5f9fd; border-style:dashed; }
+.form-card input[type="file"]::file-selector-button,
+.form-card input[type="file"]::-webkit-file-upload-button{
+  border:0; border-radius:10px; padding:10px 14px;
+  background:#0a3871; color:#fff; font-weight:700; cursor:pointer; margin-right:10px;
+}
+
+/* Imagen previa */
+.preview{
+  width:min(320px,100%); border-radius:12px;
+  box-shadow:0 10px 24px rgba(0,0,0,.15); border:1px solid rgba(0,0,0,.06);
+}
+
+/* Acciones */
+.actions{ display:flex; gap:12px; align-items:center; margin-top:6px; }
+.actions button{
+  flex:1; padding:12px 14px; border:0; border-radius:12px;
+  background:#0d2e5c; color:#fff; font-weight:800;
+  box-shadow:0 10px 22px rgba(10,56,113,.25);
+  cursor:pointer; transition:filter .18s, transform .04s;
+}
+.actions button:hover{ filter:brightness(1.07); }
+.actions button:active{ transform: translateY(1px); }
+
+.back-cta{
+  white-space:nowrap; padding:10px 14px; border-radius:999px;
+  background:#eef5fb; color:#0a3871; text-decoration:none; font-weight:700;
+  border:1px solid #cfe0ee; transition:background .2s, transform .04s;
+}
+.back-cta:hover{ background:#e4eff8; }
+.back-cta:active{ transform: translateY(1px); }
+
+@media (max-width:520px){
+  .actions{ flex-direction:column; }
+  .actions button, .back-cta{ width:100%; }
+}
+/* --- Forzar layout a una columna y ampliar tarjeta --- */
+.form-card{
+  width: min(880px, 95vw);           /* más largo en desktop */
+}
+
+/* en esta página, todas las filas que usan grid-2 serán de 1 columna */
+.form-card .grid-2{
+  display: grid;
+  grid-template-columns: 1fr;        /* siempre 1 columna */
+  gap: 16px;
+}
+
+/* separación vertical cómoda entre bloques */
+.form-card .field{ margin-bottom: 14px; }
+
+/* inputs a lo largo (ya lo están, reforzamos) */
+.form-card input[type="text"],
+.form-card input[type="date"],
+.form-card input[type="file"]{
+  width: 100%;
+}
+
+/* opcional: que “Rango de fechas” tenga un pequeño respiro arriba */
+.form-card .field:first-of-type + .field { margin-top: 6px; }
+
+
+/* Select con el mismo estilo que los inputs */
+.form-card select{
+  width:100%;
+  padding:12px 14px;
+  border:1.5px solid var(--stroke);
+  border-radius:12px;
+  font-size:1rem;
+  background:#fff;
+  outline:none;
+  transition:border-color .18s, box-shadow .18s;
+  appearance: none; /* quita estilos nativos fuertes */
+}
+.form-card select:focus{
+  border-color:#0E5688;
+  box-shadow:0 0 0 4px rgba(14,86,136,.12);
+}
+/* Campos de texto, password, fecha y selects iguales */
+.form-card .field input[type="text"],
+.form-card .field input[type="password"],
+.form-card .field input[type="date"],
+.form-card .field select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
+  outline: none;
+  transition: box-shadow .2s, border-color .2s;
+}
+
+/* Estado focus */
+.form-card .field input[type="text"]:focus,
+.form-card .field input[type="password"]:focus,
+.form-card .field input[type="date"]:focus,
+.form-card .field select:focus {
+  border-color: #0a3871;
+  box-shadow: 0 0 0 3px rgba(10,56,113,.15);
+}
+
+/* Placeholder coherente */
+.form-card .field input::placeholder {
+  color: #9aa4af;
+}
+
+

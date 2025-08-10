@@ -11,25 +11,40 @@
 <body>
 
     
-    <section class="content03">
-        <div class="card">
-            <p>INICIO DE SESION</p>
-        </div>
-    </section>
+   <section class="login-header">
+  <div class="login-title-badge">
+    <h1 class="login-title-text">INICIO DE SESIÓN</h1>
+  </div>
+</section>
 
-    <section class="login-body">
-        <div class="login-container">
-            <form action="/login" method="POST">
-              <input type="text" name= "user" id="user" placeholder="Usuario" >
-              <input type="password" name="pass" id="pass" placeholder="Contraseña" >
-                <input type="submit" value="Iniciar Sesion">
-            </form>
-          </div>
-    </section>
-    <div class="regresar">
-        <a href="/"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<main class="login-body">
+  <div class="login-card">
+    <h2 class="login-heading">Bienvenido</h2>
+    <p class="login-subheading">Ingresa tus credenciales para continuar</p>
+
+    <form action="/login" method="POST">
+      <div class="field">
+        <label for="user">Usuario</label>
+        <input type="text" id="user" name="user" placeholder="Usuario" required>
+      </div>
+
+      <div class="field">
+        <label for="pass">Contraseña</label>
+        <input type="password" id="pass" name="pass" placeholder="Contraseña" required>
+      </div>
+
+      <div class="form-row">
+        <label class="remember"><input type="checkbox" name="remember"> Recuérdame</label>
+        <a href="#" id="olvide-link">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button type="submit" class="btn-primary">Iniciar sesión</button>
+    </form>
+
+    <a href="/" class="back-link">← Regresar</a>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <% if(typeof alert != "undefined") { %>
         <script>
             Swal.fire({
@@ -44,5 +59,68 @@
         </script>
 
         <% } %>
+
+        <script>
+const SOPORTE_MAIL = 'soporte@tusitio.com'; // ← cámbialo
+
+document.getElementById('olvide-link').addEventListener('click', async (e) => {
+  e.preventDefault();
+
+  const { value: formValues } = await Swal.fire({
+    title: 'Contactar soporte',
+    html: `
+      <input id="swal-usuario" class="swal2-input" placeholder="Usuario o correo" />
+      <textarea id="swal-mensaje" class="swal2-textarea" placeholder="Describe brevemente el problema"></textarea>
+    `,
+    confirmButtonText: 'Enviar',
+    cancelButtonText: 'Cancelar',
+    showCancelButton: true,
+    focusConfirm: false,
+    preConfirm: () => {
+      const usuario = (document.getElementById('swal-usuario').value || '').trim();
+      const mensaje = (document.getElementById('swal-mensaje').value || '').trim();
+      if (!usuario || !mensaje) {
+        Swal.showValidationMessage('Escribe tu usuario/correo y un mensaje.');
+        return false;
+      }
+      return { usuario, mensaje };
+    }
+  });
+
+  if (!formValues) return;
+
+  try {
+    const res = await fetch('/soporte/recuperar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formValues),
+      credentials: 'same-origin'
+    });
+    if (!res.ok) throw new Error('Bad response');
+
+    Swal.fire('Mensaje enviado', 'Soporte se pondrá en contacto contigo.', 'success');
+  } catch (err) {
+    const body = encodeURIComponent(
+      `Usuario/Correo: ${formValues.usuario}\n\n${formValues.mensaje}`
+    );
+    Swal.fire({
+      icon: 'info',
+      title: 'No se pudo enviar desde aquí',
+      html: `
+        Escríbenos a <a href="mailto:${SOPORTE_MAIL}?subject=Recuperación de contraseña&body=${body}">
+        ${SOPORTE_MAIL}</a> o copia el correo.`,
+      confirmButtonText: 'Copiar correo',
+      showCancelButton: true
+    }).then(r => {
+      if (r.isConfirmed) {
+        navigator.clipboard.writeText(SOPORTE_MAIL);
+        Swal.fire('Copiado', 'Correo de soporte copiado al portapapeles.', 'success');
+      }
+    });
+  }
+});
+</script>
+
+    
 </body>
 </html>

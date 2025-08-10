@@ -1,37 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Academia ITSON</title>
-        <link rel="stylesheet" href="resources/styles/styleMain.css">
-        <link rel="stylesheet" href="resources/styles/stylePago.css">
-        <link rel="icon" href="resources/imgs/academia-logo.png">
-    </head>
-<body>
-    <section class="content03">
-        
-        <div class="cardContra">
-            <p>ACTUALIZAR USUARIO COORDINADOR</p>
-        </div>
-    </section>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Academia ITSON</title>
+  <link rel="stylesheet" href="/resources/styles/styleMain.css">
+  <link rel="stylesheet" href="/resources/styles/stylePago.css">
+  <link rel="icon" href="/resources/imgs/academia-logo.png">
+</head>
+<body class="admin-bg">
+  <section class="content03">
+    <div class="badge-title"><p>ACTUALIZAR USUARIO (COORDINADOR)</p></div>
+  </section>
 
-    <section class="login-body">
-        <div class="login-container">
-            <form action="/eliminar/<%= user.id_usuario %>" method="POST">
-                <label for="usuario">Escribe el usuario:</label>
-        <input type="text" name="user"  value="<%= user.usuario %>" >
-        <label for="Contraseña">Escriba la Contraseña:</label>
-        <input  type="text" name="Contraseña" value="<%= user.contra %>" >
-                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas actualizar este Usuario?');">
-                    Eliminar
-                </button>
-            </form>
-          </div>
-    </section>
-    <div class="regresar">
-    <a href="/formActualizarUsuarioCoordinador"><img src="resources/imgs/flecha.png" alt="Flecha de regreso"></a>
-</div>
-    
+  <section class="login-body">
+    <div class="login-container form-card">
+      <form id="formActualizar" action="/actualizarUsuarioCoordinador/<%= user.id_usuario %>" method="POST">
+        <div class="field">
+          <label>Usuario:</label>
+          <input type="text" name="usuarioNuevo" value="<%= user.usuario %>" required>
+        </div>
+
+        <div class="field">
+          <label>Nueva contraseña (opcional):</label>
+          <input type="password" name="nuevaContra" placeholder="Dejar vacío para mantener la actual">
+        </div>
+
+        <div class="field">
+          <label>Rol:</label>
+          <input type="text" value="<%= user.rol %>" disabled>
+          <input type="hidden" name="rol" value="<%= user.rol %>">
+        </div>
+
+        <div class="actions">
+          <button type="submit">Actualizar</button>
+          <a class="back-cta" href="/formActualizarUsuarioCoordinador">⟵ Volver a selección</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const form = document.getElementById('formActualizar');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      Swal.fire({
+        title: '¿Actualizar usuario?',
+        text: 'Se guardarán los cambios de «<%= user.usuario %>».',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        focusCancel: true
+      }).then(r=>{
+        if(r.isConfirmed){
+          Swal.fire({title:'Actualizando…', allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+          form.submit();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
