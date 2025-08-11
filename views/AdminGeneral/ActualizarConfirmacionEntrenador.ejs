@@ -1,3 +1,4 @@
+<!-- views/AdminGeneral/ActualizarConfirmacionEntrenador.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,30 +10,48 @@
   <link rel="icon" href="/resources/imgs/academia-logo.png">
 </head>
 <body class="admin-bg">
+  <% var isDelete = (typeof isDelete !== 'undefined') ? isDelete : false; %>
+
   <section class="content03">
-    <div class="badge-title"><p>FORMULARIO PARA ACTUALIZAR DATOS ENTRENADOR</p></div>
+    <div class="badge-title">
+      <p><%= isDelete ? 'ELIMINAR ENTRENADOR' : 'FORMULARIO PARA ACTUALIZAR DATOS ENTRENADOR' %></p>
+    </div>
   </section>
 
   <section class="login-body">
     <div class="login-container form-card">
-      <form id="formActualizar" action="/actualizarEntrenador/<%= entrenador.id_entrenador %>" method="POST">
+      <form id="formActualizar"
+            action="<%= isDelete ? ('/eliminarEntrenador/' + entrenador.id_entrenador)
+                                 : ('/actualizarEntrenador/' + entrenador.id_entrenador) %>"
+            method="POST">
+
         <div class="field">
           <label>Nombres:</label>
-          <input type="text" name="nombres" value="<%= entrenador.nombres %>" required>
+          <input type="text" name="nombres"
+                 value="<%= entrenador.nombres %>"
+                 <%= isDelete ? 'readonly class="readonly"' : 'required' %>>
         </div>
+
         <div class="field">
           <label>Apellido Paterno:</label>
-          <input type="text" name="apellidoPaterno" value="<%= entrenador.apellido_paterno %>" required>
+          <input type="text" name="apellidoPaterno"
+                 value="<%= entrenador.apellido_paterno %>"
+                 <%= isDelete ? 'readonly class="readonly"' : 'required' %>>
         </div>
+
         <div class="field">
           <label>Apellido Materno:</label>
-          <input type="text" name="apellidoMaterno" value="<%= entrenador.apellido_materno %>" required>
+          <input type="text" name="apellidoMaterno"
+                 value="<%= entrenador.apellido_materno %>"
+                 <%= isDelete ? 'readonly class="readonly"' : 'required' %>>
         </div>
+
         <div class="field">
           <label>Categoría:</label>
-          <select name="categoria" required>
+          <select name="categoria" <%= isDelete ? 'disabled class="readonly"' : 'required' %>>
             <% categorias.forEach(c => { %>
-              <option value="<%= c.id_categoria %>" <%= c.id_categoria===entrenador.id_categoria ? 'selected':'' %>>
+              <option value="<%= c.id_categoria %>"
+                <%= c.id_categoria===entrenador.id_categoria ? 'selected':'' %>>
                 <%= c.nombre_categoria %>
               </option>
             <% }) %>
@@ -40,8 +59,12 @@
         </div>
 
         <div class="actions">
-          <button type="submit">Actualizar</button>
-          <a class="back-cta" href="/formActualizarEntrenador">⟵ Volver a selección</a>
+          <button type="submit" class="<%= isDelete ? 'btn-danger' : '' %>">
+            <%= isDelete ? 'Eliminar' : 'Actualizar' %>
+          </button>
+          <a class="back-cta" href="<%= isDelete ? '/formEliminarEntrenador' : '/formActualizarEntrenador' %>">
+            ⟵ Volver a selección
+          </a>
         </div>
       </form>
     </div>
@@ -50,20 +73,24 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     const form = document.getElementById('formActualizar');
+    const isDelete = <%= JSON.stringify(isDelete) %>;
     form.addEventListener('submit', function(e){
       e.preventDefault();
       Swal.fire({
-        title:'¿Actualizar entrenador?',
-        text:'Se guardarán los cambios de «<%= entrenador.nombres %>».',
-        icon:'question',
-        showCancelButton:true,
-        confirmButtonText:'Sí, actualizar',
-        cancelButtonText:'Cancelar',
-        reverseButtons:true,
-        focusCancel:true
+        title: isDelete ? '¿Eliminar entrenador?' : '¿Actualizar entrenador?',
+        text: isDelete ? 'Esta acción no se puede deshacer.'
+                       : 'Se guardarán los cambios de «<%= entrenador.nombres %>».',
+        icon: isDelete ? 'warning' : 'question',
+        showCancelButton: true,
+        confirmButtonText: isDelete ? 'Sí, eliminar' : 'Sí, actualizar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        focusCancel: true
       }).then(r=>{
         if(r.isConfirmed){
-          Swal.fire({title:'Actualizando…', allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+          Swal.fire({title: (isDelete?'Eliminando…':'Actualizando…'),
+                     allowOutsideClick:false, allowEscapeKey:false,
+                     didOpen:()=>Swal.showLoading()});
           form.submit();
         }
       });
@@ -71,3 +98,4 @@
   </script>
 </body>
 </html>
+

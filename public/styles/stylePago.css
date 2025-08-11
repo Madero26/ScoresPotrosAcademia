@@ -161,5 +161,11 @@ body.admin-bg{
 .form-card .field input::placeholder {
   color: #9aa4af;
 }
+/* para inputs y selects bloqueados en modo eliminar */
+.readonly, .readonly:read-only, select:disabled {
+  background:#f1f5fb;
+  color:#6b7280;
+  cursor:not-allowed;
+}
 
 

@@ -1,0 +1,93 @@
+<section class="content01">
+  <div class="regreso">
+    <a href="/logout">Cerrar Sesion</a>
+  </div>
+  <div class="perfil">
+            <% if (usuario) { %>
+            <p> User:  <%= usuario.nombres %> </p>
+            <% } %>
+        </div>
+</section>
+
+<nav>
+  <img src="/resources/imgs/potros.png" alt="POTROS ITSON" />
+
+  <!-- AGREGAR -->
+  <div>
+    <form>
+      <select name="agregar" id="agregar" onchange="redirigir(this)">
+        <option>AGREGAR</option>
+        <option value="/CoordAgregar">AGREGAR JUGADOR</option>
+        <option value="/formCrearEquipos">AGREGAR EQUIPO</option>
+        <option value="/formCrearEntrenadores">AGREGAR ENTRENADOR</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ELIMINAR -->
+  <div>
+    <form>
+      <select name="eliminar" id="eliminar" onchange="redirigir(this)">
+        <option>ELIMINAR</option>
+        <option value="/CoordEliminar">ELIMINAR JUGADOR</option>
+        <option value="/formEliminarEquipo">ELIMINAR EQUIPO</option>
+        <option value="/formEliminarEntrenador">ELIMINAR ENTRENADOR</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ACTUALIZAR -->
+  <div>
+    <form>
+      <select name="actualizar" id="actualizar" onchange="redirigir(this)">
+        <option>ACTUALIZAR</option>
+        <option value="/CoordActualizar">ACTUALIZAR JUGADOR</option>
+        <option value="/formActualizarEquipo">ACTUALIZAR EQUIPO</option>
+        <option value="/formActualizarEntrenador">ACTUALIZAR ENTRENADOR</option>
+        <option value="/formActualizarCategoria">ACTUALIZAR CATEGORÍA</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- CAMBIAR CONTRASEÑA -->
+  <div>
+    <a href="/CoordContraNueva" class="link">CAMBIAR CONTRASEÑA</a>
+  </div>
+
+  <img src="/resources/imgs/logo.png" alt="Logo" />
+</nav>
+
+<!-- content02 solicitado -->
+<section class="content02"></section>
+
+<!-- Scripts del nav; se protegen para no inicializar doble -->
+<script>
+  if (!window.__coordNavInit) {
+    window.__coordNavInit = true;
+
+    window.redirigir = function (selectElement) {
+      const url = selectElement.value;
+      if (url && !/^(AGREGAR|ELIMINAR|ACTUALIZAR)$/.test(url)) {
+        document.body.classList.add('fade-out');
+        setTimeout(() => (window.location.href = url), 200);
+      }
+      // Regresar a placeholder
+      setTimeout(() => { selectElement.selectedIndex = 0; }, 250);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.link').forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const url = this.href;
+          document.body.classList.add('fade-out');
+          setTimeout(() => (window.location.href = url), 200);
+        });
+      });
+    });
+  }
+</script>
+<script src="/resources/js/Animaciones.js"></script>
+
+
+

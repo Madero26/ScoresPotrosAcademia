@@ -9,15 +9,29 @@
 </head>
 <body>
    <%- include('../partials/adminNav', { usuario }) %>
-    <h1 class="fotos">FORMULARIO ELIMINAR CATEGORIA</h1>
+    <h1 class="fotos">FORMULARIO PARA ELIMINAR CATEGORIAS</h1>
     <form action="/eliminarCategoria" method="GET">
         <label for="categoria">Seleccione la categoria:</label>
-        <select name="categoriaID" id="categoria" required>
+        <select name="categoriaID">
             <% categorias.forEach(categoria => { %>
                 <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
                 <% }); %>
         </select>
         <input type="submit" value="Eliminar">
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: '<%= alertTitle %>',
+    text: '<%= alertMessage %>',
+    icon: '<%= alertIcon %>',
+    showConfirmButton: <%= showConfirmButton %>,
+    timer: <%= timer %>
+  }).then(() => {
+    window.location = '/<%= ruta %>';
+  });
+</script>
+<% } %>
 </body>
 </html>

@@ -9,16 +9,72 @@
 </head>
 <body>
     <%- include('../partials/adminNav', { usuario }) %>
-    <h1 class="fotos">FORMULARIO ELIMINAR EQUIPO</h1>
-    <form action="/eliminarEquipo" method="GET">
-        <label for="categoria">Seleccione la categoria:</label>
-        <select name="categoriaID">
-            <% categorias.forEach(categoria => { %>
-                <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
-                <% }); %>
-        </select>
-        
-        <input type="submit" value="Eliminar">
-    </form>
+    <h1 class="fotos">FORMULARIO PARA ELIMINAR EQUIPO</h1>
+
+<form id="formBuscarEquipo" action="/eliminarEquipo" method="GET">
+  <label for="categoriaSelect">Seleccione la categoría:</label>
+  <select id="categoriaSelect" name="categoriaID" required>
+    <% categorias.forEach(c => { %>
+      <option value="<%= c.id_categoria %>"><%= c.nombre_categoria %></option>
+    <% }) %>
+  </select>
+
+  <br><br>
+
+  <label for="equipoSelect">Seleccione el equipo:</label>
+  <select id="equipoSelect" name="equipoID" disabled required>
+    <option value="">— Selecciona una categoría primero —</option>
+  </select>
+
+  <br><br>
+
+  <input id="btnIr" type="submit" value="Eliminar" disabled>
+</form>
+
+<script>
+  const catSel = document.getElementById('categoriaSelect');
+  const eqSel  = document.getElementById('equipoSelect');
+  const btnIr  = document.getElementById('btnIr');
+
+  async function cargarEquipos(catId){
+    eqSel.innerHTML = '<option value="">Cargando…</option>';
+    eqSel.disabled = true; btnIr.disabled = true;
+    try{
+      const r = await fetch(`/api/equipos?categoriaID=${encodeURIComponent(catId)}`, {credentials:'same-origin'});
+      const js = await r.json();
+      if(!js.ok) throw new Error(js.message||'Error');
+
+      if(!js.data || js.data.length===0){
+        eqSel.innerHTML = '<option value="">— No hay equipos en esta categoría —</option>';
+        return;
+      }
+      eqSel.innerHTML = '<option value="">— Selecciona —</option>' +
+        js.data.map(e => `<option value="${e.id_equipo}">${e.nombre}</option>`).join('');
+      eqSel.disabled = false;
+    }catch(e){
+      console.error(e);
+      eqSel.innerHTML = '<option value="">— Error al cargar —</option>';
+    }
+  }
+
+  eqSel.addEventListener('change', ()=>{ btnIr.disabled = !eqSel.value; });
+
+  if(catSel.value) cargarEquipos(catSel.value);
+  catSel.addEventListener('change', e => cargarEquipos(e.target.value));
+</script>
+
+<!-- SweetAlert de éxito al volver del POST -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: '<%= alertTitle %>',
+    text: '<%= alertMessage %>',
+    icon: '<%= alertIcon %>',
+    showConfirmButton: <%= showConfirmButton %>,
+    timer: <%= timer %>
+  }).then(()=>{ window.location='/<%= ruta %>'; });
+</script>
+<% } %>
 </body>
 </html>

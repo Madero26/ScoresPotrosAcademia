@@ -1,24 +1,86 @@
+<!-- views/AdminGeneral/FormularioEliminarEntrenador.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academia ITSON</title>
-    <link rel="stylesheet" href="resources/styles/styleForms.css">
-    <link rel="icon" href="resources/imgs/academia-logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia ITSON</title>
+  <link rel="stylesheet" href="/resources/styles/styleForms.css">
+  <link rel="icon" href="/resources/imgs/academia-logo.png">
 </head>
 <body>
-    <%- include('../partials/adminNav', { usuario }) %>
-    <h1 class="fotos">FORMULARIO ELIMINAR ENTRENADOR</h1>
-    <form action="/eliminarEntrenador" method="GET">
-        <label for="categoria">Seleccione la categoria:</label>
-        <select name="categoriaID">
-            <% categorias.forEach(categoria => { %>
-                <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
-                <% }); %>
-        </select>
-        
-        <input type="submit" value="Eliminar">
-    </form>
+  <%- include('../partials/adminNav', { usuario }) %>
+
+  <h1 class="fotos">FORMULARIO PARA ELIMINAR ENTRENADOR</h1>
+
+  <form id="formBuscarEntrenador" action="/eliminarEntrenador" method="GET">
+    <label for="categoriaSelect">Seleccione la categoría:</label>
+    <select id="categoriaSelect" name="categoriaID" required>
+      <% categorias.forEach(c => { %>
+        <option value="<%= c.id_categoria %>"><%= c.nombre_categoria %></option>
+      <% }) %>
+    </select>
+
+    <br><br>
+
+    <label for="entrenadorSelect">Seleccione el entrenador:</label>
+    <select id="entrenadorSelect" name="entrenadorID" disabled required>
+      <option value="">— Selecciona una categoría primero —</option>
+    </select>
+
+    <br><br>
+
+    <input id="btnIr" type="submit" value="Eliminar" disabled>
+  </form>
+
+  <script>
+    const catSel = document.getElementById('categoriaSelect');
+    const entSel = document.getElementById('entrenadorSelect');
+    const btnIr  = document.getElementById('btnIr');
+
+    async function cargarEntrenadores(catId){
+      entSel.innerHTML = '<option value="">Cargando…</option>';
+      entSel.disabled = true; btnIr.disabled = true;
+
+      try{
+        const resp = await fetch(`/api/entrenadores?categoriaID=${encodeURIComponent(catId)}`, {credentials:'same-origin'});
+        const data = await resp.json();
+        if(!data.ok) throw new Error(data.message || 'Error');
+
+        if(!data.data || data.data.length === 0){
+          entSel.innerHTML = '<option value="">— No hay entrenadores en esta categoría —</option>';
+          return;
+        }
+
+        entSel.innerHTML = '<option value="">— Selecciona —</option>' +
+          data.data.map(e => `<option value="${e.id_entrenador}">${e.nombre}</option>`).join('');
+
+        entSel.disabled = false;
+      }catch(e){
+        console.error(e);
+        entSel.innerHTML = '<option value="">— Error al cargar —</option>';
+      }
+    }
+
+    entSel.addEventListener('change', ()=>{ btnIr.disabled = !entSel.value; });
+
+    if(catSel.value) cargarEntrenadores(catSel.value);
+    catSel.addEventListener('change', e => cargarEntrenadores(e.target.value));
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+    <script>
+      Swal.fire({
+        title: '<%= alertTitle %>',
+        text: '<%= alertMessage %>',
+        icon: '<%= alertIcon %>',
+        showConfirmButton: <%= showConfirmButton %>,
+        timer: <%= timer %>
+      }).then(() => {
+        window.location = '/<%= ruta %>';
+      });
+    </script>
+  <% } %>
 </body>
 </html>

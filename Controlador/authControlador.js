@@ -1565,3 +1565,184 @@ exports.cambiarContrasena = async (req, res) => {
     });
   }
 };
+
+// authControlador.js
+exports.eliminarCategoria = async (req, res) => {
+  try {
+    const usuario = req.user || req.usuario;
+    const id = req.params.id;
+
+    await new Promise((resolve, reject) => {
+      coneccion.query('DELETE FROM Categorias WHERE id_categoria=?', [id],
+        (err, result) => err ? reject(err) : resolve(result));
+    });
+
+    // Cargar nuevamente el combo/lista para que el admin siga trabajando
+    coneccion.query('SELECT * FROM Categorias', (e, categorias) => {
+      if (e) return res.status(500).send('Error al recargar categorías');
+      res.render('AdminGeneral/FormularioEliminarCategoria', {
+        usuario,
+        categorias,
+        alert: true,
+        alertTitle: '¡Eliminado!',
+        alertMessage: 'La categoría se eliminó correctamente.',
+        alertIcon: 'success',
+        showConfirmButton: false,
+        timer: 1500,
+        ruta: 'formEliminarCategoria'
+      });
+    });
+  } catch (err) {
+    console.error('Error al eliminar categoría:', err);
+    res.status(500).send('Error al eliminar la categoría.');
+  }
+};
+
+exports.eliminarCoordinador = (req, res) => {
+  const usuario = req.user || req.usuario;
+  const id = req.params.id;
+
+  coneccion.query('DELETE FROM Coordinadores WHERE id_coordinador=?', [id], (err) => {
+    if (err) {
+      console.error('Error al eliminar coordinador:', err);
+      return res.status(500).send('No fue posible eliminar.');
+    }
+
+    // recargar listado para seguir trabajando
+    coneccion.query('SELECT id_coordinador, nombres FROM Coordinadores ORDER BY nombres', (e, coordinadores) => {
+      if (e) return res.status(500).send('Error al recargar coordinadores');
+      res.render('AdminGeneral/FormularioEliminarCoordinador', {
+        usuario,
+        coordinadores,
+        alert: true,
+        alertTitle: '¡Eliminado!',
+        alertMessage: 'El coordinador fue eliminado correctamente.',
+        alertIcon: 'success',
+        showConfirmButton: false,
+        timer: 1500,
+        ruta: 'formEliminarCoordinador'
+      });
+    });
+  });
+};
+// authControlador.js
+exports.eliminarEntrenador = (req, res) => {
+  const usuario = req.user || req.usuario;
+  const id = req.params.id;
+
+  coneccion.query('DELETE FROM Entrenadores WHERE id_entrenador=?', [id], (err) => {
+    if (err) {
+      console.error('Error al eliminar entrenador:', err);
+      return res.status(500).send('No fue posible eliminar.');
+    }
+
+    // Volvemos al form de selección; el listado de entrenadores se obtiene por fetch.
+    coneccion.query('SELECT id_categoria,nombre_categoria FROM Categorias ORDER BY nombre_categoria',
+    (e, categorias) => {
+      if (e) return res.status(500).send('Error al recargar categorías');
+      res.render('AdminGeneral/FormularioEliminarEntrenador', {
+        usuario,
+        categorias,
+        alert: true,
+        alertTitle: '¡Eliminado!',
+        alertMessage: 'El entrenador fue eliminado correctamente.',
+        alertIcon: 'success',
+        showConfirmButton: false,
+        timer: 1500,
+        ruta: 'formEliminarEntrenador'
+      });
+    });
+  });
+};
+
+
+// authControlador.js
+exports.eliminarEquipo = (req, res) => {
+  const usuario = req.user || req.usuario;
+  const id = req.params.id;
+
+  // (Tus FKs ya tienen ON DELETE SET NULL en Jugadores, así que está OK.)
+  coneccion.query('DELETE FROM Equipos WHERE id_equipo=?', [id], (err) => {
+    if (err) {
+      console.error('Error al eliminar equipo:', err);
+      return res.status(500).send('No fue posible eliminar.');
+    }
+
+    // Volver al form de selección con popup
+    coneccion.query('SELECT id_categoria,nombre_categoria FROM Categorias ORDER BY nombre_categoria',
+    (e, categorias) => {
+      if (e) return res.status(500).send('Error al recargar categorías');
+      res.render('AdminGeneral/FormularioEliminarEquipo', {
+        usuario,
+        categorias,
+        alert: true,
+        alertTitle: '¡Eliminado!',
+        alertMessage: 'El equipo fue eliminado correctamente.',
+        alertIcon: 'success',
+        showConfirmButton: false,
+        timer: 1500,
+        ruta: 'formEliminarEquipo'
+      });
+    });
+  });
+};
+// authControlador.js
+exports.eliminarJugador = (req, res) => {
+  const usuario = req.user || req.usuario;
+  const id = req.params.id;
+
+  coneccion.query('DELETE FROM Jugadores WHERE id_jugador=?', [id], (err) => {
+    if (err) {
+      console.error('Error al eliminar jugador:', err);
+      return res.status(500).send('No fue posible eliminar.');
+    }
+
+    // Regresar al form con popup
+    coneccion.query('SELECT id_categoria,nombre_categoria FROM Categorias ORDER BY nombre_categoria',
+    (e, categorias) => {
+      if (e) return res.status(500).send('Error al recargar categorías');
+      res.render('AdminGeneral/FormularioEliminarJugador', {
+        usuario,
+        categorias,
+        alert: true,
+        alertTitle: '¡Eliminado!',
+        alertMessage: 'El jugador fue eliminado correctamente.',
+        alertIcon: 'success',
+        showConfirmButton: false,
+        timer: 1500,
+        ruta: 'formEliminarJugador'
+      });
+    });
+  });
+};
+// authControlador.js
+exports.eliminarUsuarioCoordinador = (req, res) => {
+  const usuario = req.user || req.usuario;
+  const id = req.params.id;
+
+  // Al borrar el usuario, la FK en Coordinadores tiene ON DELETE SET NULL (según tu esquema),
+  // así que los coordinadores quedarán con id_usuario = NULL automáticamente.
+  coneccion.query('DELETE FROM UsuarioAdministradores WHERE id_usuario=?', [id], (err) => {
+    if (err) {
+      console.error('Error al eliminar usuario coordinador:', err);
+      return res.status(500).send('No fue posible eliminar.');
+    }
+
+    // Recargar lista para seguir trabajando
+    coneccion.query("SELECT id_usuario, usuario FROM UsuarioAdministradores WHERE rol='Coordinador' ORDER BY usuario",
+    (e, userCoordinador) => {
+      if (e) return res.status(500).send('Error al recargar usuarios');
+      res.render('AdminGeneral/FormularioEliminarUsuarioCoordinador', {
+        usuario,
+        userCoordinador,
+        alert: true,
+        alertTitle: '¡Eliminado!',
+        alertMessage: 'El usuario del coordinador fue eliminado correctamente.',
+        alertIcon: 'success',
+        showConfirmButton: false,
+        timer: 1500,
+        ruta: 'formEliminarUsuarioCoordinador'
+      });
+    });
+  });
+};

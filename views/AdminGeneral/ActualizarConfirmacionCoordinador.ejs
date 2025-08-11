@@ -11,104 +11,114 @@
 </head>
 
 <body class="admin-bg">
-    <section class="content03">
-        <div class="badge-title">
-            <p>FORMULARIO PARA ACTUALIZAR DATOS COORDINADOR</p>
+    <% // default por si no lo envían
+var isDelete = (typeof isDelete !== 'undefined') ? isDelete : false;
+%>
+
+<section class="content03">
+  <div class="badge-title">
+    <p><%= isDelete ? 'ELIMINAR COORDINADOR' : 'FORMULARIO PARA ACTUALIZAR DATOS COORDINADOR' %></p>
+  </div>
+</section>
+
+<section class="login-body">
+  <div class="login-container form-card">
+    <form id="formActualizar"
+      action="<%= isDelete ? ('/eliminarCoordinador/' + coordinador.id_coordinador)
+                           : ('/actualizarCoordinador/' + coordinador.id_coordinador) %>"
+      method="POST" <%= isDelete ? '' : 'enctype="multipart/form-data"' %>>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="nombre">Nombre(s):</label>
+          <input type="text" id="nombre" name="nombre"
+            value="<%= coordinador.nombres %>" <%= isDelete ? 'readonly class="readonly"' : 'required' %> >
         </div>
-    </section>
 
-    <section class="login-body">
-        <div class="login-container form-card">
-            <form id="formActualizar" action="/actualizarCoordinador/<%= coordinador.id_coordinador %>" method="POST"
-                enctype="multipart/form-data">
-
-                <div class="grid-2">
-                    <div class="field">
-                        <label for="nombre">Nombre(s):</label>
-                        <input type="text" id="nombre" name="nombre" value="<%= coordinador.nombres %>" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="apellidoPaterno">Apellido paterno:</label>
-                        <input type="text" id="apellidoPaterno" name="apellidoPaterno"
-                            value="<%= coordinador.apellido_paterno %>" required>
-                    </div>
-                </div>
-
-                <div class="grid-2">
-                    <div class="field">
-                        <label for="apellidoMaterno">Apellido materno:</label>
-                        <input type="text" id="apellidoMaterno" name="apellidoMaterno"
-                            value="<%= coordinador.apellido_materno %>" required>
-                    </div>
-
-                    <!-- Categoría asignada -->
-                    <div class="field">
-                        <label for="categoria">Categoría asignada:</label>
-                        <select id="categoria" name="categoria" required>
-                            <% categorias.forEach(c=> { %>
-                                <option value="<%= c.id_categoria %>" <%=c.id_categoria===coordinador.id_categoria
-                                    ? 'selected' : '' %>>
-                                    <%= c.nombre_categoria %>
-                                </option>
-                                <% }) %>
-                        </select>
-                    </div>
-
-                    <!-- Usuario asignado -->
-                    <div class="field">
-                        <label for="usuario">Usuario asignado:</label>
-                        <select id="usuario" name="usuario" required>
-                            <% userCoordinador.forEach(u=> { %>
-                                <option value="<%= u.id_usuario %>" <%=u.id_usuario===coordinador.id_usuario
-                                    ? 'selected' : '' %>>
-                                    <%= u.usuario %>
-                                </option>
-                                <% }) %>
-                        </select>
-                    </div>
-
-
-                    <div class="field">
-                        <label>Foto actual:</label>
-                        <img class="preview" src="<%= coordinador.url_foto %>" alt="Foto del coordinador">
-                    </div>
-
-                    <div class="field">
-                        <label>Subir nueva foto (opcional):</label>
-                        <input type="file" name="fotoCoordinador" accept="image/*">
-                    </div>
-
-                    <div class="actions">
-                        <button type="submit">Actualizar</button>
-                        <a class="back-cta" href="/formActualizarCoordinador">⟵ Volver a selección</a>
-                    </div>
-            </form>
+        <div class="field">
+          <label for="apellidoPaterno">Apellido paterno:</label>
+          <input type="text" id="apellidoPaterno" name="apellidoPaterno"
+            value="<%= coordinador.apellido_paterno %>" <%= isDelete ? 'readonly class="readonly"' : 'required' %> >
         </div>
-    </section>
+      </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        const form = document.getElementById('formActualizar');
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            Swal.fire({
-                title: '¿Actualizar coordinador?',
-                text: 'Se guardarán los cambios de «<%= coordinador.nombres %>».',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, actualizar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true,
-                focusCancel: true
-            }).then((r) => {
-                if (r.isConfirmed) {
-                    Swal.fire({ title: 'Actualizando…', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => Swal.showLoading() });
-                    form.submit();
-                }
-            });
-        });
-    </script>
+      <div class="grid-2">
+        <div class="field">
+          <label for="apellidoMaterno">Apellido materno:</label>
+          <input type="text" id="apellidoMaterno" name="apellidoMaterno"
+            value="<%= coordinador.apellido_materno %>" <%= isDelete ? 'readonly class="readonly"' : 'required' %> >
+        </div>
+
+        <div class="field">
+          <label for="categoria">Categoría asignada:</label>
+          <select id="categoria" name="categoria" <%= isDelete ? 'disabled class="readonly"' : 'required' %>>
+            <% categorias.forEach(c=> { %>
+              <option value="<%= c.id_categoria %>" <%= c.id_categoria===coordinador.id_categoria ? 'selected' : '' %>><%= c.nombre_categoria %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="usuario">Usuario asignado:</label>
+        <select id="usuario" name="usuario" <%= isDelete ? 'disabled class="readonly"' : 'required' %>>
+          <% userCoordinador.forEach(u=> { %>
+            <option value="<%= u.id_usuario %>" <%= u.id_usuario===coordinador.id_usuario ? 'selected' : '' %>><%= u.usuario %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Foto actual:</label>
+        <img class="preview" src="<%= coordinador.url_foto %>" alt="Foto del coordinador">
+      </div>
+
+      <% if (!isDelete) { %>
+        <div class="field">
+          <label>Subir nueva foto (opcional):</label>
+          <input type="file" name="fotoCoordinador" accept="image/*">
+        </div>
+      <% } %>
+
+      <div class="actions">
+        <button type="submit" class="<%= isDelete ? 'btn-danger' : '' %>">
+          <%= isDelete ? 'Eliminar' : 'Actualizar' %>
+        </button>
+        <a class="back-cta" href="<%= isDelete ? '/formEliminarCoordinador' : '/formActualizarCoordinador' %>">
+          ⟵ Volver a selección
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  const form = document.getElementById('formActualizar');
+  const isDelete = <%= JSON.stringify(isDelete) %>;
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    Swal.fire({
+      title: isDelete ? '¿Eliminar coordinador?' : '¿Actualizar coordinador?',
+      text: isDelete
+        ? 'Esta acción no se puede deshacer.'
+        : 'Se guardarán los cambios de «<%= coordinador.nombres %>».',
+      icon: isDelete ? 'warning' : 'question',
+      showCancelButton: true,
+      confirmButtonText: isDelete ? 'Sí, eliminar' : 'Sí, actualizar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+      focusCancel: true
+    }).then((r) => {
+      if (r.isConfirmed) {
+        Swal.fire({title: (isDelete?'Eliminando…':'Actualizando…'),
+          allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+        form.submit();
+      }
+    });
+  });
+</script>
+
 </body>
 
 </html>

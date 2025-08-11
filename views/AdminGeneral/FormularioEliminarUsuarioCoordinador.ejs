@@ -9,7 +9,7 @@
 </head>
 <body>
     <%- include('../partials/adminNav', { usuario }) %>
-    <h1 class="fotos">FORMULARIO ELIMINAR USUARIO DE COORDINADOR</h1>
+    <h1 class="fotos">FORMULARIO ACTUALIZAR DATOS DE USUARIO COORDINADOR</h1>
     <form action="/eliminarUsuarioCoordinador" method="GET">
         <label for="usuario">Seleccione el usuario:</label>
         <select name="usuario">
@@ -19,20 +19,18 @@
         </select>
         <input type="submit" value="Eliminar">
     </form>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <% if(typeof alert !="undefined" ) { %>
-        <script>
-            Swal.fire({
-                title: '<%= alertTitle %>',
-                text: '<%= alertMessage %>',
-                icon: '<%= alertIcon %>',
-                showConfirmButton: <%= showConfirmButton %> ,
-                timer: <%= timer %>
-            }).then(() => {
-                    window.location = '/<%= ruta %>'
-                })
-        </script>
 
-        <% } %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: '<%= alertTitle %>',
+    text: '<%= alertMessage %>',
+    icon: '<%= alertIcon %>',
+    showConfirmButton: <%= showConfirmButton %>,
+    timer: <%= timer %>
+  }).then(()=>{ window.location='/<%= ruta %>'; });
+</script>
+<% } %>
 </body>
 </html>

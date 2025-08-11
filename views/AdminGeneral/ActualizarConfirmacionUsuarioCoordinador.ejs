@@ -1,3 +1,4 @@
+<!-- views/AdminGeneral/ActualizarConfirmacionUsuarioCoordinador.ejs -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,32 +10,52 @@
   <link rel="icon" href="/resources/imgs/academia-logo.png">
 </head>
 <body class="admin-bg">
+  <% var isDelete = (typeof isDelete !== 'undefined') ? isDelete : false; %>
+
   <section class="content03">
-    <div class="badge-title"><p>ACTUALIZAR USUARIO (COORDINADOR)</p></div>
+    <div class="badge-title">
+      <p><%= isDelete ? 'ELIMINAR USUARIO (COORDINADOR)' : 'ACTUALIZAR USUARIO (COORDINADOR)' %></p>
+    </div>
   </section>
 
   <section class="login-body">
     <div class="login-container form-card">
-      <form id="formActualizar" action="/actualizarUsuarioCoordinador/<%= user.id_usuario %>" method="POST">
-        <div class="field">
-          <label>Usuario:</label>
-          <input type="text" name="usuarioNuevo" value="<%= user.usuario %>" required>
-        </div>
+      <form id="formActualizar"
+        action="<%= isDelete ? ('/eliminarUsuarioCoordinador/' + user.id_usuario)
+                             : ('/actualizarUsuarioCoordinador/' + user.id_usuario) %>"
+        method="POST">
 
         <div class="field">
-          <label>Nueva contraseña (opcional):</label>
-          <input type="password" name="nuevaContra" placeholder="Dejar vacío para mantener la actual">
+          <label>Usuario:</label>
+          <input type="text" name="usuarioNuevo" value="<%= user.usuario %>"
+                 <%= isDelete ? 'readonly class="readonly"' : 'required' %>>
         </div>
+
+        <% if (!isDelete) { %>
+          <div class="field">
+            <label>Nueva contraseña (opcional):</label>
+            <input type="password" name="nuevaContra" placeholder="Dejar vacío para mantener la actual">
+          </div>
+        <% } else { %>
+          <div class="field">
+            <label>Contraseña:</label>
+            <input type="password" value="********" readonly class="readonly">
+          </div>
+        <% } %>
 
         <div class="field">
           <label>Rol:</label>
-          <input type="text" value="<%= user.rol %>" disabled>
+          <input type="text" value="<%= user.rol %>" disabled class="readonly">
           <input type="hidden" name="rol" value="<%= user.rol %>">
         </div>
 
         <div class="actions">
-          <button type="submit">Actualizar</button>
-          <a class="back-cta" href="/formActualizarUsuarioCoordinador">⟵ Volver a selección</a>
+          <button type="submit" class="<%= isDelete ? 'btn-danger' : '' %>">
+            <%= isDelete ? 'Eliminar' : 'Actualizar' %>
+          </button>
+          <a class="back-cta" href="<%= isDelete ? '/formEliminarUsuarioCoordinador' : '/formActualizarUsuarioCoordinador' %>">
+            ⟵ Volver a selección
+          </a>
         </div>
       </form>
     </div>
@@ -43,20 +64,24 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     const form = document.getElementById('formActualizar');
+    const isDelete = <%= JSON.stringify(isDelete) %>;
     form.addEventListener('submit', function(e){
       e.preventDefault();
       Swal.fire({
-        title: '¿Actualizar usuario?',
-        text: 'Se guardarán los cambios de «<%= user.usuario %>».',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, actualizar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true,
-        focusCancel: true
+        title: isDelete ? '¿Eliminar usuario?' : '¿Actualizar usuario?',
+        text: isDelete ? 'Esta acción no se puede deshacer.'
+                       : 'Se guardarán los cambios de «<%= user.usuario %>».',
+        icon: isDelete ? 'warning' : 'question',
+        showCancelButton:true,
+        confirmButtonText: isDelete ? 'Sí, eliminar' : 'Sí, actualizar',
+        cancelButtonText:'Cancelar',
+        reverseButtons:true,
+        focusCancel:true
       }).then(r=>{
         if(r.isConfirmed){
-          Swal.fire({title:'Actualizando…', allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+          Swal.fire({title:(isDelete?'Eliminando…':'Actualizando…'),
+                     allowOutsideClick:false, allowEscapeKey:false,
+                     didOpen:()=>Swal.showLoading()});
           form.submit();
         }
       });

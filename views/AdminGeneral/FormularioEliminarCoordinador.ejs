@@ -9,15 +9,31 @@
 </head>
 <body>
     <%- include('../partials/adminNav', { usuario }) %>
-    <h1 class="fotos">FORMULARIO ELIMINAR COORDINADOR</h1>
-    <form action="/eliminarCoordinador" method="GET">
-        <label for="coordinador">Seleccione al coordinador:</label>
-        <select name="coordinador">
-            <% coordinadores.forEach(coordinador => { %>
-                <option value="<%= coordinador.id_coordinador %>">  <%= coordinador.nombres %> </option>
-                <% }); %>
-        </select>
-        <input type="submit" value="Eliminar">
-    </form>
+    <h1 class="fotos">FORMULARIO PARA ELIMINAR COORDINADOR</h1>
+    <!-- AdminGeneral/FormularioEliminarCoordinador.ejs -->
+<form action="/eliminarCoordinador" method="GET">
+  <label for="coordinador">Seleccione al coordinador:</label>
+  <select name="coordinador">
+    <% coordinadores.forEach(c => { %>
+      <option value="<%= c.id_coordinador %>"><%= c.nombres %></option>
+    <% }) %>
+  </select>
+  <input type="submit" value="Eliminar">
+</form>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: '<%= alertTitle %>',
+      text: '<%= alertMessage %>',
+      icon: '<%= alertIcon %>',
+      showConfirmButton: <%= showConfirmButton %>,
+      timer: <%= timer %>
+    }).then(() => {
+      window.location = '/<%= ruta %>';
+    });
+  </script>
+<% } %>
 </body>
 </html>

@@ -7,88 +7,114 @@
   <link rel="stylesheet" href="resources/styles/stylePago.css"/>
   <link rel="icon" href="resources/imgs/academia-logo.png"/>
 </head>
+<!-- AdminGeneral/ActualizarConfirmacionCategoria.ejs -->
 <body class="admin-bg">
+  <%
+// Si el controlador/route no envía isDelete, por defecto es false
+var isDelete = (typeof isDelete !== 'undefined') ? isDelete : false;
+%>
+
   <section class="content03">
     <div class="badge-title">
-      <p>ACTUALIZAR DATOS CATEGORIA</p>
+      <p><%= isDelete ? 'ELIMINAR CATEGORÍA' : 'ACTUALIZAR DATOS CATEGORÍA' %></p>
     </div>
   </section>
 
   <section class="login-body">
-  <div class="login-container form-card">
-    <form id="formActualizar" action="/actualizarCategoria/<%= categoria.id_categoria %>" method="POST" enctype="multipart/form-data">
-      
-      <!-- Fila: Nombre / Rango edad -->
-      <div class="grid-2">
-        <div class="field">
-          <label>Nombre de la categoría:</label>
-          <input type="text" name="nombre" value="<%= categoria.nombre_categoria %>" required />
-        </div>
-
-        <div class="field">
-          <label>Rango de edad:</label>
-          <input type="text" name="rango" value="<%= categoria.rango_edad %>" required />
-        </div>
-      </div>
-
-      <!-- Rango de fechas -->
-      <div class="field">
-        <label>Rango de fechas:</label>
+    <div class="login-container form-card">
+      <form
+        id="formCategoria"
+        action="<%= isDelete 
+                  ? `/eliminarCategoria/${categoria.id_categoria}`
+                  : `/actualizarCategoria/${categoria.id_categoria}` %>"
+        method="POST"
+        enctype="multipart/form-data"
+      >
         <div class="grid-2">
-          <div>
-            <label class="sub">Desde</label>
-            <input type="date" name="inferior" value="<%= (new Date(categoria.rango_inferior)).toISOString().slice(0,10) %>" required />
+          <div class="field">
+            <label>Nombre de la categoría:</label>
+            <input type="text" name="nombre"
+              value="<%= categoria.nombre_categoria %>"
+              <%= isDelete ? 'readonly' : '' %> required />
           </div>
-          <div>
-            <label class="sub">Hasta</label>
-            <input type="date" name="superior" value="<%= (new Date(categoria.rango_superior)).toISOString().slice(0,10) %>" required />
+
+          <div class="field">
+            <label>Rango de edad:</label>
+            <input type="text" name="rango"
+              value="<%= categoria.rango_edad %>"
+              <%= isDelete ? 'readonly' : '' %> required />
           </div>
         </div>
-      </div>
 
-      <!-- Foto actual -->
-      <div class="field">
-        <label>Foto actual:</label>
-        <img class="preview" src="<%= categoria.url_foto %>" alt="Foto de la categoría">
-      </div>
+        <div class="field">
+          <label>Rango de fechas:</label>
+          <div class="grid-2">
+            <div>
+              <label class="sub">Desde</label>
+              <input type="date" name="inferior"
+                value="<%= (new Date(categoria.rango_inferior)).toISOString().slice(0,10) %>"
+                <%= isDelete ? 'readonly' : '' %> required />
+            </div>
+            <div>
+              <label class="sub">Hasta</label>
+              <input type="date" name="superior"
+                value="<%= (new Date(categoria.rango_superior)).toISOString().slice(0,10) %>"
+                <%= isDelete ? 'readonly' : '' %> required />
+            </div>
+          </div>
+        </div>
 
-      <!-- Nueva foto -->
-      <div class="field">
-        <label>Subir nueva foto (opcional):</label>
-        <input type="file" name="fotoCategoria" accept="image/*" />
-      </div>
+        <div class="field">
+          <label>Foto actual:</label>
+          <img class="preview" src="<%= categoria.url_foto %>" alt="Foto de la categoría">
+        </div>
 
-      <!-- Acciones -->
-      <div class="actions">
-        <button id="btnActualizar" type="submit">Actualizar</button>
-        <a class="back-cta" href="/formActualizarCategoria">⟵ Volver a selección</a>
-      </div>
-    </form>
-  </div>
-</section>
+        <!-- esconder input file cuando es eliminar -->
+        <% if (!isDelete) { %>
+          <div class="field">
+            <label>Subir nueva foto (opcional):</label>
+            <input type="file" name="fotoCategoria" accept="image/*" />
+          </div>
+        <% } %>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-  const form = document.getElementById('formActualizar');
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    Swal.fire({
-      title: '¿Actualizar categoría?',
-      text: 'Se guardarán los cambios de «<%= categoria.nombre_categoria %>».',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, actualizar',
-      cancelButtonText: 'Cancelar',
-      reverseButtons: true,
-      focusCancel: true
-    }).then((r) => {
-      if (r.isConfirmed) {
-        Swal.fire({title:'Actualizando…', allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
-        form.submit();
-      }
+        <div class="actions">
+          <button id="btnAccion" type="submit">
+            <%= isDelete ? 'Eliminar' : 'Actualizar' %>
+          </button>
+          <a class="back-cta" href="<%= isDelete ? '/formEliminarCategoria' : '/formActualizarCategoria' %>">
+            ⟵ Volver a selección
+          </a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const form = document.getElementById('formCategoria');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const modo = <%= isDelete ? 'true' : 'false' %>;
+      Swal.fire({
+        title: modo ? '¿Eliminar categoría?' : '¿Actualizar categoría?',
+        text: modo
+          ? 'Esta acción no se puede deshacer.'
+          : 'Se guardarán los cambios de «<%= categoria.nombre_categoria %>».',
+        icon: modo ? 'warning' : 'question',
+        showCancelButton: true,
+        confirmButtonText: modo ? 'Sí, eliminar' : 'Sí, actualizar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        focusCancel: true
+      }).then((r) => {
+        if (r.isConfirmed) {
+          Swal.fire({title: (modo?'Eliminando…':'Actualizando…'),
+                     allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+          form.submit();
+        }
+      });
     });
-  });
-</script>
-
+  </script>
 </body>
+
 </html>

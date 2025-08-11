@@ -1,3 +1,4 @@
+<!-- views/AdminGeneral/ActualizarConfirmacionJugador.ejs -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,44 +10,58 @@
   <link rel="icon" href="/resources/imgs/academia-logo.png">
 </head>
 <body class="admin-bg">
+  <% var isDelete = (typeof isDelete !== 'undefined') ? isDelete : false; %>
+
   <section class="content03">
-    <div class="badge-title"><p>ACTUALIZAR JUGADOR</p></div>
+    <div class="badge-title"><p><%= isDelete ? 'ELIMINAR JUGADOR' : 'ACTUALIZAR JUGADOR' %></p></div>
   </section>
 
   <section class="login-body">
     <div class="login-container form-card">
-      <form id="formActualizar" action="/actualizarJugador/<%= jugador.id_jugador %>" method="POST" enctype="multipart/form-data">
+      <form id="formJugador"
+            action="<%= isDelete ? ('/eliminarJugador/' + jugador.id_jugador)
+                                 : ('/actualizarJugador/' + jugador.id_jugador) %>"
+            method="POST" <%= isDelete ? '' : 'enctype="multipart/form-data"' %>>
         <div class="field">
           <label>Nombres:</label>
-          <input type="text" name="nombres" value="<%= jugador.nombres %>" required>
+          <input type="text" name="nombres" value="<%= jugador.nombres %>"
+                 <%= isDelete ? 'readonly class="readonly"' : 'required' %>>
         </div>
         <div class="field">
           <label>Apellido paterno:</label>
-          <input type="text" name="apellidoPaterno" value="<%= jugador.apellido_paterno %>" required>
+          <input type="text" name="apellidoPaterno" value="<%= jugador.apellido_paterno %>"
+                 <%= isDelete ? 'readonly class="readonly"' : 'required' %>>
         </div>
         <div class="field">
           <label>Apellido materno:</label>
-          <input type="text" name="apellidoMaterno" value="<%= jugador.apellido_materno %>" required>
+          <input type="text" name="apellidoMaterno" value="<%= jugador.apellido_materno %>"
+                 <%= isDelete ? 'readonly class="readonly"' : 'required' %>>
         </div>
         <div class="field">
           <label>Fecha de nacimiento:</label>
-          <input type="date" name="fechaNacimiento" value="<%= (new Date(jugador.fecha_nacimiento)).toISOString().slice(0,10) %>">
+          <input type="date" name="fechaNacimiento"
+                 value="<%= (new Date(jugador.fecha_nacimiento)).toISOString().slice(0,10) %>"
+                 <%= isDelete ? 'readonly class="readonly" onfocus="this.blur()"' : '' %>>
         </div>
 
         <div class="grid-2">
           <div class="field">
             <label>Categoría:</label>
-            <select id="catEdit" name="categoria" required>
+            <select id="catEdit" name="categoria" <%= isDelete ? 'disabled class="readonly"' : 'required' %>>
               <% categorias.forEach(c=>{ %>
-                <option value="<%= c.id_categoria %>" <%= c.id_categoria===jugador.id_categoria ? 'selected':'' %>><%= c.nombre_categoria %></option>
+                <option value="<%= c.id_categoria %>" <%= c.id_categoria===jugador.id_categoria ? 'selected':'' %>>
+                  <%= c.nombre_categoria %>
+                </option>
               <% }) %>
             </select>
           </div>
           <div class="field">
             <label>Equipo:</label>
-            <select id="teamEdit" name="equipo" required>
+            <select id="teamEdit" name="equipo" <%= isDelete ? 'disabled class="readonly"' : 'required' %>>
               <% equipos.forEach(eq=>{ %>
-                <option value="<%= eq.id_equipo %>" <%= eq.id_equipo===jugador.id_equipo ? 'selected':'' %>><%= eq.nombre %></option>
+                <option value="<%= eq.id_equipo %>" <%= eq.id_equipo===jugador.id_equipo ? 'selected':'' %>>
+                  <%= eq.nombre %>
+                </option>
               <% }) %>
             </select>
           </div>
@@ -56,14 +71,21 @@
           <label>Foto actual:</label><br>
           <img class="preview" src="/<%= jugador.url_foto %>" alt="Foto del jugador" style="max-width:220px">
         </div>
-        <div class="field">
-          <label>Subir nueva foto (opcional):</label>
-          <input type="file" name="fotoJugador" accept="image/*">
-        </div>
+
+        <% if (!isDelete) { %>
+          <div class="field">
+            <label>Subir nueva foto (opcional):</label>
+            <input type="file" name="fotoJugador" accept="image/*">
+          </div>
+        <% } %>
 
         <div class="actions">
-          <button type="submit">Actualizar</button>
-          <a class="back-cta" href="/formActualizarJugador">⟵ Volver a selección</a>
+          <button type="submit" class="<%= isDelete ? 'btn-danger' : '' %>">
+            <%= isDelete ? 'Eliminar' : 'Actualizar' %>
+          </button>
+          <a class="back-cta" href="<%= isDelete ? '/formEliminarJugador' : '/formActualizarJugador' %>">
+            ⟵ Volver a selección
+          </a>
         </div>
       </form>
     </div>
@@ -71,47 +93,45 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    // Confirmación antes de enviar
-    const form = document.getElementById('formActualizar');
+    const form = document.getElementById('formJugador');
+    const isDelete = <%= JSON.stringify(isDelete) %>;
     form.addEventListener('submit', function(e){
       e.preventDefault();
       Swal.fire({
-        title:'¿Actualizar jugador?',
-        text:'Se guardarán los cambios de «<%= jugador.nombres %>».',
-        icon:'question',
+        title: isDelete ? '¿Eliminar jugador?' : '¿Actualizar jugador?',
+        text: isDelete ? 'Esta acción no se puede deshacer.'
+                       : 'Se guardarán los cambios de «<%= jugador.nombres %>».',
+        icon: isDelete ? 'warning' : 'question',
         showCancelButton:true,
-        confirmButtonText:'Sí, actualizar',
+        confirmButtonText: isDelete ? 'Sí, eliminar' : 'Sí, actualizar',
         cancelButtonText:'Cancelar',
         reverseButtons:true,
         focusCancel:true
       }).then(r=>{
         if(r.isConfirmed){
-          Swal.fire({title:'Actualizando…', allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading()});
+          Swal.fire({title:(isDelete?'Eliminando…':'Actualizando…'),
+                     allowOutsideClick:false, allowEscapeKey:false,
+                     didOpen:()=>Swal.showLoading()});
           form.submit();
         }
       });
     });
 
-    // Si cambian la categoría en edición, recargo equipos de esa categoría
+    // sólo en actualizar recargamos equipos si cambia la categoría
+    <% if (!isDelete) { %>
     const catEdit = document.getElementById('catEdit');
     const teamEdit = document.getElementById('teamEdit');
     catEdit.addEventListener('change', async (e)=>{
-      teamEdit.innerHTML = '<option value="">Cargando…</option>';
-      teamEdit.disabled = true;
+      teamEdit.innerHTML = '<option value="">Cargando…</option>'; teamEdit.disabled = true;
       try{
         const r = await fetch(`/api/equipos?categoriaID=${encodeURIComponent(e.target.value)}`, {credentials:'same-origin'});
         const js = await r.json();
-        if(!js.ok || !js.data.length){
-          teamEdit.innerHTML = '<option value="">— Sin equipos —</option>';
-          return;
-        }
+        if(!js.ok || !js.data.length){ teamEdit.innerHTML = '<option value="">— Sin equipos —</option>'; return; }
         teamEdit.innerHTML = js.data.map(eq => `<option value="${eq.id_equipo}">${eq.nombre}</option>`).join('');
         teamEdit.disabled = false;
-      }catch(err){
-        console.error(err);
-        teamEdit.innerHTML = '<option value="">— Error —</option>';
-      }
+      }catch(err){ console.error(err); teamEdit.innerHTML = '<option value="">— Error —</option>'; }
     });
+    <% } %>
   </script>
 </body>
 </html>

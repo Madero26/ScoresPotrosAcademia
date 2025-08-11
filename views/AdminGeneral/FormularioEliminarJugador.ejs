@@ -9,16 +9,166 @@
 </head>
 <body>
     <%- include('../partials/adminNav', { usuario }) %>
-    <h1 class="fotos">FORMULARIO ELIMINAR JUGADOR</h1>
-    <form action="/eliminarJugador" method="GET">
-        <label for="categoria">Seleccione la categoria:</label>
-        <select name="categoriaID">
-            <% categorias.forEach(categoria => { %>
-                <option value="<%= categoria.id_categoria %>"> <%= categoria.nombre_categoria %> </option>
-                <% }); %>
-        </select>
-        
-        <input type="submit" value="Eliminar">
-    </form>
+   <h1 class="fotos">FORMULARIO PARA ELIMINAR JUGADOR</h1>
+
+<form id="formBuscarJugador" action="/eliminarJugador " method="GET">
+  <!-- CATEGORÍA -->
+  <label for="categoriaSelect">Seleccione la categoría:</label>
+  <select id="categoriaSelect" name="categoriaID" required>
+    <% categorias.forEach(c => { %>
+      <option value="<%= c.id_categoria %>"><%= c.nombre_categoria %></option>
+    <% }) %>
+  </select>
+
+  <br><br>
+
+  <!-- EQUIPO (opcional) -->
+  <label for="equipoSelect">Filtrar por equipo (opcional):</label>
+  <select id="equipoSelect" name="equipoID" disabled>
+    <option value="">— Todos los equipos —</option>
+  </select>
+
+  <br><br>
+
+  <!-- BUSCADOR -->
+  <label for="buscarJugador">Buscar jugador:</label>
+  <input id="buscarJugador" type="text" placeholder="Escribe para filtrar (nombre y apellidos)" autocomplete="off">
+
+  <br><br>
+
+  <!-- JUGADOR -->
+  <label for="jugadorSelect">Seleccione el jugador:</label>
+  <select id="jugadorSelect" name="jugadorID" disabled required>
+    <option value="">— Selecciona una categoría primero —</option>
+  </select>
+
+  <br><br>
+
+  <input id="btnIr" type="submit" value="Eliminar" disabled>
+</form>
+
+<script>
+  const catSel = document.getElementById('categoriaSelect');
+  const teamSel = document.getElementById('equipoSelect');
+  const search  = document.getElementById('buscarJugador');
+  const jugSel  = document.getElementById('jugadorSelect');
+  const btnIr   = document.getElementById('btnIr');
+
+  let ALL_PLAYERS = []; // {id_jugador, nombre, id_equipo|null}
+  let TEAMS = [];       // {id_equipo, nombre}
+
+  const norm = (s) => (s || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita acentos
+    .toLowerCase().trim();
+
+  function renderTeams() {
+    // Resetea equipos con: Todos / Sin equipo / lista
+    teamSel.innerHTML = '';
+    const optTodos = new Option('— Todos los equipos —', '');
+    const optSin   = new Option('Sin equipo', '__none__');
+    teamSel.add(optTodos);
+    teamSel.add(optSin);
+    TEAMS.forEach(t => teamSel.add(new Option(t.nombre, String(t.id_equipo))));
+    teamSel.disabled = false;
+  }
+
+  function renderPlayers() {
+    const teamFilter = teamSel.value;     // '' | '__none__' | id_equipo
+    const q = norm(search.value);
+
+    let rows = ALL_PLAYERS.slice();
+
+    // por equipo
+    if (teamFilter === '__none__') {
+      rows = rows.filter(p => !p.id_equipo); // null/undefined/0
+    } else if (teamFilter) {
+      rows = rows.filter(p => String(p.id_equipo) === teamFilter);
+    }
+
+    // por texto
+    if (q) {
+      rows = rows.filter(p => norm(p.nombre).includes(q));
+    }
+
+    // pinta
+    jugSel.innerHTML = '';
+    if (rows.length === 0) {
+      jugSel.add(new Option('— Sin resultados —', ''));
+      jugSel.disabled = true;
+      btnIr.disabled = true;
+      return;
+    }
+
+    jugSel.add(new Option('— Selecciona —', ''));
+    rows.forEach(p => jugSel.add(new Option(p.nombre, String(p.id_jugador))));
+    jugSel.disabled = false;
+    btnIr.disabled = !jugSel.value;
+  }
+
+  async function loadCategory(catId) {
+    // Bloquea mientras carga
+    teamSel.disabled = true; jugSel.disabled = true; btnIr.disabled = true;
+    teamSel.innerHTML = '<option value="">Cargando equipos…</option>';
+    jugSel.innerHTML  = '<option value="">Cargando jugadores…</option>';
+
+    try {
+      // 1) equipos de la categoría
+      const r1 = await fetch(`/api/equipos?categoriaID=${encodeURIComponent(catId)}`, { credentials: 'same-origin' });
+      const j1 = await r1.json();
+      if (!j1.ok) throw new Error(j1.message || 'Error equipos');
+      TEAMS = j1.data || [];
+      renderTeams();
+
+      // 2) jugadores de la categoría (con o sin equipo)
+      const r2 = await fetch(`/api/jugadoresByCategoria?categoriaID=${encodeURIComponent(catId)}`, { credentials: 'same-origin' });
+      const j2 = await r2.json();
+      if (!j2.ok) throw new Error(j2.message || 'Error jugadores');
+      ALL_PLAYERS = j2.data || [];
+
+      // render inicial (sin texto, sin filtro de equipo)
+      teamSel.value = '';
+      search.value = '';
+      renderPlayers();
+
+    } catch (e) {
+      console.error(e);
+      teamSel.innerHTML = '<option value="">— Error al cargar —</option>';
+      jugSel.innerHTML  = '<option value="">— Error al cargar —</option>';
+      teamSel.disabled = true; jugSel.disabled = true; btnIr.disabled = true;
+    }
+  }
+
+  // eventos
+  catSel.addEventListener('change', e => loadCategory(e.target.value));
+  teamSel.addEventListener('change', renderPlayers);
+  jugSel.addEventListener('change', () => { btnIr.disabled = !jugSel.value; });
+
+  // debounce para el buscador
+  let t;
+  search.addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(renderPlayers, 150);
+  });
+
+  // carga inicial
+  if (catSel.value) loadCategory(catSel.value);
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: '<%= alertTitle %>',
+    text: '<%= alertMessage %>',
+    icon: '<%= alertIcon %>',
+    showConfirmButton: <%= showConfirmButton %>,
+    timer: <%= timer %>
+  }).then(() => {
+    window.location = '/<%= ruta %>'; // 'formActualizarJugador'
+  });
+</script>
+<% } %>
+
 </body>
 </html>
