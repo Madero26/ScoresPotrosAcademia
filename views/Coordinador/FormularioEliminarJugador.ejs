@@ -9,60 +9,7 @@
 
 </head>
 <body>
-    <section class="content01">
-        <div class ="regreso">
-        <a href="logout">Cerrar Sesion</a>
-         </div>
-        <div class="perfil">
-            <% if (usuario) { %>
-            <p> User:  <%= usuario.nombres %> </p>
-            <% } %>
-        </div>
-    </section>
-    <nav>
-        <img src="resources/imgs/potros.png" alt="POTROS ITSON">
-        <div>
-            <a href="/formCoordinadores">FORMULARIO FOTOS EQUIPOS</a>
-        </div>
-        <div>
-            <a href="/CoordFotoCate">FORMULARIO FOTOS CATEGORIAS</a>
-        </div>
-        <div>
-            <a href="/CoordAgregar">FORMULARIO AGREGAR JUGADORES</a>
-        </div>
-        <div>
-            <a href="/CoordEliminar">FORMULARIO ELIMINAR JUGADORES</a>
-        </div>
-        <div>
-            <a href="/CoordActualizar">FORMULARIO ACTUALIZAR JUGADORES</a>
-        </div>
-        <div>
-            <a href="/CoordPagos">FORMULARIO PARA REGISTRAR PAGO SEMANAL</a>
-        </div>
-        <div>
-            <a href="/CoordContraNueva">CAMBIAR CONTRASEÑA</a>
-        </div>
-        <img src="resources/imgs/logo.png" alt="Logo">
-    </nav>
-    <script>
-        // Agregar el evento a todos los enlaces con clase 'link'
-        document.querySelectorAll('.link').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // Evita que el link se cargue inmediatamente
-                const url = this.href; // Captura la URL del enlace
-
-                // Añadir la clase fade-out para iniciar la animación de desvanecimiento
-                document.body.classList.add('fade-out');
-
-                // Esperar a que la animación de desvanecimiento termine (0.5s) y luego redirigir
-                setTimeout(function() {
-                    window.location.href = url; // Cambia a la nueva URL después de la animación
-                }, 200); // Espera 500 ms para redirigir
-            });
-        });
-    </script>
-    <script src="resources/js/Animaciones.js"></script>
-    <section class="content02">_</section>
+   <%- include('../partials/coordNav', { usuario }) %>
     <h1 class="eliminar">FORMULARIO PARA ELIMINAR JUGADORES</h1>
     
     <form action="/datos" method="POST" >
