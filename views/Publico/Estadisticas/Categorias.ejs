@@ -1,0 +1,40 @@
+<%- include('../../partials/head') %>
+<link rel="stylesheet" href="/resources/styles/styleCategorias.css">
+
+<%- include('../../partials/navbar_public') %>
+
+<section class="categorias-section">
+  <h1 class="titulo">Categorías</h1>
+
+  <form method="get" class="selector-temporada">
+    <label>Temporada:</label>
+    <select name="temporada" onchange="this.form.submit()">
+      <% (temporadas||[]).forEach(t=>{ %>
+        <option value="<%= t.id_temporada %>" <%= String(t.id_temporada)===String(idTemp) ? 'selected' : '' %>>
+          <%= t.nombre %>
+        </option>
+      <% }) %>
+    </select>
+  </form>
+
+  <div class="categorias-grid">
+    <% (cats||[]).forEach(c => { %>
+      <div class="categoria-card">
+        <img src="<%= (c.url_foto && c.url_foto.trim()) ? c.url_foto : '/resources/imgs/logo.png' %>"
+             alt="<%= c.nombre_categoria %>" class="categoria-img">
+        <div class="categoria-info">
+          <h2><%= c.nombre_categoria %></h2>
+          <a href="/Estadisticas/categoria/<%= c.id_categoria %>?temporada=<%= idTemp %>" class="boton-ir">
+            Ver equipos
+          </a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <% if (!(cats&&cats.length)) { %>
+    <p class="empty">Sin categorías para esta temporada.</p>
+  <% } %>
+</section>
+
+

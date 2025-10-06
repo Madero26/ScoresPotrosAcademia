@@ -107,6 +107,43 @@
   background-color: #0066c0;
 }
 
+/* Finder (select + botón) centrado y lindo */
+.finder{
+  max-width: 860px;
+  margin: -6px auto 24px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.finder__select{
+  flex: 1 1 560px;
+  min-width: 260px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 999px;
+  outline: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+  font-size: 15px;
+}
+.finder__btn{
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #0b5f97;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+}
+.finder__btn:hover{ background:#094c78; }
+
+/* responsive */
+@media (max-width:600px){
+  .finder{ flex-direction: column; gap: 8px; }
+  .finder__select{ width:100%; }
+  .finder__btn{ width:100%; }
+}
 
 @media (max-width: 768px) {
   .equipos-grid {

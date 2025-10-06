@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="es"><head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleEquiposCategorias.css">
+</head><body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="categorias-section">
+    <h1 class="titulo">Equipos de <%= categoriaNombre %></h1>
+
+<form class="finder" onsubmit="goPerfil(event)">
+  <select id="selJugador" class="finder__select"></select>
+  <button class="finder__btn">Ver perfil</button>
+</form>
+
+<script>
+  (function () {
+    const idCat  = '<%= idCat %>';
+    const idTemp = '<%= idTemp %>';
+
+    fetch(`/Estadisticas/api/jugadores?cat=${idCat}&temporada=${idTemp}`)
+      .then(r => r.json())
+      .then(rows => {
+        const sel = document.getElementById('selJugador');
+        sel.innerHTML = rows.map(r =>
+          `<option value="${r.id_jugador}">${r.nombre}</option>`).join('');
+      });
+
+    window.goPerfil = (e) => {
+      e.preventDefault();
+      const id = document.getElementById('selJugador').value;
+      if (id) location.href = `/Estadisticas/perfilJugador/${id}?temporada=${idTemp}`;
+    };
+  })();
+</script>
+
+
+    <div class="equipos-grid">
+      <% teams.forEach(t=>{ %>
+        <div class="equipo-card">
+          <img src="/<%= t.url_foto || 'resources/imgs/logo.png' %>" class="equipo-img" alt="Equipo">
+          <div class="equipo-info">
+            <h2><%= t.nombre %></h2>
+            <div class="botones">
+              <a class="btn" href="/Estadisticas/categoria/<%= idCat %>/equipo/<%= t.id_equipo_temporada %>?temporada=<%= idTemp %>">Estadísticas del equipo</a>
+              <a class="btn btn-secundario" href="/Estadisticas/categoria/<%= idCat %>/jugadores?equipo=<%= t.id_equipo_temporada %>&temporada=<%= idTemp %>">Jugadores del equipo</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+</body></html>
+
+

@@ -209,7 +209,6 @@ CREATE TABLE EstadisticasEquipoTemporada (
   ganados INT DEFAULT 0,
   perdidos INT DEFAULT 0,
   empatados INT DEFAULT 0,
-  puntos INT DEFAULT 0,
   errores INT DEFAULT 0,
   FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
   FOREIGN KEY (id_equipo_temporada) REFERENCES EquipoTemporada(id_equipo_temporada) ON DELETE CASCADE,

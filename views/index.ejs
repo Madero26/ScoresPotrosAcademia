@@ -1,91 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-    <%- include('partials/head') %>
+  <%- include('partials/head') %>
 </head>
-
 <body>
 
+  <%- include('partials/navbar_public', { showLoginGhost: true }) %>
 
-
-
-     <section class="content01">
-  <button class="login-ghost" id="btnLoginGhost" aria-haspopup="dialog" aria-controls="loginModal">
-    Iniciar sesión
-  </button>
-</section>
-
-<div class="modal-overlay" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="modal-card" role="document">
-    <h3>Área restringida</h3>
-    <p>Este apartado es únicamente para ADMINISTRADORES. Si continúas, serás redirigido a la página de acceso.</p>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" id="cancelLogin">Cancelar</button>
-      <a class="btn btn-primary" href="/Login">Continuar</a>
+  <section class="content03">
+    <div class="card">
+      <h1>ACADEMIA DE BEISBOL POTROS ITSON</h1>
     </div>
-  </div>
-</div>
+  </section>
 
-
-<script>
-  // Control del modal de login
-  (function () {
-    const btnOpen = document.getElementById('btnLoginGhost');
-    const modal   = document.getElementById('loginModal');
-    const btnCancel = document.getElementById('cancelLogin');
-
-    if (!btnOpen || !modal || !btnCancel) return;
-
-    const open = () => {
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    };
-    const close = () => {
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    };
-
-    btnOpen.addEventListener('click', open);
-    btnCancel.addEventListener('click', close);
-
-    // Cerrar al hacer click fuera del cuadro
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) close();
-    });
-
-    // Cerrar con Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
-        close();
-      }
-    });
-  })();
-</script>
-
-<nav>
-  <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
-  <div><a href="/" class="link <%= currentPath === '/' ? 'active' : '' %>">INICIO</a></div>
-  <div><a href="/Estadisticas" class="link <%= currentPath.startsWith('/Estadisticas') ? 'active' : '' %>">ESTADISTICAS</a></div>
-  <div><a href="/JugadoresD" class="link <%= currentPath.startsWith('/JugadoresD') ? 'active' : '' %>">JUGADORES DESTACADOS</a></div>
-  <div><a href="/Coord" class="link <%= currentPath.startsWith('/Coord') ? 'active' : '' %>">COORDINADORES</a></div>
-  <div><a href="/Standing" class="link <%= currentPath.startsWith('/Standing') ? 'active' : '' %>">STANDING</a></div>
-  <img src="/resources/imgs/logo.png" alt="Logo">
-</nav>
-
-<script src="/resources/js/Animaciones.js"></script>
-<section class="content02"></section>
-      
-
-    
-     
-   
-    <section class="content03">
-        <div class="card">
-            <h1>ACADEMIA DE BEISBOL POTROS ITSON</h1>
-        </div>
-    </section>
-
+  <script src="/resources/js/Animaciones.js"></script>
 </body>
-
 </html>

@@ -1,0 +1,98 @@
+/* === ESTADÍSTICAS (público) === */
+:root{
+  --blue:#0a70ad; --blue-700:#0b5f97; --card:#fff; --text:#122; --muted:#e6edf5; --brand:#EC2227;
+}
+
+/* contenedor */
+.stats-wrap{
+  min-height:100vh;
+  background:var(--blue);
+  padding:32px 16px 48px;
+}
+
+/* título centrado */
+.titulo-jugadores{
+  margin:0 0 16px;
+  text-align:center;
+  color:#fff;
+  font-size:clamp(22px, 2.6vw, 36px);
+  letter-spacing:.5px;
+  font-weight:800;
+}
+
+/* tabs centrados */
+.submenu{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  margin:8px auto 22px;
+}
+.tab-button{
+  appearance:none;
+  border:0;
+  border-radius:12px;
+  padding:.6rem 1.25rem;
+  font-weight:700;
+  background:#d8dde4;
+  color:#0c2a40;
+  cursor:pointer;
+  transition:transform .12s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,.12);
+}
+.tab-button:hover{ transform:translateY(-1px); }
+.tab-button:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+.tab-button.active{ background:var(--brand); color:#fff; }
+
+/* tarjeta/tabla */
+.table-card{
+  width:min(1200px, 94vw);
+  margin:0 auto 20px;
+  background:var(--card);
+  border-radius:18px;
+  box-shadow:0 10px 24px rgba(0,0,0,.14);
+  padding:14px 14px 10px;
+}
+.t-sub{
+  margin:0 0 8px 6px;
+  color:#123b5b;
+  font-weight:800;
+  letter-spacing:.3px;
+}
+
+/* tabla */
+.table-zone{ overflow-x:visible; }
+.t{
+  width:100%;
+  border-collapse:collapse;
+  color:var(--text);
+  font-size:15.5px;
+}
+.t th{ background:var(--blue-700); color:#fff; }
+.t th,.t td{
+  border:1px solid var(--muted);
+  padding:.65rem .6rem;
+  text-align:center;
+  vertical-align:middle;
+}
+.t tbody tr:nth-child(odd){ background:#f7fbff; }
+.t a{ color:var(--blue-700); text-decoration:underline; }
+.t a:hover{ color:var(--brand); }
+
+/* responsive */
+@media (max-width:1024px){
+  .table-zone{ overflow-x:auto; }
+  .t{ min-width:980px; }
+}
+@media (max-width:640px){
+  .stats-wrap{ padding:24px 10px 36px; }
+  .submenu{ gap:8px; }
+  .tab-button{ padding:.55rem .95rem; border-radius:10px; }
+  .table-card{ width:96vw; }
+}
+
+
+
+
+
+

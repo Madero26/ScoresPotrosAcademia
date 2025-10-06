@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleJugadoresEquipo.css">
+  <style>
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="stats-wrap">
+    <h1 class="titulo-jugadores">ESTADÍSTICAS GENERALES</h1>
+
+    <!-- Tabs -->
+    <div class="submenu">
+      <button class="tab-button active" data-tab="bat">Bateo</button>
+      <button class="tab-button" data-tab="pit">Pitcheo</button>
+    </div>
+
+    <!-- BATEO -->
+    <section data-section="bat" class="tab-pane active">
+      <div class="table-card">
+        <h3 class="t-sub">Estadísticas de Bateo</h3>
+        <div class="table-zone">
+          <table class="t t-full">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>AB</th>
+                <th>H</th>
+                <th>BB</th>
+                <th>R</th>
+                <th>RBI</th>
+                <th>1B</th>
+                <th>2B</th>
+                <th>3B</th>
+                <th>HR</th>
+                <th>SB</th>
+                <th>AVG</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% jugadores.forEach(j => { %>
+                <tr>
+                  <td>
+                    <a href="/Estadisticas/perfilJugador/<%= j.id_jugador %>?temporada=<%= idTemp %>">
+                      <%= j.nombres %> <%= j.apellido_paterno %> <%= j.apellido_materno %>
+                    </a>
+                  </td>
+                  <td><%= (j.apariciones_al_bat ?? j.turnos ?? 0) %></td>
+                  <td><%= (j.hits ?? 0) %></td>
+                  <td><%= (j.bases_por_bolas ?? j.bb ?? 0) %></td>
+                  <td><%= (j.carreras ?? 0) %></td>
+                  <td><%= (j.carreras_producidas ?? j.rbi ?? 0) %></td>
+                  <td><%= (j.sencillos ?? 0) %></td>
+                  <td><%= (j.dobles ?? 0) %></td>
+                  <td><%= (j.triples ?? 0) %></td>
+                  <td><%= (j.home_runs ?? j.hr ?? 0) %></td>
+                  <td><%= (j.bases_robadas ?? j.sb ?? 0) %></td>
+                  <td><%= Number(j.promedio_bateo ?? j.avg ?? 0).toFixed(3) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PITCHEO -->
+    <section data-section="pit" class="tab-pane">
+      <div class="table-card">
+        <h3 class="t-sub">Estadísticas de Pitcheo</h3>
+        <div class="table-zone">
+          <table class="t t-full">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>IP</th>
+                <th>BB</th>
+                <th>K</th>
+                <th>W</th>
+                <th>L</th>
+                <th>ERA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% jugadores.forEach(j => { %>
+                <tr>
+                  <td>
+                    <a href="/Estadisticas/perfilJugador/<%= j.id_jugador %>?temporada=<%= idTemp %>">
+                      <%= j.nombres %> <%= j.apellido_paterno %> <%= j.apellido_materno %>
+                    </a>
+                  </td>
+                  <td><%= (j.entradas_lanzadas ?? j.innings ?? 0) %></td>
+                  <td><%= (j.bb ?? j.bases_por_bolas ?? 0) %></td>
+                  <td><%= (j.ponches ?? 0) %></td>
+                  <td><%= (j.victorias ?? 0) %></td>
+                  <td><%= (j.derrotas ?? 0) %></td>
+                  <td><%= Number(j.efectividad ?? j.era ?? 0).toFixed(3) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <script>
+    // Toggle único entre Bateo y Pitcheo
+    (function(){
+      const panes = document.querySelectorAll('[data-section]');
+      const btns  = document.querySelectorAll('.tab-button');
+      const show = (key) => {
+        panes.forEach(p => p.classList.toggle('active', p.dataset.section === key));
+        btns.forEach(b => b.classList.toggle('active', b.dataset.tab === key));
+      };
+      btns.forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
+      show('bat'); // por defecto
+    })();
+  </script>
+</body>
+</html>
+

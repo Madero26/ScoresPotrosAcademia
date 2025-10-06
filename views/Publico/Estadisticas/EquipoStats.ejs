@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleEquipoStats.css">
+</head>
+<body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="eq-page">
+    <div class="eq-wrap">
+      <header class="eq-hero">
+        <img class="eq-logo" src="/<%= logoUrl || 'resources/imgs/logo.png' %>" alt="Logo equipo">
+        <h1 class="eq-title"><%= equipoNombre %></h1>
+        <p class="eq-sub">Estadísticas del equipo</p>
+      </header>
+
+      <% if (estadisticas) { %>
+        <section class="eq-stats">
+          <div class="eq-stat">
+            <div class="eq-num"><%= estadisticas.carreras_a_favor %></div>
+            <div class="eq-lab">GF</div>
+          </div>
+          <div class="eq-stat">
+            <div class="eq-num"><%= estadisticas.carreras_en_contra %></div>
+            <div class="eq-lab">GC</div>
+          </div>
+          <div class="eq-stat">
+            <div class="eq-num"><%= estadisticas.ganados %></div>
+            <div class="eq-lab">Ganados</div>
+          </div>
+          <div class="eq-stat">
+            <div class="eq-num"><%= estadisticas.perdidos %></div>
+            <div class="eq-lab">Perdidos</div>
+          </div>
+          <div class="eq-stat">
+            <div class="eq-num"><%= estadisticas.empatados %></div>
+            <div class="eq-lab">Empatados</div>
+          </div>
+          <div class="eq-stat">
+            <div class="eq-num"><%= estadisticas.errores %></div>
+            <div class="eq-lab">Errores</div>
+          </div>
+        </section>
+      <% } else { %>
+        <p class="eq-empty">Aún no hay estadísticas para este equipo.</p>
+      <% } %>
+    </div>
+  </section>
+</body>
+</html>
+
+
+
+

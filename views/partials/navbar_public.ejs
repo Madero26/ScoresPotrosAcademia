@@ -1,0 +1,53 @@
+<% const isOn = (p) => currentPath === p || currentPath.startsWith(p + '/'); %>
+
+<section class="content01">
+  <% if (typeof showLoginGhost !== 'undefined' && showLoginGhost) { %>
+    <button class="login-ghost" id="btnLoginGhost" aria-haspopup="dialog" aria-controls="loginModal">
+      Iniciar sesión
+    </button>
+  <% } %>
+</section>
+
+<!-- Modal login opcional -->
+<div class="modal-overlay" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="modal-card" role="document">
+    <h3>Área restringida</h3>
+    <p>Solo para administradores. Serás redirigido al acceso.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelLogin">Cancelar</button>
+      <a class="btn btn-primary" href="/Login">Continuar</a>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
+  <div><a href="/"             class="link <%= currentPath === '/' ? 'active' : '' %>">INICIO</a></div>
+  <div><a href="/Estadisticas" class="link <%= isOn('/Estadisticas') ? 'active' : '' %>">ESTADISTICAS</a></div>
+  <div><a href="/JugadoresD"   class="link <%= isOn('/JugadoresD')   ? 'active' : '' %>">JUGADORES DESTACADOS</a></div>
+  <div><a href="/Coord"        class="link <%= isOn('/Coord')        ? 'active' : '' %>">COORDINADORES</a></div>
+  <div><a href="/Standing"     class="link <%= isOn('/Standing')     ? 'active' : '' %>">STANDING</a></div>
+  <img src="/resources/imgs/logo.png" alt="Logo">
+</nav>
+
+<section class="content02"></section>
+
+<script>
+  // Evita doble inicialización
+  if (!window.__publicNavInit) {
+    window.__publicNavInit = true;
+
+    // Modal login
+    const btnOpen   = document.getElementById('btnLoginGhost');
+    const modal     = document.getElementById('loginModal');
+    const btnCancel = document.getElementById('cancelLogin');
+
+    const open = () => { if(modal){ modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; } };
+    const close= () => { if(modal){ modal.setAttribute('aria-hidden','true');  document.body.style.overflow=''; } };
+
+    btnOpen   && btnOpen.addEventListener('click', open);
+    btnCancel && btnCancel.addEventListener('click', close);
+    modal     && modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal && modal.getAttribute('aria-hidden')==='false') close(); });
+  }
+</script>

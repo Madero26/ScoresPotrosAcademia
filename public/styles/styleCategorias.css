@@ -83,5 +83,15 @@
     scroll-snap-align: center;
   }
 }
+/* añade al final de styleCategorias.css */
+.selector-temporada{
+  max-width: 1024px; margin: 0 auto 1rem; display:flex; gap:.5rem; align-items:center;
+  background:#075a8f; padding:.75rem 1rem; border-radius:12px; color:#fff;
+}
+.selector-temporada select{
+  appearance:none; padding:.4rem .8rem; border-radius:8px; border:1px solid #cfd8dc;
+  background:#fff; color:#123; font-weight:600;
+}
+.empty{ color:#e6f2ff; text-align:center; margin-top:1.5rem; opacity:.9; }
 
 
