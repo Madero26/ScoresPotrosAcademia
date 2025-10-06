@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleCoordinadores.css">
+</head>
+<body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="co-wrap">
+    <h1 class="co-title">Coordinadores</h1>
+
+    <div class="co-grid">
+      <% if (coordinadores.length) { %>
+        <% coordinadores.forEach(c => { %>
+          <article class="co-card">
+            <img class="co-img" src="/<%= c.url_foto %>" alt="Foto de <%= c.nombres %> <%= c.apellido_paterno %>">
+            <h3 class="co-name"><%= c.nombres %> <%= c.apellido_paterno %> <%= c.apellido_materno %></h3>
+            <p class="co-cats">
+              <b>Categoría:</b>
+              <% if (c.categorias?.length) { %>
+                <%= c.categorias.join(', ') %>
+              <% } else { %>
+                — Sin asignación —
+              <% } %>
+            </p>
+          </article>
+        <% }) %>
+      <% } else { %>
+        <p class="co-empty">No hay coordinadores registrados.</p>
+      <% } %>
+    </div>
+  </section>
+</body>
+</html>

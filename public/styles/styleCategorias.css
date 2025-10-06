@@ -1,97 +1,129 @@
-.categorias-section {
-  padding: 2rem;
-  background-color: #0070b8;
-  min-height: 100vh;
+/* Sección */
+.categorias-section{
+  background:#086cad;
+  min-height:100vh;
+  padding:32px 16px;
 }
 
-.titulo {
-  color: white;
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 2rem;
+/* Título */
+.titulo{
+  color:#fff;
+  text-align:center;
+  font-size:clamp(1.6rem, 1rem + 2.2vw, 2.2rem);
+  margin:0 0 18px;
+  letter-spacing:.3px;
 }
 
-.categorias-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  justify-content: center;
-  padding: 0 1rem;
-}
-
-.categoria-card {
-  background-color: white;
-  border-radius: 16px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.3s ease;
-}
-.categoria-card:hover {
-  transform: scale(1.03);
-}
-
-.categoria-img {
-  width: 100%;
-  height: 160px;
-  object-fit: contain;
-  background: #f9f9f9;
-  padding: 1rem;
-}
-
-.categoria-info {
-  padding: 1rem;
-  text-align: center;
-}
-
-.categoria-info h2 {
-  font-size: 1.2rem;
-  margin: 0.5rem 0;
-  color: #000;
-}
-
-.boton-ir {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.5rem 1.2rem;
-  background-color: #EC2227;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-.boton-ir:hover {
-  background-color: #ff4d4f;
-}
-
-/* RESPONSIVE MOBILE VIEW */
-@media (max-width: 768px) {
-  .categorias-grid {
-    grid-template-columns: repeat(auto-fit, minmax(80%, 1fr));
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    display: flex;
-    flex-wrap: nowrap;
-  }
-
-  .categoria-card {
-    min-width: 80%;
-    scroll-snap-align: center;
-  }
-}
-/* añade al final de styleCategorias.css */
+/* Selector de temporada (opcional) */
 .selector-temporada{
-  max-width: 1024px; margin: 0 auto 1rem; display:flex; gap:.5rem; align-items:center;
-  background:#075a8f; padding:.75rem 1rem; border-radius:12px; color:#fff;
+  max-width:1100px;
+  margin:0 auto 14px;
+  display:flex;
+  gap:.6rem;
+  align-items:center;
+  justify-content:center;
+  color:#eaf6ff;
 }
 .selector-temporada select{
-  appearance:none; padding:.4rem .8rem; border-radius:8px; border:1px solid #cfd8dc;
-  background:#fff; color:#123; font-weight:600;
+  padding:.45rem .7rem;
+  border-radius:10px;
+  border:1px solid #e6edf5;
+  background:#fff;
+  color:#123;
+  font-weight:700;
 }
-.empty{ color:#e6f2ff; text-align:center; margin-top:1.5rem; opacity:.9; }
+
+/* Grid de tarjetas */
+.categorias-grid{
+  max-width:1100px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+  gap:16px;
+  justify-content:center;
+}
+
+/* Tarjeta */
+.categoria-card{
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 12px 26px rgba(0,0,0,.15);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.5rem;
+  padding:18px;
+  text-align:center;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.categoria-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 16px 34px rgba(0,0,0,.22);
+}
+
+/* Imagen redonda tipo avatar */
+.categoria-img{
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#f2f6fb;
+  border:3px solid #e6edf5;
+  box-shadow:0 6px 14px rgba(0,0,0,.12);
+  display:block;
+  margin:0 auto .5rem;
+}
+
+/* Info */
+.categoria-info{
+  padding:0;
+  text-align:center;
+}
+.categoria-info h2{
+  font-size:1.05rem;
+  margin:0;
+  color:#0b2239;
+  font-weight:800;
+}
+
+/* Botón */
+.boton-ir{
+  display:inline-block;
+  margin-top:.35rem;
+  padding:.5rem 1rem;
+  background:#EC2227;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:800;
+  transition:filter .2s ease;
+}
+.boton-ir:hover{ filter:brightness(1.05) }
+
+/* Estados vacíos */
+.empty{
+  color:#e6f2ff;
+  text-align:center;
+  margin-top:1.5rem;
+  opacity:.9;
+  grid-column:1 / -1;
+}
+
+/* Responsive */
+@media (max-width:720px){
+  .categorias-grid{
+    grid-template-columns:repeat(auto-fit,minmax(78%,1fr));
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+  }
+  .categoria-card{
+    min-width:78%;
+    scroll-snap-align:center;
+  }
+}
 
 

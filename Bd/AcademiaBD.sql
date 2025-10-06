@@ -18,7 +18,8 @@ CREATE TABLE Categorias (
   id_categoria INT AUTO_INCREMENT PRIMARY KEY,
   nombre_categoria VARCHAR(100) NOT NULL, -- ej. "7-8", "9-10"
   edad_min INT NOT NULL,
-  edad_max INT NOT NULL
+  edad_max INT NOT NULL,
+  url_foto VARCHAR(255) NULL
 );
 
 -- 3) Rangos por temporada

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleDestacados.css">
+</head>
+<body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="tabla-estadisticas">
+    <h2><%= tituloEstadistica %> — <%= nombreCategoria %></h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre del jugador</th>
+          <th><%= tituloEstadistica %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% jugadoresPaginados.forEach((jugador, index) => { %>
+          <% const ranking = (paginaActual - 1) * 20 + index + 1; %>
+          <tr class="<%= ranking === 1 ? 'mvp-row' : '' %>">
+            <td><%= ranking %></td>
+            <td class="<%= ranking === 1 ? 'mvp-text' : (ranking <= 3 ? 'top3-text' : '') %>">
+              <a href="/Estadisticas/perfilJugador/<%= jugador.id_jugador %>"><%= jugador.nombre %></a>
+              <% if (ranking === 1) { %><span class="emoji-fire">🔥</span><% } %>
+            </td>
+            <td><%= jugador.valor %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <div class="paginacion">
+      <% for (let i = 1; i <= totalPaginas; i++) { %>
+        <a href="/JugadoresD/categoria/<%= categoriaID %>/estadisticas/<%= tipo %>?pagina=<%= i %>"
+           class="<%= i === paginaActual ? 'activo' : '' %>"><%= i %></a>
+      <% } %>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleSecciones.css">
+</head>
+<body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="estadisticas-ninas">
+    <h2>📊 Estadísticas de la categoría <%= categoriaNombre %></h2>
+
+    <div class="submenu-estadisticas">
+  <button type="button" class="filtro-btn activo" data-tab="bateo">Estadísticas de Bateo</button>
+  <button type="button" class="filtro-btn" data-tab="pitcheo">Estadísticas de Pitcheo</button>
+</div>
+
+
+    <div class="tarjetas-grid" id="seccion-bateo">
+      <% const bateo = [
+        { icon: '📈', label: 'Promedio de bateo', ruta: 'promedio' },
+        { icon: '🥎', label: 'Sencillos', ruta: 'sencillos' },
+        { icon: '⚾️⚾️', label: 'Dobles', ruta: 'dobles' },
+        { icon: '3️⃣', label: 'Triples', ruta: 'triples' },
+        { icon: '💥', label: 'Home Runs', ruta: 'homeruns' },
+        { icon: '🏃‍♂️💨', label: 'Bases Robadas', ruta: 'basesrobadas' }
+      ]; %>
+      <% bateo.forEach(s => { %>
+        <a href="/JugadoresD/categoria/<%= categoriaID %>/estadisticas/<%= s.ruta %>?temporada=<%= idTemp %>" class="tarjeta-estadistica">
+          <div class="emoji-tarjeta"><%= s.icon %></div>
+          <div class="titulo-tarjeta"><%= s.label %></div>
+          <div class="clic-aqui">👉 Haz clic aquí 👈</div>
+        </a>
+      <% }) %>
+    </div>
+
+    <div class="tarjetas-grid oculto" id="seccion-pitcheo">
+      <% const pitcheo = [
+        { icon: '🎯', label: 'Efectividad', ruta: 'efectividad' },
+        { icon: '🏆', label: 'Victorias', ruta: 'victorias' },
+        { icon: '🔥', label: 'Ponches', ruta: 'ponches' }
+      ]; %>
+      <% pitcheo.forEach(s => { %>
+        <a href="/JugadoresD/categoria/<%= categoriaID %>/estadisticas/<%= s.ruta %>?temporada=<%= idTemp %>" class="tarjeta-estadistica">
+          <div class="emoji-tarjeta"><%= s.icon %></div>
+          <div class="titulo-tarjeta"><%= s.label %></div>
+          <div class="clic-aqui">👉 Haz clic aquí 👈</div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+
+<script>
+(function(){
+  const panes = {
+    bateo:   document.getElementById('seccion-bateo'),
+    pitcheo: document.getElementById('seccion-pitcheo')
+  };
+  const btns = document.querySelectorAll('.filtro-btn');
+
+  function show(key){
+    Object.entries(panes).forEach(([k, el])=>{
+      el.classList.toggle('oculto', k !== key);
+    });
+    btns.forEach(b=> b.classList.toggle('activo', b.dataset.tab === key));
+  }
+
+  btns.forEach(b=> b.addEventListener('click', ()=> show(b.dataset.tab)));
+  show('bateo'); // estado inicial
+})();
+</script>
+
+</body>
+</html>

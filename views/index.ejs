@@ -2,17 +2,101 @@
 <html lang="es">
 <head>
   <%- include('partials/head') %>
+  <!-- Asegúrate de apuntar al nombre del archivo donde pegaste el CSS anterior -->
+  <link rel="stylesheet" href="/resources/styles/styleIndex.css">
 </head>
 <body>
-
   <%- include('partials/navbar_public', { showLoginGhost: true }) %>
 
-  <section class="content03">
-    <div class="card">
-      <h1>ACADEMIA DE BEISBOL POTROS ITSON</h1>
-    </div>
-  </section>
+  <main class="home-wrap">
+
+    <!-- HERO -->
+    <section class="hp-hero">
+      <h1 class="hp-title">Academia de Béisbol Potros ITSON</h1>
+      <p class="hp-sub">
+        Ciudad Obregón, Sonora • Enfoque en desarrollo y medición del desempeño
+        para jugadores de 4–18 años.
+      </p>
+      <a class="hp-btn" href="/Estadisticas">Ver estadísticas</a>
+    </section>
+
+    <!-- ¿QUÉ MEDIMOS? -->
+    <h2 class="sec-title">¿Qué medimos?</h2>
+    <section class="measure-grid">
+
+      <article class="measure-card">
+        <div class="measure-emoji">🥎</div>
+        <div class="measure-body">
+          <h3 class="measure-title">Bateo</h3>
+          <p class="measure-items">AB, H, 1B, 2B, 3B, HR, BB, R, RBI, SB, AVG</p>
+        </div>
+      </article>
+
+      <article class="measure-card">
+        <div class="measure-emoji">⚾️</div>
+        <div class="measure-body">
+          <h3 class="measure-title">Pitcheo</h3>
+          <p class="measure-items">IP, BB, K, W/L, ERA (efectividad)</p>
+        </div>
+      </article>
+
+      <article class="measure-card">
+        <div class="measure-emoji">📈</div>
+        <div class="measure-body">
+          <h3 class="measure-title">Rendimiento</h3>
+          <p class="measure-items">60 yd, Vel. pit, Brazo, Pop time, Vel. bate</p>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- CATEGORÍAS FORMATIVAS -->
+    <h2 class="sec-title">Categorías formativas</h2>
+    <section class="cat-grid">
+
+      <article class="cat-card">
+        <h3 class="cat-age">7–8</h3>
+        <p class="cat-desc">Fundamentos</p>
+      </article>
+
+      <article class="cat-card">
+        <h3 class="cat-age">9–10</h3>
+        <p class="cat-desc">Técnica</p>
+      </article>
+
+      <article class="cat-card">
+        <h3 class="cat-age">11–12</h3>
+        <p class="cat-desc">Posiciones • Lecturas</p>
+      </article>
+
+      <article class="cat-card">
+        <h3 class="cat-age">13–14</h3>
+        <p class="cat-desc">Juego completo</p>
+      </article>
+
+      <article class="cat-card">
+        <h3 class="cat-age">15–18</h3>
+        <p class="cat-desc">Alto rendimiento • Scouting</p>
+      </article>
+
+    </section>
+
+    <!-- UBICACIÓN -->
+    <h2 class="sec-title">Ubicación</h2>
+    <section class="hp-hero" style="max-width:900px">
+      <p class="hp-sub" style="margin-bottom:0">
+        Instituto Tecnológico de Sonora — Potros ITSON. 5 de Febrero 818 Sur,
+        Col. Centro, Ciudad Obregón, Sonora.
+        <br>
+        <small>*Este portal se centra en métricas y desempeño de la academia/temporadas locales.</small>
+      </p>
+    </section>
+
+  </main>
 
   <script src="/resources/js/Animaciones.js"></script>
 </body>
 </html>
+
+
+

@@ -1,0 +1,112 @@
+<section class="content01">
+  <div class="regreso"><a href="/Login/logout">Cerrar sesión</a></div>
+  <div class="perfil">
+    <% if (usuario) { %><p> Admin: <%= usuario.usuario %> </p><% } %>
+  </div>
+</section>
+
+<nav>
+  <img src="/resources/imgs/potros.png" alt="POTROS ITSON" />
+
+  <!-- CREAR -->
+  <div>
+    <form>
+      <select name="crear" class="admin-select" onchange="redirigirAdminGeneral(this)">
+        <option>CREAR</option>
+        <optgroup label="Temporadas">
+          <option value="/formCrearTemporada">Crear temporada</option>
+          <option value="/formTemporadaActiva">Marcar temporada activa</option>
+          <option value="/formCopiarEquiposTemporada">Copiar equipos a nueva temporada</option>
+        </optgroup>
+
+        <optgroup label="Cat/Eq">
+          <option value="/formCrearCategoria">Crear categoría</option>
+          <option value="/formCrearEquipos">Crear equipo (por temporada)</option>
+        </optgroup>
+
+        <optgroup label="Personas">
+          <option value="/formCrearCoordinadores">Crear coordinador</option>
+          <option value="/formCrearEntrenadores">Crear entrenador</option>
+          <option value="/formCrearJugador">Crear jugador</option>
+        </optgroup>
+
+        <optgroup label="Usuarios-Admin">
+          <option value="/formCrearUsuarioAdmin">Crear usuario administrador</option>
+          <option value="/formCrearUsuarioCoordinador">Crear usuario coordinador</option>
+          <option value="/formCrearUsuarioEstadisticas">Crear usuario estadísticas</option>
+        </optgroup>
+      </select>
+    </form>
+  </div>
+
+  <!-- ACTUALIZAR -->
+  <div>
+    <form>
+      <select name="actualizar" class="admin-select" onchange="redirigirAdminGeneral(this)">
+        <option>ACTUALIZAR</option>
+        <optgroup label="Temporadas">
+          <option value="/formActualizarTemporada">Actualizar temporada</option>
+        </optgroup>
+        <optgroup label="Cat/Eq">
+          <option value="/formActualizarCategoria">Actualizar categoría</option>
+          <option value="/formActualizarEquipo">Actualizar equipo</option>
+        </optgroup>
+        <optgroup label="Personas">
+          <option value="/formActualizarCoordinador">Actualizar coordinador</option>
+          <option value="/formActualizarEntrenador">Actualizar entrenador</option>
+          <option value="/formActualizarJugador">Actualizar jugador</option>
+        </optgroup>
+        <optgroup label="Usuarios-Admin">
+          <option value="/formActualizarUsuarioAdmin">Actualizar usuario admin</option>
+          <option value="/formActualizarUsuarioCoordinador">Actualizar usuario coordinador</option>
+          <option value="/formActualizarUsuarioEstadisticas">Actualizar usuario estadísticas</option>
+        </optgroup>
+      </select>
+    </form>
+  </div>
+
+  <!-- ELIMINAR -->
+  <div>
+    <form>
+      <select name="eliminar" class="admin-select" onchange="redirigirAdminGeneral(this)">
+        <option>ELIMINAR</option>
+        <optgroup label="Temporadas">
+          <option value="/formEliminarTemporada">Eliminar temporada</option>
+        </optgroup>
+        <optgroup label="Cat/Eq">
+          <option value="/formEliminarCategoria">Eliminar categoría</option>
+          <option value="/formEliminarEquipo">Eliminar equipo</option>
+        </optgroup>
+        <optgroup label="Personas">
+          <option value="/formEliminarCoordinador">Eliminar coordinador</option>
+          <option value="/formEliminarEntrenador">Eliminar entrenador</option>
+          <option value="/formEliminarJugador">Eliminar jugador</option>
+        </optgroup>
+        <optgroup label="Usuarios-Admin">
+          <option value="/formEliminarUsuarioAdmin">Eliminar usuario admin</option>
+          <option value="/formEliminarUsuarioCoordinador">Eliminar usuario coordinador</option>
+          <option value="/formEliminarUsuarioEstadisticas">Eliminar usuario estadísticas</option>
+        </optgroup>
+      </select>
+    </form>
+  </div>
+
+  <div><a href="/AdminContra" class="link">Cambiar contraseña</a></div>
+  <img src="/resources/imgs/logo.png" alt="Logo" />
+</nav>
+
+<section class="content02"></section>
+
+<script>
+  if (!window.__adminGeneralNavInit) {
+    window.__adminGeneralNavInit = true;
+    window.redirigirAdminGeneral = function (select) {
+      const url = select.value;
+      if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
+        document.body.classList.add('fade-out');
+        setTimeout(() => (location.href = url), 150);
+      }
+      setTimeout(() => (select.selectedIndex = 0), 250);
+    };
+  }
+</script>

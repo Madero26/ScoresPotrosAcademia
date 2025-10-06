@@ -1,0 +1,81 @@
+<section class="content01">
+  <div class="regreso"><a href="/Login/logout">Cerrar sesión</a></div>
+  <div class="perfil">
+    <% if (usuario) { %><p> Coordinador: <%= usuario.nombres %> </p><% } %>
+  </div>
+</section>
+
+<nav>
+  <img src="/resources/imgs/potros.png" alt="POTROS ITSON" />
+
+  <!-- AGREGAR -->
+  <div>
+    <form>
+      <select class="admin-select" onchange="redirigirCoord(this)">
+        <option>AGREGAR</option>
+        <optgroup label="Rosters">
+          <option value="/CoordAgregar">Agregar jugador</option>
+          <option value="/formCrearEquipos">Agregar equipo</option>
+          <option value="/formCrearEntrenadores">Agregar entrenador</option>
+        </optgroup>
+        <optgroup label="Mediciones">
+          <option value="/formRegistrarRendimiento">Registrar rendimiento mensual</option>
+        </optgroup>
+      </select>
+    </form>
+  </div>
+
+  <!-- ACTUALIZAR -->
+  <div>
+    <form>
+      <select class="admin-select" onchange="redirigirCoord(this)">
+        <option>ACTUALIZAR</option>
+        <optgroup label="Rosters">
+          <option value="/CoordActualizar">Actualizar jugador</option>
+          <option value="/formActualizarEquipo">Actualizar equipo</option>
+          <option value="/formActualizarEntrenador">Actualizar entrenador</option>
+          <option value="/formActualizarCategoria">Actualizar categoría</option>
+        </optgroup>
+        <optgroup label="Mediciones">
+          <option value="/formActualizarRendimiento">Actualizar rendimiento mensual</option>
+        </optgroup>
+      </select>
+    </form>
+  </div>
+
+  <!-- ELIMINAR -->
+  <div>
+    <form>
+      <select class="admin-select" onchange="redirigirCoord(this)">
+        <option>ELIMINAR</option>
+        <optgroup label="Rosters">
+          <option value="/CoordEliminar">Eliminar jugador</option>
+          <option value="/formEliminarEquipo">Eliminar equipo</option>
+          <option value="/formEliminarEntrenador">Eliminar entrenador</option>
+        </optgroup>
+        <optgroup label="Mediciones">
+          <option value="/formEliminarRendimiento">Eliminar medición de rendimiento</option>
+        </optgroup>
+      </select>
+    </form>
+  </div>
+
+  <div><a href="/CoordContraNueva" class="link">Cambiar contraseña</a></div>
+  <img src="/resources/imgs/logo.png" alt="Logo" />
+</nav>
+
+<section class="content02"></section>
+
+<script>
+  if (!window.__coordNavInitV2) {
+    window.__coordNavInitV2 = true;
+    window.redirigirCoord = function (select) {
+      const url = select.value;
+      if (url && !/^(AGREGAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
+        document.body.classList.add('fade-out');
+        setTimeout(() => (location.href = url), 150);
+      }
+      setTimeout(() => (select.selectedIndex = 0), 250);
+    };
+  }
+</script>

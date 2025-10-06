@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleCategorias.css">
+</head>
+<body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="categorias-section">
+    <h1 class="titulo">Elige una categoría</h1>
+
+    <form method="get" class="selector-temporada">
+    <label>Temporada:</label>
+    <select name="temporada" onchange="this.form.submit()">
+      <% (temporadas||[]).forEach(t=>{ %>
+        <option value="<%= t.id_temporada %>" <%= String(t.id_temporada)===String(idTemp) ? 'selected' : '' %>>
+          <%= t.nombre %>
+        </option>
+      <% }) %>
+    </select>
+  </form>
+
+    <div class="categorias-grid">
+      <% cats.forEach(c=>{ %>
+        <a class="categoria-card" href="/JugadoresD/categoria/<%= c.id_categoria %>?temporada=<%= idTemp %>">
+          <img class="categoria-img" src="/resources/imgs/logo.png" alt="Cat">
+          <div class="categoria-info">
+            <h2><%= c.nombre_categoria %></h2>
+            <span class="boton-ir">Ver destacados</span>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+</body>
+</html>

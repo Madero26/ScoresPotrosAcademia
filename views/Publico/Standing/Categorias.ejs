@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('../../partials/head') %>
+  <link rel="stylesheet" href="/resources/styles/styleStanding.css">
+</head>
+<body>
+  <%- include('../../partials/navbar_public') %>
+
+  <section class="st-wrap">
+    <h1 class="st-title">Standing</h1>
+
+    <form class="st-season">
+      <label>Temporada</label>
+      <select name="temporada" onchange="this.form.submit()">
+        <% temporadas.forEach(t => { %>
+          <option value="<%= t.id_temporada %>" <%= t.id_temporada==idTemp?'selected':'' %>>
+            <%= t.nombre %>
+          </option>
+        <% }) %>
+      </select>
+    </form>
+
+    <div class="st-cats">
+      <% cats.forEach(cat => { %>
+        <article class="st-card">
+         <img class="cat-photo" 
+     src="/<%= (cat.url_foto && cat.url_foto.trim()) ? cat.url_foto : 'resources/imgs/logo.png' %>" 
+     alt="Categoría">
+
+          <h3 class="cat-name"><%= cat.nombre_categoria %></h3>
+          <a class="btn-primary"
+             href="/Standing/categoria/<%= cat.id_categoria %>?temporada=<%= idTemp %>">
+            Ver standing de temporada
+          </a>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+</body>
+</html>
+

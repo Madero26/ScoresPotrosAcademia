@@ -1,42 +1,107 @@
-.titulo-coordinadores {
-  text-align: center;
-  font-size: 2rem;
-  color: white;
-  margin-bottom: 2rem;
+/* Contenedor */
+.st-wrap{
+  background:#0a70ad;
+  min-height:100vh;
+  padding:2rem 1rem 3rem;
 }
 
-.coordinadores-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-  padding: 1rem;
+/* Título */
+.st-title{
+  color:#fff;
+  text-align:center;
+  font-size:clamp(1.6rem, 1rem + 2.2vw, 2.4rem);
+  margin:0 0 1rem;
+  letter-spacing:.3px;
 }
 
-.coordinador-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1rem 1.5rem;
-  width: 250px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+/* Temporadas */
+.st-season{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.6rem;
+  margin-bottom:1.2rem;
+}
+.st-season label{color:#eaf6ff;font-weight:700}
+.st-season select{
+  border-radius:10px;border:0;padding:.45rem .7rem; font-weight:700;
 }
 
-.coordinador-foto {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+/* Tarjetas de categorías */
+.st-cats{
+  max-width:1100px;margin:0 auto;
+  display:grid;gap:1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.st-cat{
+  background:#fff;border-radius:16px;
+  box-shadow:0 12px 26px rgba(0,0,0,.15);
+  padding:1.1rem;text-align:center;
+  display:flex;flex-direction:column;gap:.6rem;align-items:center;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.st-cat:hover{ transform:translateY(-6px); box-shadow:0 16px 34px rgba(0,0,0,.22); }
+.st-cat__name{ font-weight:800;color:#0b2239 }
+.st-btn{
+  display:inline-block;background:#ec2227;color:#fff;
+  padding:.5rem 1rem;border-radius:10px;font-weight:800;text-decoration:none;
+}
+.st-btn:hover{ background:#ff4b4f }
+.st-empty{ color:#fff;text-align:center;grid-column:1/-1 }
+
+/* Tabla */
+.st-head{
+  max-width:1100px;margin:0 auto .7rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.st-head .st-title{ margin:0 }
+.st-link{ color:#fff;font-weight:700;text-decoration:underline }
+
+.st-table-zone{
+  max-width:1100px;margin:0 auto;background:#fff;border-radius:16px;
+  box-shadow:0 12px 26px rgba(0,0,0,.15); padding:1rem;
+  overflow-x:auto;
+}
+.st-table{ width:100%; border-collapse:collapse; color:#122; }
+.st-table th, .st-table td{
+  border:1px solid #e6edf5; padding:.6rem; text-align:center;
+}
+.st-table thead th{
+  background:#0b5f97; color:#fff;
+}
+.th-team{ text-align:left; }
+.td-team{ text-align:left; display:flex; align-items:center; gap:.55rem; }
+.team-logo{ width:28px; height:28px; object-fit:cover; border-radius:6px; background:#f2f6fb }
+
+.pos{ font-weight:900 }
+.tie{
+  margin-left:.35rem; font-size:.72rem; font-weight:900;
+  color:#0b5f97; background:#eaf5ff; border-radius:999px; padding:.15rem .4rem;
 }
 
-.coordinador-card h3 {
-  font-size: 1.2rem;
-  color: #000;
-  margin-bottom: 0.3rem;
-}
+/* +/- */
+.good{ color:#0f8f3c; font-weight:800 }
+.bad { color:#d12828; font-weight:800 }
 
-.coordinador-card p {
-  font-size: 1rem;
-  color: #333;
+/* Podio */
+.pos-1{ background:linear-gradient(0deg, #fff 0, #fff 80%, #fef4c0 100%) }
+.pos-2{ background:linear-gradient(0deg, #fff 0, #fff 80%, #e7eef6 100%) }
+.pos-3{ background:linear-gradient(0deg, #fff 0, #fff 80%, #f7e0c8 100%) }
+.st-wrap{min-height:100vh;background:#086cad;padding:32px 16px}
+.st-title{color:#fff;text-align:center;font-size:34px;margin:0 0 18px}
+.st-season{display:flex;gap:8px;justify-content:center;align-items:center;margin-bottom:18px;color:#cfe7ff}
+.st-season select{padding:.45rem .7rem;border-radius:10px;border:1px solid #e6edf5}
+
+.st-cats{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.st-card{background:#fff;border-radius:18px;box-shadow:0 10px 24px rgba(0,0,0,.12);padding:18px;text-align:center}
+.cat-photo{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid #e6edf5;box-shadow:0 6px 14px rgba(0,0,0,.12);margin:0 auto 10px;display:block}
+.cat-name{margin:0 0 10px;color:#0b2239}
+.btn-primary{display:inline-block;background:#ec2227;color:#fff;padding:.55rem 1.1rem;border-radius:10px;font-weight:700;text-decoration:none}
+.btn-primary:hover{filter:brightness(1.05)}
+
+/* Responsive */
+@media (max-width:720px){
+  .st-head{ flex-direction:column; align-items:center }
+  .st-table-zone{ padding:.6rem }
+  .st-table{ min-width:850px } /* scroll horizontal cuando toque */
 }
