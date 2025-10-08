@@ -1,92 +1,85 @@
-<section class="content01">
-  <div class="regreso"><a href="/Login/logout">Cerrar sesión</a></div>
-  <div class="perfil">
-    <% if (usuario) { %><p> Estadísticas: <%= usuario.usuario %> </p><% } %>
+<!-- HEADER PROFESIONAL -->
+<header class="topbar">
+  <div class="topbar__container">
+    <div class="topbar__left">
+      <img class="brand" src="/resources/imgs/potros.png" alt="Potros ITSON">
+      <span class="title">Panel de estadísticas</span>
+    </div>
+    <div class="topbar__right">
+      <% if (usuario) { %>
+        <span class="user">Usuario: <strong><%= usuario.alias || usuario.usuario %></strong></span>
+      <% } %>
+      <a href="/AdminContra" class="btn btn-outline">Cambiar contraseña</a>
+      <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+    </div>
   </div>
-</section>
+</header>
 
-<nav>
-  <img src="/resources/imgs/potros.png" alt="POTROS ITSON" />
+<!-- ACCIONES -->
+<nav class="actions">
+  <div class="actions__container">
+    <div class="actions__grid">
 
-  <!-- CREAR -->
-  <div>
-    <form>
-      <select class="admin-select" onchange="redirigirStats(this)">
-        <option>CREAR</option>
-        <optgroup label="Bateo">
-          <option value="/formCrearEstadisticasBateo">Registrar bateo</option>
-        </optgroup>
-        <optgroup label="Pitcheo">
-          <option value="/formCrearEstadisticasPitcheo">Registrar pitcheo</option>
-        </optgroup>
-        <optgroup label="Equipo">
-          <option value="/formCrearEstadisticasEquipo">Registrar estadísticas equipo</option>
-        </optgroup>
-        <optgroup label="Rendimiento">
-          <option value="/formRegistrarRendimiento">Registrar rendimiento mensual</option>
-        </optgroup>
-      </select>
-    </form>
+      <!-- CREAR (masivo por equipo) -->
+      <div class="action">
+        <label for="stats-crear">Crear</label>
+        <select id="stats-crear" class="select" onchange="redirigirStats(this)">
+          <option>CREAR</option>
+          <optgroup label="Carga masiva por equipo">
+            <option value="/StatsCargarBateoEquipo">Cargar bateo por equipo</option>
+            <option value="/StatsCargarPitcheoEquipo">Cargar pitcheo por equipo</option>
+            <option value="/StatsCargarEstadisticaEquipo">Cargar estadísticas del equipo</option>
+          </optgroup>
+          <optgroup label="Por jugador">
+            <option value="/StatsCargarBateoJugador">Cargar bateo de jugador</option>
+            <option value="/StatsCargarPitcheoJugador">Cargar pitcheo de jugador</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- ACTUALIZAR (filtro por jugador/equipo) -->
+      <div class="action">
+        <label for="stats-actualizar">Actualizar</label>
+        <select id="stats-actualizar" class="select" onchange="redirigirStats(this)">
+          <option>ACTUALIZAR</option>
+          <optgroup label="Por jugador">
+            <option value="/StatsEditarBateoJugador">Editar bateo de jugador</option>
+            <option value="/StatsEditarPitcheoJugador">Editar pitcheo de jugador</option>
+          </optgroup>
+          <optgroup label="Por equipo">
+            <option value="/StatsEditarEstadisticaEquipo">Editar estadísticas del equipo</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- ELIMINAR (filtro por jugador/equipo) -->
+      <div class="action">
+        <label for="stats-eliminar">Eliminar</label>
+        <select id="stats-eliminar" class="select" onchange="redirigirStats(this)">
+          <option>ELIMINAR</option>
+          <optgroup label="Por jugador">
+            <option value="/StatsEliminarBateoJugador">Eliminar bateo de jugador</option>
+            <option value="/StatsEliminarPitcheoJugador">Eliminar pitcheo de jugador</option>
+          </optgroup>
+          <optgroup label="Por equipo">
+            <option value="/StatsEliminarEstadisticaEquipo">Eliminar estadísticas del equipo</option>
+          </optgroup>
+        </select>
+      </div>
+
+    </div>
   </div>
-
-  <!-- ACTUALIZAR -->
-  <div>
-    <form>
-      <select class="admin-select" onchange="redirigirStats(this)">
-        <option>ACTUALIZAR</option>
-        <optgroup label="Bateo">
-          <option value="/formActualizarEstadisticasBateo">Actualizar bateo</option>
-        </optgroup>
-        <optgroup label="Pitcheo">
-          <option value="/formActualizarEstadisticasPitcheo">Actualizar pitcheo</option>
-        </optgroup>
-        <optgroup label="Equipo">
-          <option value="/formActualizarEstadisticasEquipo">Actualizar estadísticas equipo</option>
-        </optgroup>
-        <optgroup label="Rendimiento">
-          <option value="/formActualizarRendimiento">Actualizar rendimiento mensual</option>
-        </optgroup>
-      </select>
-    </form>
-  </div>
-
-  <!-- ELIMINAR -->
-  <div>
-    <form>
-      <select class="admin-select" onchange="redirigirStats(this)">
-        <option>ELIMINAR</option>
-        <optgroup label="Bateo">
-          <option value="/formEliminarEstadisticasBateo">Eliminar registro de bateo</option>
-        </optgroup>
-        <optgroup label="Pitcheo">
-          <option value="/formEliminarEstadisticasPitcheo">Eliminar registro de pitcheo</option>
-        </optgroup>
-        <optgroup label="Equipo">
-          <option value="/formEliminarEstadisticasEquipo">Eliminar registro de equipo</option>
-        </optgroup>
-        <optgroup label="Rendimiento">
-          <option value="/formEliminarRendimiento">Eliminar medición de rendimiento</option>
-        </optgroup>
-      </select>
-    </form>
-  </div>
-
-  <div><a href="/AdminContra" class="link">Cambiar contraseña</a></div>
-  <img src="/resources/imgs/logo.png" alt="Logo" />
 </nav>
 
-<section class="content02"></section>
 
 <script>
   if (!window.__statsNavInit) {
     window.__statsNavInit = true;
     window.redirigirStats = function (select) {
       const url = select.value;
-      if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
-        document.body.classList.add('fade-out');
-        setTimeout(() => (location.href = url), 150);
-      }
-      setTimeout(() => (select.selectedIndex = 0), 250);
+      if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) location.href = url;
+      setTimeout(() => (select.selectedIndex = 0), 200);
     };
   }
 </script>
+

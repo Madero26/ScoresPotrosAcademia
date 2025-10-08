@@ -1,112 +1,168 @@
-<section class="content01">
-  <div class="regreso"><a href="/Login/logout">Cerrar sesión</a></div>
-  <div class="perfil">
-    <% if (usuario) { %><p> Admin: <%= usuario.usuario %> </p><% } %>
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar__container">
+    <div class="topbar__left">
+      <img class="brand" src="/resources/imgs/potros.png" alt="Potros ITSON">
+      <span class="title">Panel administrativo</span>
+    </div>
+    <div class="topbar__right">
+      <% if (usuario) { %>
+        <span class="user">Usuario: <strong><%= usuario.usuario %></strong></span>
+      <% } %>
+      <a href="/AdminContra" class="btn btn-outline">Cambiar contraseña</a>
+      <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+    </div>
   </div>
-</section>
+</header>
 
-<nav>
-  <img src="/resources/imgs/potros.png" alt="POTROS ITSON" />
+<!-- ACCIONES -->
+<nav class="actions">
+  <div class="actions__container">
+    <div class="actions__grid">
 
-  <!-- CREAR -->
-  <div>
-    <form>
-      <select name="crear" class="admin-select" onchange="redirigirAdminGeneral(this)">
-        <option>CREAR</option>
-        <optgroup label="Temporadas">
-          <option value="/formCrearTemporada">Crear temporada</option>
-          <option value="/formTemporadaActiva">Marcar temporada activa</option>
-          <option value="/formCopiarEquiposTemporada">Copiar equipos a nueva temporada</option>
-        </optgroup>
+      <!-- CREAR -->
+      <div class="action">
+        <label for="adm-crear">Crear</label>
+        <select id="adm-crear" class="select" onchange="redirigirAdminGeneral(this)">
+          <option>CREAR</option>
 
-        <optgroup label="Cat/Eq">
-          <option value="/formCrearCategoria">Crear categoría</option>
-          <option value="/formCrearEquipos">Crear equipo (por temporada)</option>
-        </optgroup>
+          <optgroup label="Básicos">
+            <option value="/formCrearTemporada">Crear temporada</option>
+            <option value="/formCrearCategoria">Crear categoría</option>
+            <option value="/formCrearJugador">Crear jugador</option>
+            <option value="/formCrearEntrenador">Crear entrenador</option>
+            <option value="/formCrearCoordinador">Crear coordinador</option>
+            <option value="/formCrearEquipoBase">Crear equipo (catálogo)</option>
+          </optgroup>
 
-        <optgroup label="Personas">
-          <option value="/formCrearCoordinadores">Crear coordinador</option>
-          <option value="/formCrearEntrenadores">Crear entrenador</option>
-          <option value="/formCrearJugador">Crear jugador</option>
-        </optgroup>
+          <optgroup label="Usuarios">
+            <option value="/formCrearUsuarioAdmin">Crear usuario admin</option>
+            <option value="/formCrearUsuarioCoordinador">Crear usuario coordinador</option>
+            <option value="/formCrearUsuarioEstadisticas">Crear usuario estadísticas</option>
+          </optgroup>
 
-        <optgroup label="Usuarios-Admin">
-          <option value="/formCrearUsuarioAdmin">Crear usuario administrador</option>
-          <option value="/formCrearUsuarioCoordinador">Crear usuario coordinador</option>
-          <option value="/formCrearUsuarioEstadisticas">Crear usuario estadísticas</option>
-        </optgroup>
-      </select>
-    </form>
+          <optgroup label="Mediciones">
+            <option value="/CoordRegistrarRendimiento">Registrar rendimiento mensual</option>
+          </optgroup>
+
+          <optgroup label="Gestión por temporada">
+            <option value="/formCrearEquipoTemporada">Registrar equipo en temporada</option>
+            <option value="/formAsignarCoordinadorCategoria">Asignar coordinador a categoría (temporada)</option>
+            <option value="/formAsignarJugadorCategoria">Asignar jugador a categoría (temporada)</option>
+            <option value="/formInscribirJugadorEquipo">Inscribir jugador en equipo (temporada)</option>
+            <option value="/formAsignarUsuarioRolAlias">Asignar rol y alias a usuario en categoría (temporada)</option>
+          </optgroup>
+
+          <optgroup label="Controles de temporada">
+            <option value="/formTemporadaActiva">Marcar temporada activa</option>
+            <option value="/formConfigRangoEdad">Definir rango de nacimiento por categoría (temporada)</option>
+            <option value="/formCopiarEquiposTemporada">Copiar equipos a nueva temporada</option>
+            <option value="/formConfigMinimoApariciones">Configurar mínimo de apariciones de bateo (temporada)</option>
+          </optgroup>
+
+          <!-- Nota: NO crear estadísticas desde Admin (política del rol). -->
+        </select>
+      </div>
+
+      <!-- ACTUALIZAR -->
+      <div class="action">
+        <label for="adm-actualizar">Actualizar</label>
+        <select id="adm-actualizar" class="select" onchange="redirigirAdminGeneral(this)">
+          <option>ACTUALIZAR</option>
+
+          <optgroup label="Básicos">
+            <option value="/formActualizarTemporada">Actualizar temporada</option>
+            <option value="/formActualizarCategoria">Actualizar categoría</option>
+            <option value="/formActualizarJugador">Actualizar jugador</option>
+            <option value="/formActualizarEntrenador">Actualizar entrenador</option>
+            <option value="/formActualizarCoordinador">Actualizar coordinador</option>
+            <option value="/formActualizarEquipoBase">Actualizar equipo (catálogo)</option>
+          </optgroup>
+
+          <optgroup label="Usuarios">
+            <option value="/formActualizarUsuarioAdmin">Actualizar usuario admin</option>
+            <option value="/formActualizarUsuarioCoordinador">Actualizar usuario coordinador</option>
+            <option value="/formActualizarUsuarioEstadisticas">Actualizar usuario estadísticas</option>
+          </optgroup>
+
+          <optgroup label="Gestión por temporada">
+            <option value="/formActualizarEquipoTemporada">Actualizar equipo en temporada</option>
+            <option value="/formActualizarAsignacionCoordinadorCategoria">Actualizar asignación de coordinador a categoría</option>
+            <option value="/formActualizarAsignacionJugadorCategoria">Actualizar asignación de jugador a categoría</option>
+            <option value="/formActualizarInscripcionJugadorEquipo">Actualizar inscripción de jugador en equipo</option>
+            <option value="/formActualizarUsuarioRolAlias">Actualizar rol y alias de usuario en categoría</option>
+          </optgroup>
+
+          <optgroup label="Controles de temporada">
+            <option value="/formActualizarRangoEdad">Actualizar rango de nacimiento por categoría</option>
+            <option value="/formActualizarMinimoApariciones">Actualizar mínimo de apariciones de bateo</option>
+          </optgroup>
+
+          <optgroup label="Estadísticas (solo edición)">
+            <option value="/formActualizarEstadisticasBateo">Actualizar estadísticas de bateo</option>
+            <option value="/formActualizarEstadisticasPitcheo">Actualizar estadísticas de pitcheo</option>
+            <option value="/formActualizarEstadisticasEquipo">Actualizar estadísticas de equipo</option>
+            <option value="/formActualizarEstadisticasRendimiento">Actualizar estadísticas de rendimiento</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- ELIMINAR -->
+      <div class="action">
+        <label for="adm-eliminar">Eliminar</label>
+        <select id="adm-eliminar" class="select" onchange="redirigirAdminGeneral(this)">
+          <option>ELIMINAR</option>
+
+          <optgroup label="Básicos">
+            <option value="/formEliminarTemporada">Eliminar temporada</option>
+            <option value="/formEliminarCategoria">Eliminar categoría</option>
+            <option value="/formEliminarJugador">Eliminar jugador</option>
+            <option value="/formEliminarEntrenador">Eliminar entrenador</option>
+            <option value="/formEliminarCoordinador">Eliminar coordinador</option>
+            <option value="/formEliminarEquipoBase">Eliminar equipo (catálogo)</option>
+          </optgroup>
+
+          <optgroup label="Usuarios">
+            <option value="/formEliminarUsuarioAdmin">Eliminar usuario admin</option>
+            <option value="/formEliminarUsuarioCoordinador">Eliminar usuario coordinador</option>
+            <option value="/formEliminarUsuarioEstadisticas">Eliminar usuario estadísticas</option>
+          </optgroup>
+
+          <optgroup label="Gestión por temporada">
+            <option value="/formEliminarEquipoTemporada">Eliminar equipo en temporada</option>
+            <option value="/formEliminarAsignacionCoordinadorCategoria">Quitar coordinador de categoría (temporada)</option>
+            <option value="/formEliminarAsignacionJugadorCategoria">Quitar jugador de categoría (temporada)</option>
+            <option value="/formEliminarInscripcionJugadorEquipo">Quitar jugador del equipo (temporada)</option>
+            <option value="/formEliminarUsuarioRolAlias">Eliminar rol/alias de usuario en categoría</option>
+          </optgroup>
+
+          <optgroup label="Controles de temporada">
+            <option value="/formEliminarRangoEdad">Eliminar rango de nacimiento por categoría</option>
+            <option value="/formEliminarMinimoApariciones">Eliminar mínimo de apariciones de bateo</option>
+          </optgroup>
+
+          <optgroup label="Estadísticas (solo limpieza)">
+            <option value="/formEliminarEstadisticasBateo">Eliminar estadísticas de bateo</option>
+            <option value="/formEliminarEstadisticasPitcheo">Eliminar estadísticas de pitcheo</option>
+            <option value="/formEliminarEstadisticasEquipo">Eliminar estadísticas de equipo</option>
+            <option value="/formEliminarEstadisticasRendimiento">Eliminar estadísticas de rendimiento (mes)</option>
+          </optgroup>
+        </select>
+      </div>
+
+    </div>
   </div>
-
-  <!-- ACTUALIZAR -->
-  <div>
-    <form>
-      <select name="actualizar" class="admin-select" onchange="redirigirAdminGeneral(this)">
-        <option>ACTUALIZAR</option>
-        <optgroup label="Temporadas">
-          <option value="/formActualizarTemporada">Actualizar temporada</option>
-        </optgroup>
-        <optgroup label="Cat/Eq">
-          <option value="/formActualizarCategoria">Actualizar categoría</option>
-          <option value="/formActualizarEquipo">Actualizar equipo</option>
-        </optgroup>
-        <optgroup label="Personas">
-          <option value="/formActualizarCoordinador">Actualizar coordinador</option>
-          <option value="/formActualizarEntrenador">Actualizar entrenador</option>
-          <option value="/formActualizarJugador">Actualizar jugador</option>
-        </optgroup>
-        <optgroup label="Usuarios-Admin">
-          <option value="/formActualizarUsuarioAdmin">Actualizar usuario admin</option>
-          <option value="/formActualizarUsuarioCoordinador">Actualizar usuario coordinador</option>
-          <option value="/formActualizarUsuarioEstadisticas">Actualizar usuario estadísticas</option>
-        </optgroup>
-      </select>
-    </form>
-  </div>
-
-  <!-- ELIMINAR -->
-  <div>
-    <form>
-      <select name="eliminar" class="admin-select" onchange="redirigirAdminGeneral(this)">
-        <option>ELIMINAR</option>
-        <optgroup label="Temporadas">
-          <option value="/formEliminarTemporada">Eliminar temporada</option>
-        </optgroup>
-        <optgroup label="Cat/Eq">
-          <option value="/formEliminarCategoria">Eliminar categoría</option>
-          <option value="/formEliminarEquipo">Eliminar equipo</option>
-        </optgroup>
-        <optgroup label="Personas">
-          <option value="/formEliminarCoordinador">Eliminar coordinador</option>
-          <option value="/formEliminarEntrenador">Eliminar entrenador</option>
-          <option value="/formEliminarJugador">Eliminar jugador</option>
-        </optgroup>
-        <optgroup label="Usuarios-Admin">
-          <option value="/formEliminarUsuarioAdmin">Eliminar usuario admin</option>
-          <option value="/formEliminarUsuarioCoordinador">Eliminar usuario coordinador</option>
-          <option value="/formEliminarUsuarioEstadisticas">Eliminar usuario estadísticas</option>
-        </optgroup>
-      </select>
-    </form>
-  </div>
-
-  <div><a href="/AdminContra" class="link">Cambiar contraseña</a></div>
-  <img src="/resources/imgs/logo.png" alt="Logo" />
 </nav>
 
-<section class="content02"></section>
 
 <script>
-  if (!window.__adminGeneralNavInit) {
-    window.__adminGeneralNavInit = true;
+  if (!window.__adminGeneralNavInitV2) {
+    window.__adminGeneralNavInitV2 = true;
     window.redirigirAdminGeneral = function (select) {
       const url = select.value;
-      if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
-        document.body.classList.add('fade-out');
-        setTimeout(() => (location.href = url), 150);
-      }
-      setTimeout(() => (select.selectedIndex = 0), 250);
+      if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) location.href = url;
+      setTimeout(() => (select.selectedIndex = 0), 200);
     };
   }
 </script>
+

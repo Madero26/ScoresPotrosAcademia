@@ -1,3 +1,10 @@
+// script rápido en Node
+const bcrypt = require('bcryptjs');
+(async () => {
+  console.log('admin =>', await bcrypt.hash('hash_admin', 10));
+  console.log('coord =>', await bcrypt.hash('hash_coord', 10));
+  console.log('stats =>', await bcrypt.hash('hash_stats', 10));
+})();
 
 /*
 

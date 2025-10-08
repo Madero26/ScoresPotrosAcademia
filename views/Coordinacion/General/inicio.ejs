@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleCategorias.css">
+</head>
+<body>
+    <%- include('../../partials/navbar_adminGeneral') %>
+
+    <script>
+  async function reping() {
+    try {
+      const r = await fetch('/auth/ping', { cache: 'no-store', credentials: 'same-origin' });
+      if (!r.ok) location.replace('/Login');
+    } catch { location.replace('/Login'); }
+  }
+
+  // Si vuelve desde BFCache o navegación atrás, revalida
+  window.addEventListener('pageshow', e => { if (e.persisted) reping(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') reping();
+  });
+</script>
+
+</body>
+
+</html>

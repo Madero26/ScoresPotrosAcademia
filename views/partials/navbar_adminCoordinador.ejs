@@ -1,81 +1,128 @@
-<section class="content01">
-  <div class="regreso"><a href="/Login/logout">Cerrar sesión</a></div>
-  <div class="perfil">
-    <% if (usuario) { %><p> Coordinador: <%= usuario.nombres %> </p><% } %>
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar__container">
+    <div class="topbar__left">
+      <img class="brand" src="/resources/imgs/potros.png" alt="Potros ITSON">
+      <span class="title">Panel de coordinador</span>
+    </div>
+    <div class="topbar__right">
+      <% if (usuario) { %>
+        <span class="user">Usuario: <strong><%= usuario.alias || usuario.usuario %></strong></span>
+      <% } %>
+      <a href="/CoordContraNueva" class="btn btn-outline">Cambiar contraseña</a>
+      <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+    </div>
   </div>
-</section>
+</header>
 
-<nav>
-  <img src="/resources/imgs/potros.png" alt="POTROS ITSON" />
+<!-- ACCIONES -->
+<nav class="actions">
+  <div class="actions__container">
+    <div class="actions__grid">
 
-  <!-- AGREGAR -->
-  <div>
-    <form>
-      <select class="admin-select" onchange="redirigirCoord(this)">
-        <option>AGREGAR</option>
-        <optgroup label="Rosters">
-          <option value="/CoordAgregar">Agregar jugador</option>
-          <option value="/formCrearEquipos">Agregar equipo</option>
-          <option value="/formCrearEntrenadores">Agregar entrenador</option>
-        </optgroup>
-        <optgroup label="Mediciones">
-          <option value="/formRegistrarRendimiento">Registrar rendimiento mensual</option>
-        </optgroup>
-      </select>
-    </form>
+      <!-- AGREGAR -->
+      <div class="action">
+        <label for="coord-agregar">Agregar</label>
+        <select id="coord-agregar" class="select" onchange="redirigirCoord(this)">
+          <option>AGREGAR</option>
+
+          <optgroup label="Personas">
+            <option value="/CoordCrearJugador">Crear jugador</option>
+            <option value="/CoordCrearEntrenador">Crear entrenador</option>
+          </optgroup>
+
+          <optgroup label="Gestión de temporada (mi categoría)">
+            <option value="/CoordRegistrarEquipoTemporada">Registrar equipo en temporada</option>
+            <option value="/CoordAsignarJugadorCategoria">Asignar jugador a mi categoría</option>
+            <option value="/CoordInscribirJugadorEquipo">Inscribir jugador en equipo</option>
+            <option value="/CoordAsignarEntrenadorEquipo">Asignar entrenador a equipo</option>
+          </optgroup>
+
+          <optgroup label="Mediciones">
+            <option value="/CoordRegistrarRendimiento">Registrar rendimiento mensual</option>
+          </optgroup>
+
+          <optgroup label="Controles de temporada">
+            <option value="/CoordConfigMinimoApariciones">Configurar mínimo de apariciones de bateo</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- ACTUALIZAR -->
+      <div class="action">
+        <label for="coord-actualizar">Actualizar</label>
+        <select id="coord-actualizar" class="select" onchange="redirigirCoord(this)">
+          <option>ACTUALIZAR</option>
+
+          <optgroup label="Personas">
+            <option value="/CoordActualizarJugador">Actualizar jugador</option>
+            <option value="/CoordActualizarEntrenador">Actualizar entrenador</option>
+          </optgroup>
+
+          <optgroup label="Gestión de temporada (mi categoría)">
+            <option value="/CoordActualizarEquipoTemporada">Actualizar equipo en temporada</option>
+            <option value="/CoordActualizarAsignacionJugadorCategoria">Actualizar asignación de jugador a categoría</option>
+            <option value="/CoordActualizarInscripcionJugadorEquipo">Actualizar inscripción de jugador en equipo</option>
+            <option value="/CoordActualizarEntrenadorEquipo">Actualizar entrenador del equipo</option>
+          </optgroup>
+
+          <optgroup label="Controles de temporada">
+            <option value="/CoordActualizarMinimoApariciones">Actualizar mínimo de apariciones de bateo</option>
+          </optgroup>
+
+          <optgroup label="Estadísticas (mi categoría)">
+            <option value="/CoordActualizarEstadisticasBateo">Actualizar estadísticas de bateo</option>
+            <option value="/CoordActualizarEstadisticasPitcheo">Actualizar estadísticas de pitcheo</option>
+            <option value="/CoordActualizarEstadisticasEquipo">Actualizar estadísticas de equipo</option>
+            <option value="/CoordActualizarRendimiento">Actualizar rendimiento mensual</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- ELIMINAR -->
+      <div class="action">
+        <label for="coord-eliminar">Eliminar</label>
+        <select id="coord-eliminar" class="select" onchange="redirigirCoord(this)">
+          <option>ELIMINAR</option>
+
+          <optgroup label="Personas">
+            <option value="/CoordEliminarJugador">Eliminar jugador</option>
+            <option value="/CoordEliminarEntrenador">Eliminar entrenador</option>
+          </optgroup>
+
+          <optgroup label="Gestión de temporada (mi categoría)">
+            <option value="/CoordEliminarEquipoTemporada">Eliminar equipo en temporada</option>
+            <option value="/CoordEliminarAsignacionJugadorCategoria">Quitar jugador de la categoría</option>
+            <option value="/CoordEliminarInscripcionJugadorEquipo">Quitar jugador del equipo</option>
+            <option value="/CoordEliminarEntrenadorEquipo">Quitar entrenador del equipo</option>
+          </optgroup>
+
+          <optgroup label="Controles de temporada">
+            <option value="/CoordEliminarMinimoApariciones">Eliminar mínimo de apariciones de bateo</option>
+          </optgroup>
+
+          <optgroup label="Estadísticas (mi categoría)">
+            <option value="/CoordEliminarEstadisticasBateo">Eliminar estadísticas de bateo</option>
+            <option value="/CoordEliminarEstadisticasPitcheo">Eliminar estadísticas de pitcheo</option>
+            <option value="/CoordEliminarEstadisticasEquipo">Eliminar estadísticas de equipo</option>
+            <option value="/CoordEliminarRendimiento">Eliminar rendimiento mensual</option>
+          </optgroup>
+        </select>
+      </div>
+
+    </div>
   </div>
-
-  <!-- ACTUALIZAR -->
-  <div>
-    <form>
-      <select class="admin-select" onchange="redirigirCoord(this)">
-        <option>ACTUALIZAR</option>
-        <optgroup label="Rosters">
-          <option value="/CoordActualizar">Actualizar jugador</option>
-          <option value="/formActualizarEquipo">Actualizar equipo</option>
-          <option value="/formActualizarEntrenador">Actualizar entrenador</option>
-          <option value="/formActualizarCategoria">Actualizar categoría</option>
-        </optgroup>
-        <optgroup label="Mediciones">
-          <option value="/formActualizarRendimiento">Actualizar rendimiento mensual</option>
-        </optgroup>
-      </select>
-    </form>
-  </div>
-
-  <!-- ELIMINAR -->
-  <div>
-    <form>
-      <select class="admin-select" onchange="redirigirCoord(this)">
-        <option>ELIMINAR</option>
-        <optgroup label="Rosters">
-          <option value="/CoordEliminar">Eliminar jugador</option>
-          <option value="/formEliminarEquipo">Eliminar equipo</option>
-          <option value="/formEliminarEntrenador">Eliminar entrenador</option>
-        </optgroup>
-        <optgroup label="Mediciones">
-          <option value="/formEliminarRendimiento">Eliminar medición de rendimiento</option>
-        </optgroup>
-      </select>
-    </form>
-  </div>
-
-  <div><a href="/CoordContraNueva" class="link">Cambiar contraseña</a></div>
-  <img src="/resources/imgs/logo.png" alt="Logo" />
 </nav>
 
-<section class="content02"></section>
 
 <script>
-  if (!window.__coordNavInitV2) {
-    window.__coordNavInitV2 = true;
+  if (!window.__coordNavInitV3) {
+    window.__coordNavInitV3 = true;
     window.redirigirCoord = function (select) {
       const url = select.value;
-      if (url && !/^(AGREGAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
-        document.body.classList.add('fade-out');
-        setTimeout(() => (location.href = url), 150);
-      }
-      setTimeout(() => (select.selectedIndex = 0), 250);
+      if (url && !/^(AGREGAR|ACTUALIZAR|ELIMINAR)$/.test(url)) location.href = url;
+      setTimeout(() => (select.selectedIndex = 0), 200);
     };
   }
 </script>
+

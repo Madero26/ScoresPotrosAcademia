@@ -1,0 +1,95 @@
+/* === Layout base profesional === */
+:root{
+  --azul:#0d5b82;        /* barra superior */
+  --azul-osc:#0a4766;    /* fondo acciones */
+  --panel:#ffffff;       /* tarjetas y fondo claro */
+  --borde:#d9dde3;
+  --txt:#0f172a;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+}
+/* Contenedor ancho fijo legible para adultos */
+.topbar__container,
+.actions__container{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ==== Topbar ==== */
+.topbar{
+  background:var(--azul);
+  color:#fff;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+}
+.topbar__container{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:12px 16px;
+}
+.topbar__left{display:flex; align-items:center; gap:12px;}
+.brand{height:36px; width:auto;}
+.title{font-size:1.05rem; font-weight:700; letter-spacing:.2px;}
+.topbar__right{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.user{opacity:.95; font-size:.95rem;}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:8px 12px; border-radius:8px; text-decoration:none; font-weight:700; line-height:1;
+  border:1px solid transparent;
+}
+.btn-outline{color:#fff; border-color:rgba(255,255,255,.5); background:transparent;}
+.btn-outline:hover{background:rgba(255,255,255,.12);}
+.btn-danger{background:#cf3b2d; color:#fff;}
+.btn-danger:hover{filter:brightness(.95);}
+
+/* ==== Barra de acciones ==== */
+.actions{background:var(--azul-osc);}
+.actions__container{padding:20px 16px;}
+.actions__grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:16px;
+}
+.action{
+  background:var(--panel);
+  border:1px solid var(--borde);
+  border-radius:10px;
+  padding:14px;
+}
+.action label{
+  display:block;
+  font-size:.82rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:#334155;
+  margin-bottom:6px;
+}
+.select{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid var(--borde);
+  border-radius:8px;
+  background:#fff;
+  color:var(--txt);
+  font-weight:600;
+}
+
+/* ==== Responsivo ==== */
+@media (max-width: 1024px){
+  .actions__grid{grid-template-columns: repeat(2, 1fr);}
+  .title{display:none;}            /* reduce ruido visual en tablet */
+}
+@media (max-width: 640px){
+  .topbar__container{flex-direction:column; align-items:flex-start; gap:8px;}
+  .actions__grid{grid-template-columns: 1fr;}
+  .brand{height:32px;}
+  .btn{padding:8px 10px;}
+}
+
