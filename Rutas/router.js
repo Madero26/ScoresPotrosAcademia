@@ -1,3 +1,4 @@
+/*
 const express = require('express')
 const router = express.Router()
 const coneccion = require('../database/conexion')
@@ -1143,4 +1144,4 @@ router.post('/eliminarCategoria')
 
 
 
-module.exports = router
+module.exports = router */

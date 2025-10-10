@@ -1,0 +1,83 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>.foto{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb}</style>
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar coordinador</h1>
+
+    <div class="card">
+      <form id="formSel" method="GET" action="/adminGeneral/formActualizarCoordinador" class="form-group" style="margin-bottom:1rem">
+        <label>Selecciona coordinador</label>
+        <select class="input" name="id" onchange="document.getElementById('formSel').submit()">
+          <% const lista = Array.isArray(coordinadores) ? coordinadores : []; %>
+          <% lista.forEach(x => { %>
+            <option value="<%= x.id_coordinador %>" <%= (coordinador && x.id_coordinador===coordinador.id_coordinador)?'selected':'' %>>
+              <%= x.apellido_paterno %> <%= x.apellido_materno %>, <%= x.nombres %>
+            </option>
+          <% }) %>
+        </select>
+      </form>
+
+      <% const c = (typeof coordinador !== 'undefined' && coordinador) ? coordinador : null; %>
+      <% if (!c) { %>
+        <p>No se encontró el coordinador seleccionado.</p>
+      <% } else { %>
+
+      <form action="/adminGeneral/coordinadores/<%= c.id_coordinador %>" method="POST" enctype="multipart/form-data">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:1/-1;display:flex;gap:12px;align-items:center">
+            <img class="foto" src="/resources<%= c.url_foto || '/resources/imgs/user-placeholder.png' %>" alt="">
+            <div style="flex:1">
+              <label>Foto</label>
+              <input class="input" type="file" name="foto" accept="image/*">
+              <input type="hidden" name="url_foto" value="<%= c.url_foto || '' %>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Nombres *</label>
+            <input class="input" type="text" name="nombres" required maxlength="100" value="<%= c.nombres %>">
+          </div>
+          <div class="form-group">
+            <label>Apellido paterno *</label>
+            <input class="input" type="text" name="apellido_paterno" required maxlength="100" value="<%= c.apellido_paterno %>">
+          </div>
+          <div class="form-group">
+            <label>Apellido materno *</label>
+            <input class="input" type="text" name="apellido_materno" required maxlength="100" value="<%= c.apellido_materno %>">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form action="/adminGeneral/coordinadores/<%= c.id_coordinador %>/eliminar" method="POST"
+              onsubmit="return confirm('¿Eliminar definitivamente este coordinador?')">
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+
+      <% } %>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location = <%- JSON.stringify(ruta || ('/adminGeneral/formActualizarCoordinador?id=' + (c ? c.id_coordinador : ''))) %>; });
+  </script>
+  <% } %>
+</body></html>

@@ -1,27 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <%- include('../../partials/headAdmin') %>
-  <link rel="stylesheet" href="/resources/styles/styleCategorias.css">
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>
+    .grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); }
+    .lead { font-size:1.05rem; line-height:1.6; color:#94a3b8; }
+    .list { margin:.5rem 0 0 1rem; color:#cbd5e1; }
+    .links a { display:inline-block; margin:.25rem .35rem .25rem 0; }
+    .muted { color:#94a3b8; }
+  </style>
 </head>
 <body>
-    <%- include('../../partials/navbar_adminGeneral') %>
+  <%- include('../../partials/navbar_adminGeneral') %>
 
-    <script>
-  async function reping() {
-    try {
-      const r = await fetch('/auth/ping', { cache: 'no-store', credentials: 'same-origin' });
-      if (!r.ok) location.replace('/Login');
-    } catch { location.replace('/Login'); }
-  }
+  <main class="container">
+    <h1>Panel administrativo</h1>
 
-  // Si vuelve desde BFCache o navegación atrás, revalida
-  window.addEventListener('pageshow', e => { if (e.persisted) reping(); });
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') reping();
-  });
-</script>
+    <div class="grid">
+      <!-- Qué es este panel -->
+      <section class="card">
+        <h2>¿Para qué sirve?</h2>
+        <p class="lead">
+          Este panel concentra la gestión de la <strong>Academia ITSON</strong>. Desde aquí administras
+          temporadas, categorías, equipos y personas, además de usuarios del sistema. Todo lo que ves en la
+          web pública se alimenta de la información registrada en este panel.
+        </p>
+        <ul class="list">
+          <li><strong>Temporadas:</strong> define intervalos, activa una temporada y fija la fecha de corte de edad.</li>
+          <li><strong>Categorías:</strong> rangos de edad y foto representativa.</li>
+          <li><strong>Jugadores / Entrenadores / Coordinadores:</strong> altas, edición y baja.</li>
+          <li><strong>Equipos (catálogo):</strong> nombres base para usar en cada temporada.</li>
+          <li><strong>Gestión por temporada:</strong> asignaciones y registros específicos de cada temporada.</li>
+          <li><strong>Usuarios del panel:</strong> cuentas de acceso y roles.</li>
+        </ul>
+      </section>
 
+      <!-- Cómo usarlo -->
+      <section class="card">
+        <h2>Flujo recomendado</h2>
+        <ol class="list">
+          <li>Crear o activar la <strong>temporada</strong> vigente.</li>
+          <li>Revisar/crear <strong>categorías</strong> y su rango de edades.</li>
+          <li>Dar de alta <strong>jugadores</strong>, <strong>entrenadores</strong> y <strong>coordinadores</strong>.</li>
+          <li>Crear <strong>equipos</strong> en el catálogo y luego registrarlos en la temporada.</li>
+          <li>Asignar <strong>coordinadores</strong> y <strong>jugadores</strong> por categoría/temporada.</li>
+          <li>Inscribir <strong>jugadores</strong> en sus equipos de la temporada.</li>
+          <li>Gestionar <strong>usuarios</strong> y roles del panel.</li>
+        </ol>
+        <p class="muted" style="margin-top:.5rem">
+          Usa los selectores de <em>CREAR</em> y <em>GESTIONAR</em> arriba para ir a cada módulo.
+        </p>
+      </section>
+
+      <!-- Accesos rápidos -->
+      <section class="card links">
+        <h2>Accesos rápidos</h2>
+        <a href="/adminGeneral/formCrearTemporada" class="btn btn-outline">Crear temporada</a>
+        <a href="/adminGeneral/formActualizarTemporada" class="btn btn-outline">Gestionar temporadas</a><br>
+        <a href="/adminGeneral/formCrearCategoria" class="btn btn-outline">Crear categoría</a>
+        <a href="/adminGeneral/formActualizarCategoria" class="btn btn-outline">Gestionar categorías</a><br>
+        <a href="/adminGeneral/formCrearJugador" class="btn btn-outline">Crear jugador</a>
+        <a href="/adminGeneral/formActualizarJugador" class="btn btn-outline">Gestionar jugadores</a><br>
+        <a href="/adminGeneral/formCrearEntrenador" class="btn btn-outline">Crear entrenador</a>
+        <a href="/adminGeneral/formActualizarEntrenador" class="btn btn-outline">Gestionar entrenadores</a><br>
+        <a href="/adminGeneral/formCrearCoordinador" class="btn btn-outline">Crear coordinador</a>
+        <a href="/adminGeneral/formActualizarCoordinador" class="btn btn-outline">Gestionar coordinadores</a><br>
+        <a href="/adminGeneral/formCrearEquipoBase" class="btn btn-outline">Crear equipo</a>
+        <a href="/adminGeneral/formActualizarEquipoBase" class="btn btn-outline">Gestionar equipos</a><br>
+        <a href="/adminGeneral/formActualizarUsuario" class="btn btn-outline">Gestionar usuarios</a>
+      </section>
+
+      <!-- Estado de sesión -->
+      <section class="card">
+        <h2>Estado</h2>
+        <p>Usuario: <strong><%= (usuario && usuario.usuario) ? usuario.usuario : '—' %></strong></p>
+        <p>Rol: <span class="muted"><%= (usuario && usuario.rol) ? usuario.rol : '—' %></span></p>
+        <p>Fecha y hora: <span id="dt" class="muted">—</span></p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function fmt(n){return n<10?'0'+n:n}
+    function tick(){
+      const d=new Date();
+      const s=[d.getFullYear(),fmt(d.getMonth()+1),fmt(d.getDate())].join('-')+' '+fmt(d.getHours())+':'+fmt(d.getMinutes());
+      const el=document.getElementById('dt'); if(el) el.textContent=s;
+    }
+    tick(); setInterval(tick, 30000);
+
+    async function reping(){
+      try{
+        const r=await fetch('/auth/ping',{cache:'no-store',credentials:'same-origin'});
+        if(!r.ok) location.replace('/Login');
+      }catch{ location.replace('/Login'); }
+    }
+    window.addEventListener('pageshow',e=>{ if(e.persisted) reping(); });
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') reping(); });
+  </script>
 </body>
-
 </html>
+

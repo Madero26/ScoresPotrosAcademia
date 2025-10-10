@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+
+
+
+
+<body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Crear temporada</h1>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+    <% if (typeof ok !== 'undefined' && ok) { %>
+      <div class="alert alert-success"><%= ok %></div>
+    <% } %>
+
+    <div class="card">
+      <form action="/adminGeneral/temporadas" method="POST" onsubmit="return validarFechas()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input class="input" type="text" name="nombre" required maxlength="100" placeholder="2025 o 2025-Primavera">
+          </div>
+
+          <div class="form-group">
+            <label>Fecha inicio *</label>
+            <input class="input" type="date" name="fecha_inicio" required>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha fin *</label>
+            <input class="input" type="date" name="fecha_fin" required>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha corte de edad *</label>
+            <input class="input" type="date" name="fecha_corte_edad" required>
+          </div>
+
+          <label class="switch-row">
+            <input type="checkbox" name="is_activa" value="1">
+            <span>Marcar como temporada activa</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function validarFechas() {
+      const fi = new Date(document.querySelector('[name="fecha_inicio"]').value);
+      const ff = new Date(document.querySelector('[name="fecha_fin"]').value);
+      if (ff < fi) { alert('La fecha fin no puede ser menor a inicio.'); return false; }
+      return true;
+    }
+  </script>
+</body>
+...
+  </script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: '<%= alertTitle %>',
+    text: '<%= alertMessage %>',
+    icon: '<%= alertIcon %>',
+    showConfirmButton: <%= showConfirmButton %>,
+    timer: <%= timer %>
+  }).then(()=>{ window.location = '<%= ruta %>'; });
+</script>
+<% } %>
+
+</html>
+
+

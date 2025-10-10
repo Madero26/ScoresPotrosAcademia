@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Crear equipo</h1>
+
+    <div class="card">
+      <form action="/adminGeneral/equipos" method="POST">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre corto *</label>
+            <input class="input" type="text" name="nombre_corto" required maxlength="50" placeholder="Potros A, Sub-10, etc.">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location = <%- JSON.stringify(ruta || '/adminGeneral/formCrearEquipo') %>; });
+  </script>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar equipo</h1>
+
+    <div class="card">
+      <form id="formSel" method="GET" action="/adminGeneral/formActualizarEquipo" class="form-group" style="margin-bottom:1rem">
+        <label>Selecciona equipo</label>
+        <select class="input" name="id" onchange="document.getElementById('formSel').submit()">
+          <% const lista = Array.isArray(equipos) ? equipos : []; %>
+          <% lista.forEach(x => { %>
+            <option value="<%= x.id_equipo %>" <%= (equipo && x.id_equipo===equipo.id_equipo)?'selected':'' %>>
+              <%= x.nombre_corto %>
+            </option>
+          <% }) %>
+        </select>
+      </form>
+
+      <% const e = (typeof equipo !== 'undefined' && equipo) ? equipo : null; %>
+      <% if (!e) { %>
+        <p>No se encontró el equipo seleccionado.</p>
+      <% } else { %>
+
+      <form action="/adminGeneral/equipos/<%= e.id_equipo %>" method="POST">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre corto *</label>
+            <input class="input" type="text" name="nombre_corto" required maxlength="50" value="<%= e.nombre_corto %>">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form action="/adminGeneral/equipos/<%= e.id_equipo %>/eliminar" method="POST"
+              onsubmit="return confirm('¿Eliminar definitivamente este equipo?')">
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+
+      <% } %>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location = <%- JSON.stringify(ruta || ('/adminGeneral/formActualizarEquipo?id=' + (e ? e.id_equipo : ''))) %>; });
+  </script>
+  <% } %>
+</body></html>

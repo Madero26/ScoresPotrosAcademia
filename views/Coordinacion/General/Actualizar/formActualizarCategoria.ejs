@@ -1,0 +1,83 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar categoría</h1>
+
+    <div class="card">
+      <form id="formSel" method="GET" action="/adminGeneral/formActualizarCategoria" class="form-group" style="margin-bottom:1rem">
+        <label>Selecciona categoría</label>
+        <select class="input" name="id" onchange="document.getElementById('formSel').submit()">
+          <% const lista = Array.isArray(categorias) ? categorias : []; %>
+          <% lista.forEach(x => { %>
+            <option value="<%= x.id_categoria %>" <%= (categoria && x.id_categoria===categoria.id_categoria)?'selected':'' %>>
+              <%= x.nombre_categoria %> (<%= x.edad_min %>-<%= x.edad_max %>)
+            </option>
+          <% }) %>
+        </select>
+      </form>
+
+      <% const c = (typeof categoria !== 'undefined' && categoria) ? categoria : null; %>
+      <% if (!c) { %>
+        <p>No se encontró la categoría seleccionada.</p>
+      <% } else { %>
+
+      <form action="/adminGeneral/categorias/<%= c.id_categoria %>" method="POST" onsubmit="return validar()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input class="input" type="text" name="nombre_categoria" required maxlength="100" value="<%= c.nombre_categoria %>">
+          </div>
+          <div class="form-group">
+            <label>Edad mínima *</label>
+            <input class="input" type="number" name="edad_min" min="0" required value="<%= c.edad_min %>">
+          </div>
+          <div class="form-group">
+            <label>Edad máxima *</label>
+            <input class="input" type="number" name="edad_max" min="0" required value="<%= c.edad_max %>">
+          </div>
+          
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form action="/adminGeneral/categorias/<%= c.id_categoria %>/eliminar" method="POST"
+              onsubmit="return confirm('¿Eliminar definitivamente esta categoría?')">
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+
+      <% } %>
+    </div>
+  </main>
+
+  <script>
+    function validar() {
+      const emin = Number(document.querySelector('[name="edad_min"]').value||0);
+      const emax = Number(document.querySelector('[name="edad_max"]').value||0);
+      if (emin > emax) { alert('Edad mínima no puede ser mayor que la máxima.'); return false; }
+      return true;
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location = <%- JSON.stringify(ruta || ('/adminGeneral/formActualizarCategoria?id=' + (c ? c.id_categoria : ''))) %>; });
+  </script>
+  <% } %>
+</body></html>

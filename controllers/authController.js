@@ -3,6 +3,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { promisify } = require('util');
 const db = require('../utils/db'); // debe exportar db.query(sql, params) -> Promise<Array>
+// Helper para detectar solicitudes JSON/AJAX
+const wantsJSON = req =>
+  !!(req.xhr || req.get('x-requested-with') === 'XMLHttpRequest' || req.is('application/json'));
+
 
 // --- Helpers ---------------------------------------------------------------
 
@@ -198,4 +202,93 @@ exports.logout = (req, res) => {
   res.redirect('/Login');
 };
 
+
+exports.renderCambiarContra = (req, res) => {
+  // pasa el usuario logeado para el navbar
+  return res.render('Coordinacion/General/Usuarios/formCambiarContra', {
+    ...res.locals,
+    usuario: req.user || null
+  });
+};
+
+
+exports.cambiarContra = async (req, res) => {
+  try {
+    const u = req.user;
+    if (!u) return res.redirect('/Login');
+
+    const view = 'Coordinacion/General/Usuarios/formCambiarContra';
+    const hasFlash = typeof res.flash === 'function';
+    const pwd = String(req.body.nueva || '').trim();
+
+    if (!pwd.length) {
+      if (wantsJSON(req)) return res.status(400).json({ error: 'requerida' });
+      if (hasFlash) {
+        return res.flash({
+          alertTitle:'Contraseña requerida',
+          alertMessage:'Escribe la nueva contraseña.',
+          alertIcon:'warning', showConfirmButton:true, timer:null, ruta:'/AdminContra'
+        }, '/AdminContra');
+      }
+      return res.render(view, {
+        ...res.locals,
+        usuario: req.user,
+        alert: true,
+        alertTitle: 'Contraseña requerida',
+        alertMessage: 'Escribe la nueva contraseña.',
+        alertIcon: 'warning', showConfirmButton: true, timer: null, ruta: '/AdminContra'
+      });
+    }
+
+    const hash = await bcrypt.hash(pwd, 10);
+    const r = await db.query(
+      `UPDATE UsuarioAdministradores SET contra=? WHERE id_usuario=?`,
+      [hash, u.id_usuario]
+    );
+    if (!r.affectedRows) {
+      if (wantsJSON(req)) return res.status(404).json({ error: 'no encontrado' });
+      if (hasFlash) {
+        return res.flash({
+          alertTitle:'Error',
+          alertMessage:'No se pudo actualizar la contraseña.',
+          alertIcon:'error', showConfirmButton:true, timer:null, ruta:'/AdminContra'
+        }, '/AdminContra');
+      }
+      return res.render(view, {
+        ...res.locals,
+        usuario: req.user,
+        alert: true,
+        alertTitle: 'Error',
+        alertMessage: 'No se pudo actualizar la contraseña.',
+        alertIcon: 'error', showConfirmButton: true, timer: null, ruta: '/AdminContra'
+      });
+    }
+
+    // cierra sesión
+    res.clearCookie('jwt');
+
+    if (wantsJSON(req)) return res.json({ ok: true, logout: true });
+    if (hasFlash) {
+      return res.flash({
+        alertTitle:'Actualizada',
+        alertMessage:'Contraseña cambiada. Vuelve a iniciar sesión.',
+        alertIcon:'success', showConfirmButton:false, timer:1500, ruta:'/Login'
+      }, '/Login');
+    }
+    return res.redirect('/Login');
+
+  } catch (e) {
+    console.error(e);
+    if (wantsJSON(req)) return res.status(500).json({ error: 'error' });
+    const view = 'Coordinacion/General/Usuarios/formCambiarContra';
+    return res.render(view, {
+      ...res.locals,
+      usuario: req.user || null,
+      alert: true,
+      alertTitle: 'Error',
+      alertMessage: 'Ocurrió un error al cambiar la contraseña.',
+      alertIcon: 'error', showConfirmButton: true, timer: null, ruta: '/AdminContra'
+    });
+  }
+};
 

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar usuario</h1>
+
+    <div class="card">
+      <form id="formSel" method="GET" action="/adminGeneral/formActualizarUsuario" class="form-group" style="margin-bottom:1rem">
+        <label>Selecciona usuario</label>
+        <select class="input" name="id" onchange="document.getElementById('formSel').submit()">
+          <% const lista = Array.isArray(usuarios) ? usuarios : []; %>
+          <% lista.forEach(x => { %>
+            <option value="<%= x.id_usuario %>" <%= (usuarioSel && x.id_usuario===usuarioSel.id_usuario)?'selected':'' %>>
+              <%= x.usuario %> — <%= x.rol %>
+            </option>
+          <% }) %>
+        </select>
+      </form>
+
+      <% const u = (typeof usuarioSel!=='undefined' && usuarioSel) ? usuarioSel : null; %>
+      <% if (!u) { %>
+        <p>No se encontró el usuario seleccionado.</p>
+      <% } else { %>
+
+      <% 
+        // deshabilita cambio de rol si el logeado se edita a sí mismo y es ADMIN
+        const _isSelf = (typeof usuario!=='undefined' && usuario && u) ? Number(usuario.id_usuario)===Number(u.id_usuario) : false;
+        const _disableRole = _isSelf && String(usuario?.rol||'').toUpperCase()==='ADMIN';
+      %>
+
+      <form action="/adminGeneral/usuarios/<%= u.id_usuario %>" method="POST">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Usuario *</label>
+            <input class="input" type="text" name="usuario" required maxlength="50" value="<%= u.usuario %>">
+          </div>
+
+          <div class="form-group">
+            <label>Nueva contraseña (opcional)</label>
+            <input class="input" type="password" name="contra" placeholder="Dejar vacío para no cambiar">
+          </div>
+
+          <div class="form-group">
+            <label>Rol *</label>
+            <select class="input" name="rol" required <%= _disableRole ? 'disabled' : '' %>>
+              <option value="ADMIN"        <%= u.rol==='ADMIN'?'selected':'' %>>ADMIN</option>
+              <option value="COORDINADOR"  <%= u.rol==='COORDINADOR'?'selected':'' %>>COORDINADOR</option>
+              <option value="ESTADISTICAS" <%= u.rol==='ESTADISTICAS'?'selected':'' %>>ESTADISTICAS</option>
+            </select>
+            <% if (_disableRole) { %>
+              <input type="hidden" name="rol" value="<%= u.rol %>">
+              <small class="text-muted">No puedes cambiar tu propio rol mientras estás logeado.</small>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form action="/adminGeneral/usuarios/<%= u.id_usuario %>/eliminar" method="POST" onsubmit="return confirm('¿Eliminar definitivamente este usuario?')">
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+
+      <% } %>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location = <%- JSON.stringify(ruta || ('/adminGeneral/formActualizarUsuario?id=' + (u ? u.id_usuario : ''))) %>; });
+  </script>
+  <% } %>
+</body>
+</html>

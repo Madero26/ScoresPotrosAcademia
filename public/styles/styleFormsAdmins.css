@@ -1,0 +1,236 @@
+/* ===========================
+   Admin Forms UI – Potros
+   file: styleFormsAdmins.css
+   =========================== */
+
+/* --- Reset mínimo y variables --- */
+:root{
+  --bg:#0f172a;            /* slate-900 */
+  --bg-soft:#111827;       /* gray-900 */
+  --card:#0b1222;          /* azul oscuro */
+  --muted:#64748b;         /* slate-500 */
+  --text:#eef2ff;          /* indigo-50 */
+  --primary:#3b82f6;       /* blue-500 */
+  --primary-600:#2563eb;
+  --danger:#ef4444;
+  --success:#22c55e;
+  --radius:14px;
+  --ring:0 0 0 3px rgba(59,130,246,.25);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --gap:18px;
+  --maxw:1100px;
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:var(--font);
+  background: radial-gradient(1200px 600px at 20% -10%, #13203d 0%, transparent 60%), var(--bg);
+  color:var(--text); line-height:1.45;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+
+/* --- Layout contenedor --- */
+.container{
+  width:100%;
+  max-width:var(--maxw);
+  margin:24px auto;
+  padding:0 16px;
+}
+h1,h2{margin:8px 0 20px}
+h1{font-size:clamp(22px,3.5vw,34px)}
+h2{font-size:clamp(18px,2.8vw,24px); color:#c7d2fe}
+
+/* --- Tarjeta de formulario --- */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)) , var(--card);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:var(--radius);
+  padding:22px;
+  box-shadow:var(--shadow);
+  backdrop-filter: blur(4px);
+}
+
+/* --- Grids responsivos --- */
+.grid{
+  display:grid;
+  gap:var(--gap);
+  grid-template-columns:repeat(12,1fr);
+}
+.grid-compact{gap:12px}
+@media (max-width:1024px){
+  .grid{grid-template-columns:repeat(8,1fr)}
+}
+@media (max-width:640px){
+  .grid{grid-template-columns:repeat(4,1fr)}
+}
+
+/* Helpers para spans rápidos */
+.col-12{grid-column:span 12}
+.col-8{grid-column:span 8}
+.col-6{grid-column:span 6}
+.col-4{grid-column:span 4}
+.col-3{grid-column:span 3}
+@media (max-width:1024px){
+  .lg-col-8{grid-column:span 8}
+  .lg-col-4{grid-column:span 4}
+}
+@media (max-width:640px){
+  .sm-col-4{grid-column:span 4}
+  .sm-col-2{grid-column:span 2}
+  .sm-col-1{grid-column:span 1}
+}
+
+/* --- Campos de formulario --- */
+label{display:block; font-size:14px; color:#cbd5e1; margin-bottom:4px}
+.input, input[type="text"], input[type="date"], input[type="number"],
+input[type="email"], input[type="password"], select, textarea{
+  width:100%;
+  border:1px solid rgba(255,255,255,.08);
+  background:#0a1220;
+  color:var(--text);
+  border-radius:12px;
+  padding:12px 14px;
+  outline:none;
+  transition:.15s border-color, .15s box-shadow, .15s background;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+textarea{min-height:120px; resize:vertical}
+input::placeholder, textarea::placeholder{color:#93a1b1}
+input:focus, select:focus, textarea:focus{
+  border-color:var(--primary);
+  box-shadow:var(--ring);
+  background:#0c1628;
+}
+.select{appearance:none; background-image:linear-gradient(45deg,transparent 50%, #93c5fd 50%),linear-gradient(135deg,#93c5fd 50%,transparent 50%); background-position:calc(100% - 18px) 16px, calc(100% - 12px) 16px; background-size:6px 6px; background-repeat:no-repeat}
+
+/* --- Switches y checkboxes --- */
+.switch-row{display:flex; align-items:center; gap:10px; color:#dbeafe}
+
+/* --- Acciones del formulario --- */
+.form-actions{
+  margin-top:18px; display:flex; gap:14px; flex-wrap:wrap
+}
+.btn{
+  border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  color:var(--text);
+  padding:10px 16px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s transform, .15s box-shadow, .15s background, .15s border-color;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{
+  background:linear-gradient(180deg, var(--primary) , var(--primary-600));
+  border-color:transparent;
+  box-shadow:0 8px 18px rgba(37,99,235,.35);
+}
+.btn-outline{background:transparent}
+.btn-danger{
+  background:linear-gradient(180deg, #f87171, #ef4444);
+  border-color:transparent; color:#fff;
+  box-shadow:0 8px 18px rgba(239,68,68,.35);
+}
+.btn[disabled]{opacity:.6; cursor:not-allowed}
+
+/* --- Alertas --- */
+.alert{
+  border-radius:12px; padding:12px 14px; margin-bottom:14px;
+  border:1px solid;
+}
+.alert-success{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.1); color:#bbf7d0}
+.alert-danger{border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.1); color:#fecaca}
+
+/* --- Tablas administrativas --- */
+.table{
+  width:100%; border-collapse:separate; border-spacing:0 10px;
+}
+.table thead th{
+  text-align:left; font-size:12px; letter-spacing:.02em; color:#a5b4fc; font-weight:700; padding:0 12px;
+}
+.table tbody tr{
+  background:var(--card); border-radius:12px; box-shadow:var(--shadow);
+}
+.table tbody td{
+  padding:12px; border-top:1px solid rgba(255,255,255,.06);
+}
+.table .actions{display:flex; gap:8px}
+
+/* --- Cards de sección --- */
+.section{
+  margin: 22px 0;
+}
+.section .section-title{
+  font-size:14px; text-transform:uppercase; letter-spacing:.12em; color:#9aa7ff; margin-bottom:10px;
+}
+
+/* --- Componentes compactos para listas + filtros --- */
+.toolbar{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;
+}
+.search{
+  position:relative; flex:1 1 320px;
+}
+.search input{
+  padding-left:38px;
+}
+.search::before{
+  content:"🔍"; position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:.8; font-size:14px;
+}
+
+/* --- Navegación superior opcional --- */
+.topbar{
+  position:sticky; top:0; z-index:40;
+  background: rgba(2,6,23,.8);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(6px);
+}
+.topbar__container{max-width:var(--maxw); margin:auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between}
+.topbar .brand{height:32px}
+.topbar .title{font-weight:700; margin-left:8px}
+.topbar .btn{padding:8px 12px}
+
+/* --- Responsivo de formularios: columnas automáticas --- */
+.form-grid{
+  display:grid; gap:var(--gap);
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+}
+.form-group{display:flex; flex-direction:column}
+
+/* --- Utilidades --- */
+.m-0{margin:0} .mt-1{margin-top:6px} .mt-2{margin-top:12px} .mt-3{margin-top:18px}
+.w-full{width:100%}
+.text-center{text-align:center}
+.badge{
+  display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; background:#0f1a33; border:1px solid rgba(255,255,255,.12)
+}
+
+/* --- Ajustes móviles --- */
+@media (max-width:640px){
+  .form-actions{flex-direction:column}
+  .topbar__container{gap:10px}
+  .table thead{display:none}
+  .table tbody tr{display:block; padding:10px}
+  .table tbody td{display:flex; justify-content:space-between; border:0; padding:8px 10px}
+  .table tbody td::before{content:attr(data-th); color:#a5b4fc; margin-right:10px}
+}
+
+/* --- Inputs en filas Grid rápidas --- */
+.field{
+  grid-column:span 6;
+}
+.field-sm{grid-column:span 3}
+.field-lg{grid-column:span 12}
+@media (max-width:1024px){ .field{grid-column:span 8} .field-sm{grid-column:span 4} }
+@media (max-width:640px){ .field, .field-sm, .field-lg{grid-column:span 4} }
+
+/* --- Estados de error --- */
+.is-invalid{border-color:rgba(239,68,68,.8) !important; box-shadow:0 0 0 3px rgba(239,68,68,.25)}
+.help{font-size:12px; color:#fca5a5; margin-top:4px}
+
+/* --- Chips y listas compactas --- */
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#0f1b34; font-size:12px}

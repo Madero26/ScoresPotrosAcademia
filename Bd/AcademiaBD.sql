@@ -80,23 +80,23 @@ CREATE TABLE UsuarioRolTemporadaCategoria (
 );
 
 -- 8) Entrenadores
-CREATE TABLE Entrenadores (
-  id_entrenador INT AUTO_INCREMENT PRIMARY KEY,
-  nombres VARCHAR(100) NOT NULL,
-  apellido_paterno VARCHAR(100) NOT NULL,
-  apellido_materno VARCHAR(100) NOT NULL
-);
+	CREATE TABLE Entrenadores (
+	  id_entrenador INT AUTO_INCREMENT PRIMARY KEY,
+	  nombres VARCHAR(100) NOT NULL,
+	  apellido_paterno VARCHAR(100) NOT NULL,
+	  apellido_materno VARCHAR(100) NOT NULL
+	);
 
 -- 9) Jugadores
-CREATE TABLE Jugadores (
-  id_jugador INT AUTO_INCREMENT PRIMARY KEY,
-  url_foto VARCHAR(255),
-  nombres VARCHAR(100) NOT NULL,
-  apellido_paterno VARCHAR(100) NOT NULL,
-  apellido_materno VARCHAR(100) NOT NULL,
-  fecha_nacimiento DATE NOT NULL,
-  activo TINYINT(1) DEFAULT 1
-);
+	CREATE TABLE Jugadores (
+	  id_jugador INT AUTO_INCREMENT PRIMARY KEY,
+	  url_foto VARCHAR(255),
+	  nombres VARCHAR(100) NOT NULL,
+	  apellido_paterno VARCHAR(100) NOT NULL,
+	  apellido_materno VARCHAR(100) NOT NULL,
+	  fecha_nacimiento DATE NOT NULL,
+	  activo TINYINT(1) DEFAULT 1
+	);
 
 -- 10) Asignación del jugador a categoría por temporada
 CREATE TABLE JugadorTemporadaCategoria (
@@ -112,12 +112,12 @@ CREATE TABLE JugadorTemporadaCategoria (
   UNIQUE KEY uq_jug_temp (id_jugador, id_temporada)  -- una categoría por temporada
 );
 
--- 11) Equipos (identidad base)
-CREATE TABLE Equipos (
-  id_equipo INT AUTO_INCREMENT PRIMARY KEY,
-  nombre_corto VARCHAR(50) NOT NULL,
-  UNIQUE KEY uq_equipo_nombre (nombre_corto)
-);
+	-- 11) Equipos (identidad base)
+	CREATE TABLE Equipos (
+	  id_equipo INT AUTO_INCREMENT PRIMARY KEY,
+	  nombre_corto VARCHAR(50) NOT NULL,
+	  UNIQUE KEY uq_equipo_nombre (nombre_corto)
+	);
 
 -- 12) Equipo por temporada (instancia real que juega)
 CREATE TABLE EquipoTemporada (

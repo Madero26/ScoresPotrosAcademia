@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Crear categoría</h1>
+
+    <div class="card">
+      <form action="/adminGeneral/categorias" method="POST" onsubmit="return validar()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input class="input" type="text" name="nombre_categoria" required maxlength="100" placeholder="7-8, 9-10, etc.">
+          </div>
+          <div class="form-group">
+            <label>Edad mínima *</label>
+            <input class="input" type="number" min="0" name="edad_min" required>
+          </div>
+          <div class="form-group">
+            <label>Edad máxima *</label>
+            <input class="input" type="number" min="0" name="edad_max" required>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function validar() {
+      const emin = Number(document.querySelector('[name="edad_min"]').value||0);
+      const emax = Number(document.querySelector('[name="edad_max"]').value||0);
+      if (emin > emax) { alert('Edad mínima no puede ser mayor que la máxima.'); return false; }
+      return true;
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location = <%- JSON.stringify(ruta || '/adminGeneral/formCrearCategoria') %>; });
+  </script>
+  <% } %>
+</body>
+</html>
