@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>.foto{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb}</style>
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar equipo en temporada</h1>
+
+    <div class="card">
+      <!-- Filtros -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada *</label>
+          <select id="selTemp" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <select id="selCat" class="input"><option value="">Todas</option></select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Selecciona equipo</label>
+          <select id="selET" class="input">
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Editor -->
+      <form id="frm" method="POST" action="#" enctype="multipart/form-data">
+        <input type="hidden" id="idET">
+        <!-- Guarda la URL cruda que ya está en BD (/imgs/Equipos/...) -->
+        <input type="hidden" name="url_foto" id="hidUrlFoto">
+
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:1/-1;display:flex;gap:12px;align-items:center">
+            <img id="imgPrev" class="foto" src="/resources/imgs/user-placeholder.png" alt="">
+            <div style="flex:1">
+              <label>Foto</label>
+              <input class="input" type="file" name="foto" accept="image/*">
+              <div id="prevLink" style="margin-top:.5rem"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Equipo catálogo</label>
+            <select id="selEquipoBase" name="id_equipo" class="input">
+              <option value="">Ninguno</option>
+            </select>
+          </div>
+          <div class="form-group">
+  <label>Entrenador</label>
+  <select id="selCoach" name="id_entrenador" class="input">
+    <option value="">Sin entrenador</option>
+  </select>
+</div>
+
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Nombre mostrado *</label>
+            <input id="inpNombre" name="nombre" class="input" required maxlength="80">
+          </div>
+
+          <div class="form-group">
+            <label>Colores</label>
+            <input id="inpColores" name="colores" class="input" maxlength="50">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="btnUpd" type="submit" class="btn btn-primary" disabled>Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form id="frmDel" method="POST" action="#" onsubmit="return confirm('¿Eliminar definitivamente este equipo?')">
+          <button id="btnDel" type="submit" class="btn btn-danger" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+(function(){
+  const selTemp = document.getElementById('selTemp');
+  const selCat  = document.getElementById('selCat');
+  const selET   = document.getElementById('selET');
+  const selEqB  = document.getElementById('selEquipoBase');
+  const selCoach= document.getElementById('selCoach');
+  const inpNom  = document.getElementById('inpNombre');
+  const inpCol  = document.getElementById('inpColores');
+  const hidUrl  = document.getElementById('hidUrlFoto');
+  const imgPrev = document.getElementById('imgPrev');
+  const prevLink= document.getElementById('prevLink');
+  const btnUpd  = document.getElementById('btnUpd');
+  const btnDel  = document.getElementById('btnDel');
+  const frm     = document.getElementById('frm');
+  const idET    = document.getElementById('idET');
+
+  const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Todas</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/equipoTemporada/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+  }
+  async function loadEquiposBase(){
+    selEqB.innerHTML='<option value="">Ninguno</option>';
+    const es=await GET(`/adminGeneral/equipoTemporada/equiposBase`);
+    es.forEach(e=>{ const o=document.createElement('option'); o.value=e.id_equipo; o.textContent=e.nombre_corto; selEqB.appendChild(o); });
+  }
+  async function loadET(){
+    selET.innerHTML='<option value="">Selecciona</option>';
+    disableForm();
+    const t=selTemp.value; if(!t) return;
+    const qs=new URLSearchParams({id_temporada:t});
+    if(selCat.value) qs.set('id_categoria', selCat.value);
+    const data=await GET(`/adminGeneral/equipoTemporada/lista?`+qs.toString());
+    data.forEach(x=>{
+      const o=document.createElement('option');
+      o.value=x.id_equipo_temporada;
+      o.textContent=`${x.nombre} · Cat:${x.id_categoria}${x.nombre_corto?` · Base:${x.nombre_corto}`:''}`;
+      o.dataset.payload=JSON.stringify(x);
+      selET.appendChild(o);
+    });
+  }
+  async function loadCoachesForCurrent(){
+    const t=selTemp.value; const curId=idET.value||0;
+    selCoach.innerHTML='<option value="">Sin entrenador</option>';
+    if(!t) return;
+    const cs=await GET(`/adminGeneral/equipoTemporada/entrenadores?id_temporada=${t}&id_equipo_temporada=${curId}`);
+    cs.forEach(x=>{ const o=document.createElement('option'); o.value=x.id_entrenador; o.textContent=x.nombre; selCoach.appendChild(o); });
+  }
+
+  function disableForm(){
+    frm.action='#'; document.getElementById('frmDel').action='#';
+    btnUpd.disabled=btnDel.disabled=true;
+    idET.value=''; selEqB.value=''; selCoach.value='';
+    inpNom.value=''; inpCol.value=''; hidUrl.value='';
+    imgPrev.src='/resources/imgs/user-placeholder.png'; prevLink.innerHTML='';
+  }
+
+  async function fillForm(x){
+    idET.value=x.id_equipo_temporada;
+    selEqB.value=x.id_equipo||'';
+    inpNom.value=x.nombre||'';
+    inpCol.value=x.colores||'';
+    hidUrl.value=x.url_foto||'';
+    imgPrev.src=x.url_foto?('/resources'+x.url_foto):'/resources/imgs/user-placeholder.png';
+    prevLink.innerHTML=x.url_foto?`<a href="/resources${x.url_foto}" target="_blank">ver actual</a>`:'';
+    frm.action=`/adminGeneral/equipoTemporada/${x.id_equipo_temporada}`;
+    document.getElementById('frmDel').action=`/adminGeneral/equipoTemporada/${x.id_equipo_temporada}/eliminar`;
+    await loadCoachesForCurrent();
+    selCoach.value = x.id_entrenador || '';
+    btnUpd.disabled=false; btnDel.disabled=false;
+  }
+
+  selTemp.addEventListener('change', async()=>{ await loadCats(); await loadET(); });
+  selCat .addEventListener('change',  loadET);
+  selET  .addEventListener('change', async()=>{
+    const opt=selET.selectedOptions[0];
+    if(!opt||!opt.dataset.payload) return disableForm();
+    await fillForm(JSON.parse(opt.dataset.payload));
+  });
+
+  (async function init(){ await loadCats(); await loadEquiposBase(); await loadET(); })();
+})();
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formActualizarEquipoTemporada') %>; });
+  </script>
+  <% } %>
+</body>
+</html>
+

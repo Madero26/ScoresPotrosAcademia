@@ -1,0 +1,68 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Vincular categoría a temporada</h1>
+    <div class="card">
+      <form id="frm" method="POST" action="/adminGeneral/categoriaTemporadaRango">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada *</label>
+            <select id="selTemp" name="id_temporada" class="input" required>
+              <% (temporadas||[]).forEach(t=>{ %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select id="selCat" name="id_categoria" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nacimiento desde *</label>
+            <input class="input" type="date" name="nacimiento_desde" required>
+          </div>
+          <div class="form-group">
+            <label>Nacimiento hasta *</label>
+            <input class="input" type="date" name="nacimiento_hasta" required>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Guardar</button>
+          <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/categoriaTemporada/disponibles?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+  }
+  selTemp.addEventListener('change', loadCats);
+  (async function init(){ await loadCats(); })();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formCrearCategoriaTemporada') %>; });
+</script>
+<% } %>
+</body></html>

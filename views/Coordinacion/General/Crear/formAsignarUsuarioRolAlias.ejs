@@ -1,0 +1,99 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Asignar usuario a categoría (con alias)</h1>
+
+    <div class="card">
+      <form method="POST" action="/adminGeneral/rolAlias" id="frm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada *</label>
+            <select id="selTemp" name="id_temporada" class="input" required>
+              <% (temporadas||[]).forEach(t=>{ %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select id="selCat" name="id_categoria" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+            <small>Categorías sin espacios disponibles no aparecen.</small>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Buscar usuario</label>
+            <input id="inpQ" class="input" placeholder="Filtra por usuario">
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Usuario *</label>
+            <select id="selUsr" name="id_usuario" class="input" required size="8"></select>
+            <small>Se listan coordinadores o estadísticas sin vínculo en la temporada.</small>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Alias visible *</label>
+            <input name="alias" class="input" required maxlength="100" placeholder="Etiqueta visible para este usuario en la categoría">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Guardar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const selUsr =document.getElementById('selUsr');
+  const inpQ   =document.getElementById('inpQ');
+
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+  function debounce(fn,ms){let h;return(...a)=>{clearTimeout(h);h=setTimeout(()=>fn(...a),ms);}};
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Selecciona</option>';
+    selUsr.innerHTML='';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/rolAlias/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+    await loadUsers();
+  }
+  async function loadUsers(){
+    selUsr.innerHTML='';
+    const t=selTemp.value; if(!t) return;
+    const q=inpQ.value.trim();
+    const qs=new URLSearchParams({id_temporada:t}); if(q) qs.set('q',q);
+    const us=await GET(`/adminGeneral/rolAlias/usuarios?`+qs.toString());
+    selUsr.innerHTML = us.map(u=>`<option value="${u.id_usuario}">${u.nombre} · ${u.rol}</option>`).join('');
+  }
+
+  selTemp.addEventListener('change', loadCats);
+  selCat .addEventListener('change',  loadUsers);
+  inpQ   .addEventListener('input', debounce(loadUsers,250));
+
+  (async function init(){ await loadCats(); await loadUsers(); })();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formAsignarUsuarioRolAlias') %>; });
+</script>
+<% } %>
+</body></html>

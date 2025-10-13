@@ -1,0 +1,124 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar alias de usuario por categoría</h1>
+
+    <div class="card">
+      <!-- Filtros -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada *</label>
+          <select id="selTemp" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select id="selCat" class="input"><option value="">Selecciona</option></select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Usuarios vinculados</label>
+          <select id="selV" class="input" size="6"><option value="">Selecciona</option></select>
+        </div>
+      </div>
+
+      <!-- Editor -->
+      <form id="frm" method="POST" action="#">
+        <input type="hidden" id="hidId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Alias *</label>
+            <input id="inpAlias" name="alias" class="input" required maxlength="100">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button id="btnUpd" class="btn btn-primary" type="submit" disabled>Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <form id="frmDel" method="POST" action="#" onsubmit="return false">
+          <button id="btnDel" class="btn btn-danger" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const selV   =document.getElementById('selV');
+  const inpAlias=document.getElementById('inpAlias');
+  const hidId=document.getElementById('hidId');
+  const frm=document.getElementById('frm');
+  const frmDel=document.getElementById('frmDel');
+  const btnUpd=document.getElementById('btnUpd');
+  const btnDel=document.getElementById('btnDel');
+
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Selecciona</option>';
+    selV.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/rolAlias/categorias?id_temporada=${t}`); // muestra con disponibilidad, pero para actualizar también hay que permitir las que ya están llenas
+    // Para actualizar queremos TODAS las categorías de la temporada:
+    const all=await GET(`/adminGeneral/inscripcion/categorias?id_temporada=${t}`);
+    all.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+    disableEditor();
+  }
+  async function loadLinks(){
+    selV.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value, c=selCat.value; if(!(t&&c)) return disableEditor();
+    const ls=await GET(`/adminGeneral/rolAlias/lista?id_temporada=${t}&id_categoria=${c}`);
+    selV.innerHTML = ls.map(x=>`<option value="${x.id}" data-payload='${JSON.stringify(x)}'>${x.usuario} · ${x.rol} · ${x.alias}</option>`).join('');
+    disableEditor();
+  }
+  function disableEditor(){
+    inpAlias.value=''; hidId.value=''; frm.action='#'; frmDel.action='#';
+    btnUpd.disabled=true; btnDel.disabled=true;
+  }
+  function fillEditor(x){
+    hidId.value=x.id; inpAlias.value=x.alias||'';
+    frm.action=`/adminGeneral/rolAlias/${x.id}`;
+    frmDel.action=`/adminGeneral/rolAlias/${x.id}/eliminar`;
+    btnUpd.disabled=false; btnDel.disabled=false;
+  }
+
+  selTemp.addEventListener('change', loadCats);
+  selCat .addEventListener('change',  loadLinks);
+  selV   .addEventListener('change', ()=>{
+    const o=selV.selectedOptions[0]; if(!o||!o.dataset.payload) return disableEditor();
+    fillEditor(JSON.parse(o.dataset.payload));
+  });
+
+  (async function init(){ await loadCats(); })();
+
+  // Confirm eliminar
+  btnDel.addEventListener('click', ()=>{
+    if (!frmDel.action || frmDel.action==='#') return;
+    Swal.fire({title:'¿Eliminar vínculo?',icon:'warning',showCancelButton:true,confirmButtonText:'Sí, eliminar'})
+      .then(r=>{ if(r.isConfirmed) frmDel.submit(); });
+  });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formActualizarUsuarioRolAlias') %>; });
+</script>
+<% } %>
+</body></html>

@@ -4,6 +4,7 @@ const router = express.Router();
 const db = require('../utils/db'); // ← añade esta línea
 const { playerUpload } = require('../utils/upload');
 const { coordUpload } = require('../utils/upload');
+const { teamUpload } = require('../utils/upload');
 
 /* ====== IMPORTA TUS CONTROLADORES EXISTENTES ====== */
 const temporadaCtrl = require('../controllers/temporadaController');
@@ -92,59 +93,17 @@ mapViews({
   '/formCrearUsuarioEstadisticas': 'Coordinacion/General/Crear/formCrearUsuarioEstadisticas',
 
   // Mediciones
-  '/CoordRegistrarRendimiento': 'Coordinacion/General/Gestion/coordRegistrarRendimiento',
 
   // GESTIÓN POR TEMPORADA
-  '/formCrearEquipoTemporada': 'Coordinacion/General/Gestion/formCrearEquipoTemporada',
-  '/formAsignarCoordinadorCategoria': 'Coordinacion/General/Gestion/formAsignarCoordinadorCategoria',
-  '/formAsignarJugadorCategoria': 'Coordinacion/General/Gestion/formAsignarJugadorCategoria',
-  '/formInscribirJugadorEquipo': 'Coordinacion/General/Gestion/formInscribirJugadorEquipo',
-  '/formAsignarUsuarioRolAlias': 'Coordinacion/General/Gestion/formAsignarUsuarioRolAlias',
 
   // CONTROLES DE TEMPORADA
-  '/formTemporadaActiva': 'Coordinacion/General/Gestion/formTemporadaActiva',
-  '/formConfigRangoEdad': 'Coordinacion/General/Gestion/formConfigRangoEdad',
-  '/formCopiarEquiposTemporada': 'Coordinacion/General/Gestion/formCopiarEquiposTemporada',
-  '/formConfigMinimoApariciones': 'Coordinacion/General/Gestion/formConfigMinimoApariciones',
 
   // ACTUALIZAR
 
   '/formActualizarUsuarioAdmin': 'Coordinacion/General/Actualizar/formActualizarUsuarioAdmin',
   '/formActualizarUsuarioCoordinador': 'Coordinacion/General/Actualizar/formActualizarUsuarioCoordinador',
   '/formActualizarUsuarioEstadisticas': 'Coordinacion/General/Actualizar/formActualizarUsuarioEstadisticas',
-  '/formActualizarEquipoTemporada': 'Coordinacion/General/Actualizar/formActualizarEquipoTemporada',
-  '/formActualizarAsignacionCoordinadorCategoria': 'Coordinacion/General/Actualizar/formActualizarAsignacionCoordinadorCategoria',
-  '/formActualizarAsignacionJugadorCategoria': 'Coordinacion/General/Actualizar/formActualizarAsignacionJugadorCategoria',
-  '/formActualizarInscripcionJugadorEquipo': 'Coordinacion/General/Actualizar/formActualizarInscripcionJugadorEquipo',
-  '/formActualizarUsuarioRolAlias': 'Coordinacion/General/Actualizar/formActualizarUsuarioRolAlias',
-  '/formActualizarRangoEdad': 'Coordinacion/General/Actualizar/formActualizarRangoEdad',
-  '/formActualizarMinimoApariciones': 'Coordinacion/General/Actualizar/formActualizarMinimoApariciones',
-  '/formActualizarEstadisticasBateo': 'Coordinacion/General/Actualizar/formActualizarEstadisticasBateo',
-  '/formActualizarEstadisticasPitcheo': 'Coordinacion/General/Actualizar/formActualizarEstadisticasPitcheo',
-  '/formActualizarEstadisticasEquipo': 'Coordinacion/General/Actualizar/formActualizarEstadisticasEquipo',
-  '/formActualizarEstadisticasRendimiento': 'Coordinacion/General/Actualizar/formActualizarEstadisticasRendimiento',
-
-  // ELIMINAR
-  '/formEliminarTemporada': 'Coordinacion/General/Eliminar/formEliminarTemporada',
-  '/formEliminarCategoria': 'Coordinacion/General/Eliminar/formEliminarCategoria',
-  '/formEliminarJugador': 'Coordinacion/General/Eliminar/formEliminarJugador',
-  '/formEliminarEntrenador': 'Coordinacion/General/Eliminar/formEliminarEntrenador',
-  '/formEliminarCoordinador': 'Coordinacion/General/Eliminar/formEliminarCoordinador',
-  '/formEliminarEquipoBase': 'Coordinacion/General/Eliminar/formEliminarEquipoBase',
-  '/formEliminarUsuarioAdmin': 'Coordinacion/General/Eliminar/formEliminarUsuarioAdmin',
-  '/formEliminarUsuarioCoordinador': 'Coordinacion/General/Eliminar/formEliminarUsuarioCoordinador',
-  '/formEliminarUsuarioEstadisticas': 'Coordinacion/General/Eliminar/formEliminarUsuarioEstadisticas',
-  '/formEliminarEquipoTemporada': 'Coordinacion/General/Eliminar/formEliminarEquipoTemporada',
-  '/formEliminarAsignacionCoordinadorCategoria': 'Coordinacion/General/Eliminar/formEliminarAsignacionCoordinadorCategoria',
-  '/formEliminarAsignacionJugadorCategoria': 'Coordinacion/General/Eliminar/formEliminarAsignacionJugadorCategoria',
-  '/formEliminarInscripcionJugadorEquipo': 'Coordinacion/General/Eliminar/formEliminarInscripcionJugadorEquipo',
-  '/formEliminarUsuarioRolAlias': 'Coordinacion/General/Eliminar/formEliminarUsuarioRolAlias',
-  '/formEliminarRangoEdad': 'Coordinacion/General/Eliminar/formEliminarRangoEdad',
-  '/formEliminarMinimoApariciones': 'Coordinacion/General/Eliminar/formEliminarMinimoApariciones',
-  '/formEliminarEstadisticasBateo': 'Coordinacion/General/Eliminar/formEliminarEstadisticasBateo',
-  '/formEliminarEstadisticasPitcheo': 'Coordinacion/General/Eliminar/formEliminarEstadisticasPitcheo',
-  '/formEliminarEstadisticasEquipo': 'Coordinacion/General/Eliminar/formEliminarEstadisticasEquipo',
-  '/formEliminarEstadisticasRendimiento': 'Coordinacion/General/Eliminar/formEliminarEstadisticasRendimiento'
+  
 });
 
 /* ====== ENDPOINTS CRUD ====== */
@@ -419,33 +378,96 @@ router.get('/formActualizarEquipoBase', async (req, res) => {
   }
 });
 
-/* EquipoTemporada */
-bind('post', '/equipoTemporada', equipoTemporadaCtrl.crear, 'equipoTemporada.crear');
-bind('post', '/equipoTemporada/:id', equipoTemporadaCtrl.actualizar, 'equipoTemporada.actualizar');
-bind('post', '/equipoTemporada/:id/eliminar', equipoTemporadaCtrl.eliminar, 'equipoTemporada.eliminar');
+/* Formularios */
+router.get('/formCrearEquipoTemporada',       equipoTemporadaCtrl.formCrear);
+router.get('/formActualizarEquipoTemporada',  equipoTemporadaCtrl.formActualizar);
+bind('get','/equipoTemporada/categorias',   equipoTemporadaCtrl.categoriasPorTemporada);
+bind('get','/equipoTemporada/equiposBase',  equipoTemporadaCtrl.equiposBase);
+bind('get','/equipoTemporada/lista',        equipoTemporadaCtrl.listar);
+bind('get','/equipoTemporada/entrenadores', equipoTemporadaCtrl.entrenadoresDisponibles);
 
-/* Rango nacimiento por categoría-temporada */
-bind('post', '/categoriaTemporadaRango', categoriaTempRangoCtrl.crear, 'categoriaTemporadaRango.crear');
-bind('post', '/categoriaTemporadaRango/:id', categoriaTempRangoCtrl.actualizar, 'categoriaTemporadaRango.actualizar');
-bind('post', '/categoriaTemporadaRango/:id/eliminar', categoriaTempRangoCtrl.eliminar, 'categoriaTemporadaRango.eliminar');
+router.post('/equipoTemporada',     teamUpload.single('foto'), equipoTemporadaCtrl.crear);
+router.post('/equipoTemporada/:id', teamUpload.single('foto'), equipoTemporadaCtrl.actualizar);
+bind('post','/equipoTemporada/:id/eliminar', equipoTemporadaCtrl.eliminar);
+bind('get','/equipoTemporada/:id(\\d+)',     equipoTemporadaCtrl.obtener);
 
-/* Asignación Coordinador a Categoría-Temporada */
-bind('post', '/coordinadorTemporadaCategoria', coordTempCatCtrl.crear, 'coordinadorTempCat.crear');
-bind('post', '/coordinadorTemporadaCategoria/:id/eliminar', coordTempCatCtrl.eliminar, 'coordinadorTempCat.eliminar');
+// CRUD ya existentes siguen igual; recuerda usar teamUpload.single('foto')
 
-/* Usuario rol-alias por categoría-temporada */
-bind('post', '/usuarioRolTemporadaCategoria', usuarioRolTempCatCtrl.crear, 'usuarioRolTempCat.crear');
-bind('post', '/usuarioRolTemporadaCategoria/:id/eliminar', usuarioRolTempCatCtrl.eliminar, 'usuarioRolTempCat.eliminar');
 
-/* Jugador ↔ Categoría-Temporada */
-bind('post', '/jugadorTemporadaCategoria', jugadorTempCatCtrl.crear, 'jugadorTempCat.crear');
-bind('post', '/jugadorTemporadaCategoria/:id', jugadorTempCatCtrl.actualizar, 'jugadorTempCat.actualizar');
-bind('post', '/jugadorTemporadaCategoria/:id/eliminar', jugadorTempCatCtrl.eliminar, 'jugadorTempCat.eliminar');
+// Formularios
+router.get('/formCrearCategoriaTemporada',      categoriaTempRangoCtrl.formCrear);
+router.get('/formActualizarCategoriaTemporada', categoriaTempRangoCtrl.formActualizar);
 
-/* Jugador ↔ Equipo-Temporada */
-bind('post', '/jugadorEquipoTemporada', jugadorEquipoTempCtrl.crear, 'jugadorEquipoTemp.crear');
-bind('post', '/jugadorEquipoTemporada/:id', jugadorEquipoTempCtrl.actualizar, 'jugadorEquipoTemp.actualizar');
-bind('post', '/jugadorEquipoTemporada/:id/eliminar', jugadorEquipoTempCtrl.eliminar, 'jugadorEquipoTemp.eliminar');
+// API filtros
+bind('get','/categoriaTemporada/disponibles', categoriaTempRangoCtrl.categoriasDisponibles);
+bind('get','/categoriaTemporada/lista',       categoriaTempRangoCtrl.listaPorTemporada);
+bind('get','/categoriaTemporada/:id(\\d+)',   categoriaTempRangoCtrl.obtener);
+
+// CRUD
+bind('post','/categoriaTemporadaRango',            categoriaTempRangoCtrl.crear);
+bind('post','/categoriaTemporadaRango/:id',        categoriaTempRangoCtrl.actualizar);
+bind('post','/categoriaTemporadaRango/:id/eliminar', categoriaTempRangoCtrl.eliminar);;
+
+// Formularios
+router.get('/formAsignarCoordinadorCategoria',        coordTempCatCtrl.formCrear);
+router.get('/formActualizarAsignacionCoordinadorCategoria', coordTempCatCtrl.formActualizar);
+
+// Filtros API
+bind('get','/coordCat/categorias',     coordTempCatCtrl.categoriasPorTemporada);
+bind('get','/coordCat/coordinadores',  coordTempCatCtrl.coordinadoresDisponibles);
+bind('get','/coordCat/actual',         coordTempCatCtrl.asignacionActual);
+
+// CRUD
+bind('post','/coordinadorTemporadaCategoria',            coordTempCatCtrl.crear);
+bind('post','/coordinadorTemporadaCategoria/:id',        coordTempCatCtrl.actualizar);
+bind('post','/coordinadorTemporadaCategoria/:id/eliminar', coordTempCatCtrl.eliminar);
+
+
+// Formularios
+router.get('/formAsignarUsuarioRolAlias', usuarioRolTempCatCtrl.formCrear);
+router.get('/formActualizarUsuarioRolAlias', usuarioRolTempCatCtrl.formActualizar);
+
+// API filtros/listas
+bind('get','/rolAlias/categorias', usuarioRolTempCatCtrl.categoriasDisponibles);
+bind('get','/rolAlias/usuarios',   usuarioRolTempCatCtrl.usuariosElegibles);
+bind('get','/rolAlias/lista',      usuarioRolTempCatCtrl.listar);
+bind('get','/rolAlias/:id(\\d+)',  usuarioRolTempCatCtrl.obtener);
+
+// CRUD
+bind('post','/rolAlias',             usuarioRolTempCatCtrl.crear);
+bind('post','/rolAlias/:id',         usuarioRolTempCatCtrl.actualizar);
+bind('post','/rolAlias/:id/eliminar',usuarioRolTempCatCtrl.eliminar);
+
+// Formularios
+router.get('/formAsignarJugadorCategoria',              jugadorTempCatCtrl.formCrear);
+router.get('/formActualizarAsignacionJugadorCategoria', jugadorTempCatCtrl.formActualizar);
+
+// API filtros/busqueda
+bind('get','/jugadorCat/categorias', jugadorTempCatCtrl.categoriasPorTemporada);
+bind('get','/jugadorCat/buscar',     jugadorTempCatCtrl.buscarJugadores);
+bind('get','/jugadorCat/lista',      jugadorTempCatCtrl.listarAsignados);
+bind('get','/jugadorCat/:id(\\d+)',  jugadorTempCatCtrl.obtener);
+
+// CRUD
+bind('post','/jugadorTemporadaCategoria',             jugadorTempCatCtrl.crear);
+bind('post','/jugadorTemporadaCategoria/:id',         jugadorTempCatCtrl.actualizar);
+bind('post','/jugadorTemporadaCategoria/:id/eliminar',jugadorTempCatCtrl.eliminar);
+
+// Formularios
+router.get('/formInscribirJugadorEquipo',                jugadorEquipoTempCtrl.formCrear);
+router.get('/formActualizarInscripcionJugadorEquipo',    jugadorEquipoTempCtrl.formActualizar);
+
+// API filtros/listas
+bind('get','/inscripcion/categorias', jugadorEquipoTempCtrl.categoriasPorTemporada);
+bind('get','/inscripcion/equipos',    jugadorEquipoTempCtrl.equiposPorTempCat);
+bind('get','/inscripcion/jugadores',  jugadorEquipoTempCtrl.jugadoresAsignables);
+bind('get','/inscripcion/lista',      jugadorEquipoTempCtrl.listar);
+bind('get','/inscripcion/:id(\\d+)',  jugadorEquipoTempCtrl.obtener);
+
+// CRUD
+bind('post','/jugadorEquipoTemporada',             jugadorEquipoTempCtrl.crear);
+bind('post','/jugadorEquipoTemporada/:id',         jugadorEquipoTempCtrl.actualizar);
+bind('post','/jugadorEquipoTemporada/:id/eliminar',jugadorEquipoTempCtrl.eliminar);
 
 /* Usuarios del panel */
 bind('get', '/usuarios', usuariosCtrl.listar, 'usuarios.listar');
@@ -509,8 +531,37 @@ router.get('/formActualizarUsuario', async (req,res)=>{
 });
 
 
-/* Mínimo de apariciones (bateo) */
-bind('post', '/minimoApariciones', minimoAparCtrl.upsert, 'minimoApariciones.upsert');
+
+// API de filtros (cascada)  ← MUEVE ESTO ARRIBA
+bind('get','/rendimiento/categorias', estRendCtrl.categoriasPorTemporada);
+bind('get','/rendimiento/equipos',    estRendCtrl.equiposPorTempCat);
+bind('get','/rendimiento/jugadores',  estRendCtrl.jugadoresFiltro);
+bind('get','/rendimiento/fechas',     estRendCtrl.fechasPorJugador);
+
+// API CRUD
+bind('post','/rendimiento',           estRendCtrl.crear);
+bind('post','/rendimiento/:id',       estRendCtrl.actualizar);
+bind('post','/rendimiento/:id/eliminar', estRendCtrl.eliminar);
+bind('get','/rendimiento/:id',        estRendCtrl.obtener);
+
+// Formularios
+router.get('/CoordRegistrarRendimiento', estRendCtrl.formCrear);
+router.get('/formActualizarEstadisticasRendimiento', estRendCtrl.formActualizar);
+
+
+
+
+// Formularios
+router.get('/formCrearMinimoApariciones', minimoAparCtrl.formCrear);
+router.get('/formActualizarMinimoApariciones', minimoAparCtrl.formActualizar);
+
+// API
+bind('get','/minimoApariciones/porTemporada', minimoAparCtrl.obtenerPorTemporada);
+
+// CRUD
+bind('post','/minimoApariciones', minimoAparCtrl.crear);
+bind('post','/minimoApariciones/actualizar', minimoAparCtrl.actualizar);
+bind('post','/minimoApariciones/:id/eliminar', minimoAparCtrl.eliminar);
 
 /* Estadísticas (edición) */
 bind('post', '/estadisticas/bateo', estBateoCtrl.upsert, 'estadisticasBateo.upsert');

@@ -1,0 +1,142 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Actualizar rango de categoría por temporada</h1>
+
+    <div class="card">
+      <!-- Filtros -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada *</label>
+          <select id="selTemp" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Vínculo en temporada</label>
+          <select id="selVinc" class="input">
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Editor -->
+      <form id="frm" method="POST" action="#">
+        <input type="hidden" id="hidId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select id="selCat" name="id_categoria" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nacimiento desde *</label>
+            <input id="inpDesde" class="input" type="date" name="nacimiento_desde" required>
+          </div>
+          <div class="form-group">
+            <label>Nacimiento hasta *</label>
+            <input id="inpHasta" class="input" type="date" name="nacimiento_hasta" required>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button id="btnUpd" class="btn btn-primary" type="submit" disabled>Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <form id="frmDel" method="POST" action="#" onsubmit="return false">
+          <button id="btnDel" class="btn btn-danger" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selVinc=document.getElementById('selVinc');
+  const selCat =document.getElementById('selCat');
+  const inpDesde=document.getElementById('inpDesde');
+  const inpHasta=document.getElementById('inpHasta');
+  const hidId=document.getElementById('hidId');
+  const btnUpd=document.getElementById('btnUpd');
+  const btnDel=document.getElementById('btnDel');
+  const frm=document.getElementById('frm');
+  const frmDel=document.getElementById('frmDel');
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  function resetForm(){
+    hidId.value=''; selCat.innerHTML='<option value="">Selecciona</option>';
+    inpDesde.value=''; inpHasta.value='';
+    frm.action='#'; btnUpd.disabled=true; btnDel.disabled=true; frmDel.action='#';
+  }
+
+  async function loadVinculos(){
+    selVinc.innerHTML='<option value="">Selecciona</option>';
+    resetForm();
+    const t=selTemp.value; if(!t) return;
+    const list=await GET(`/adminGeneral/categoriaTemporada/lista?id_temporada=${t}`);
+    list.forEach(x=>{
+      const o=document.createElement('option');
+      o.value=x.id; o.textContent=`${x.nombre_categoria} · ${x.nacimiento_desde} → ${x.nacimiento_hasta}`;
+      o.dataset.payload=JSON.stringify(x);
+      selVinc.appendChild(o);
+    });
+  }
+
+  async function loadCatsDisponibles(id){
+    selCat.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/categoriaTemporada/disponibles?id_temporada=${t}&id=${id||0}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+  }
+
+  async function fillForm(x){
+    hidId.value = x.id;
+    await loadCatsDisponibles(x.id);
+    selCat.value = x.id_categoria;
+    inpDesde.value = x.nacimiento_desde;
+    inpHasta.value = x.nacimiento_hasta;
+    frm.action = `/adminGeneral/categoriaTemporadaRango/${x.id}`;
+    frmDel.action = `/adminGeneral/categoriaTemporadaRango/${x.id}/eliminar`;
+    btnUpd.disabled=false; btnDel.disabled=false;
+  }
+
+  selTemp.addEventListener('change', loadVinculos);
+  selVinc.addEventListener('change', ()=>{
+    const opt=selVinc.selectedOptions[0];
+    if (!opt || !opt.dataset.payload) return resetForm();
+    fillForm(JSON.parse(opt.dataset.payload));
+  });
+
+  // Confirm eliminar
+  btnDel.addEventListener('click', ()=>{
+    if (!frmDel.action || frmDel.action==='#') return;
+    Swal.fire({
+      title:'¿Eliminar vínculo?', text:'Esta acción no se puede deshacer.',
+      icon:'warning', showCancelButton:true, confirmButtonText:'Sí, eliminar'
+    }).then(r=>{ if(r.isConfirmed) frmDel.submit(); });
+  });
+
+  (async function init(){ await loadVinculos(); })();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formActualizarCategoriaTemporada') %>; });
+</script>
+<% } %>
+</body></html>

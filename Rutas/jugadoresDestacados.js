@@ -52,7 +52,6 @@ router.get('/categoria/:idCat', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// 3) Ranking por tipo (promedio, sencillos, dobles, triples, homeruns, basesrobadas, efectividad, victorias, ponches)
 router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
   try {
     const idTemp = Number(req.query.temporada) || await getTempActivaOReciente();
@@ -65,14 +64,13 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
     const cat = (await q(`SELECT nombre_categoria FROM ${T('Categorias')} WHERE id_categoria=?`,[idCat]))[0];
     const nombreCategoria = cat?.nombre_categoria || '';
 
-    // Mapas de columnas + orden
     const mapBateo = {
       promedio: { col: 'b.promedio_bateo',   label: 'Promedio de bateo', order: 'DESC' },
       sencillos:{ col: 'b.sencillos',        label: 'Sencillos',         order: 'DESC' },
-      dobles:   { col: 'b.dobles',          label: 'Dobles',            order: 'DESC' },
-      triples:  { col: 'b.triples',         label: 'Triples',           order: 'DESC' },
-      homeruns: { col: 'b.home_runs',       label: 'Home Runs',         order: 'DESC' },
-      basesrobadas:{ col:'b.bases_robadas', label: 'Bases Robadas',     order: 'DESC' },
+      dobles:   { col: 'b.dobles',           label: 'Dobles',            order: 'DESC' },
+      triples:  { col: 'b.triples',          label: 'Triples',           order: 'DESC' },
+      homeruns: { col: 'b.home_runs',        label: 'Home Runs',         order: 'DESC' },
+      basesrobadas:{ col:'b.bases_robadas',  label: 'Bases Robadas',     order: 'DESC' },
     };
     const mapPitcheo = {
       efectividad: { col: 'p.efectividad', label: 'Efectividad', order: 'ASC' },
@@ -84,20 +82,6 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
     const meta = isBat ? mapBateo[tipo] : mapPitcheo[tipo];
     if (!meta) return res.status(404).send('Tipo no válido');
 
-    // Min apariciones para promedio si está habilitado
-    let minWhere = '1=1';
-    if (isBat) {
-      const rule = (await q(`
-        SELECT habilitado, min_apariciones
-        FROM ${T('MinimoAparicionesBateoTemporada')}
-        WHERE id_temporada=? LIMIT 1
-      `,[idTemp]))[0];
-      if (rule?.habilitado && rule?.min_apariciones >= 0) {
-        minWhere = `(IFNULL(b.apariciones_al_bat,0) >= ${Number(rule.min_apariciones)})`;
-      }
-    }
-
-    // base FROM + LEFT JOIN según grupo
     const fromJoin = isBat
       ? `FROM ${T('JugadorTemporadaCategoria')} jtc
          JOIN ${T('Jugadores')} j ON j.id_jugador=jtc.id_jugador
@@ -108,34 +92,48 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
          LEFT JOIN ${T('EstadisticasPitcheoTemporada')} p
            ON p.id_temporada=? AND p.id_jugador=j.id_jugador`;
 
-    const where = `
-      WHERE jtc.id_temporada=? AND jtc.id_categoria=? AND ${minWhere}
-    `;
+    const whereBase = `WHERE jtc.id_temporada=? AND jtc.id_categoria=?`;
 
-    // total
-    const countRows = await q(`
-      SELECT COUNT(*) AS n
+    // Regla de apariciones
+    let rule = null;
+    if (isBat && tipo==='promedio') {
+      rule = (await q(
+        `SELECT habilitado,min_apariciones FROM ${T('MinimoAparicionesBateoTemporada')} WHERE id_temporada=? LIMIT 1`,
+        [idTemp]
+      ))[0] || null;
+    }
+
+    // Ranking "normal" sin filtro
+    const baseRows = await q(`
+      SELECT j.id_jugador,
+             CONCAT(j.apellido_paterno,' ',j.apellido_materno,' ',j.nombres) AS nombre,
+             ${meta.col} AS valor,
+             IFNULL(b.apariciones_al_bat,0) AS pa
       ${fromJoin}
-      ${where}
-    `, [idTemp, idTemp, idCat].slice(isBat ? 0 : 0)); // params mismos ordenados
-
-    const total = countRows[0]?.n || 0;
-    const totalPaginas = Math.max(1, Math.ceil(total / pageSize));
-
-    // datos
-    const rows = await q(`
-      SELECT
-        j.id_jugador,
-        CONCAT(j.apellido_paterno,' ',j.apellido_materno,' ',j.nombres) AS nombre,
-        ${meta.col} AS valor
-      ${fromJoin}
-      ${where}
+      ${whereBase}
       ORDER BY ${meta.col} ${meta.order}, nombre ASC
-      LIMIT ${pageSize} OFFSET ${offset}
     `,[idTemp, idTemp, idCat]);
 
-    // formatea AVG / ERA a 3 decimales si aplica
-    const jugadoresPaginados = rows.map(r => ({
+    let rowsToUse = baseRows;
+
+    if (rule && rule.habilitado) {
+      const min = Number(rule.min_apariciones)||0;
+      const meets = baseRows.filter(r => (r.pa||0) >= min);
+
+      if (meets.length >= 2) {
+        rowsToUse = meets;
+      } else if (meets.length === 1) {
+        const first = meets[0];
+        const rest = baseRows.filter(r => r.id_jugador !== first.id_jugador);
+        rowsToUse = [first, ...rest];
+      } // if 0 → deja baseRows
+    }
+
+    const total = rowsToUse.length;
+    const totalPaginas = Math.max(1, Math.ceil(total / pageSize));
+    const pageSlice = rowsToUse.slice(offset, offset + pageSize);
+
+    const jugadoresPaginados = pageSlice.map(r => ({
       id_jugador: r.id_jugador,
       nombre: r.nombre,
       valor: (typeof r.valor === 'number' && (tipo==='promedio' || tipo==='efectividad'))
@@ -153,5 +151,6 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
     });
   } catch (e) { next(e); }
 });
+
 
 module.exports = router;

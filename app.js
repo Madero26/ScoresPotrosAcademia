@@ -41,6 +41,8 @@ const { isAuthenticated } = require('./middlewares/auth');
 // monta routers
 app.use('/', require('./Rutas/index'));
 app.use('/adminGeneral', isAuthenticated, require('./Rutas/adminGeneral'));
+app.use('/Coordinadores', require('./Rutas/coordinador'));
+
 
 app.listen(3000, () => console.log('http://localhost:3000'));
 

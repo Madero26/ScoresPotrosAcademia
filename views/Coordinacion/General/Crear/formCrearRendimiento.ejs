@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Registrar rendimiento mensual</h1>
+
+    <div class="card">
+      <form action="/adminGeneral/rendimiento" method="POST" id="frmRend">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada *</label>
+            <select id="selTemp" name="id_temporada" class="input" required>
+              <% (temporadas||[]).forEach(t=>{ %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categoría</label>
+            <select id="selCat" class="input">
+              <option value="">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Equipo</label>
+            <select id="selEquipo" class="input">
+              <option value="">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Jugador *</label>
+            <select id="selJugador" name="id_jugador" class="input" required></select>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha de medición *</label>
+            <input type="date" name="fecha_medicion" class="input" required>
+          </div>
+
+          <div class="form-group"><label>Tiempo carrera (s)</label>
+            <input type="number" step="0.01" min="0" name="tiempo_carrera_seg" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Vel. lanzamiento (mph)</label>
+            <input type="number" step="0.01" min="0" name="vel_lanzamiento_mph" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Potencia brazo (mph)</label>
+            <input type="number" step="0.01" min="0" name="potencia_brazo_mph" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Pop time (s)</label>
+            <input type="number" step="0.01" min="0" name="pop_time_seg" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Vel. bate (mph)</label>
+            <input type="number" step="0.01" min="0" name="vel_bate_mph" class="input" value="0.00">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Guardar</button>
+          <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+ <script>
+(function(){
+  const selTemp = document.getElementById('selTemp');
+  const selCat  = document.getElementById('selCat');
+  const selEq   = document.getElementById('selEquipo');
+  const selJug  = document.getElementById('selJugador');
+  const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML = '<option value="">Todas</option>';
+    selEq.innerHTML  = '<option value="">Todos</option>';
+    selJug.innerHTML = '';
+    const t = selTemp.value; if(!t) return;
+    const cats = await GET(`/adminGeneral/rendimiento/categorias?id_temporada=${t}`);
+    cats.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+  }
+  async function loadTeams(){
+    selEq.innerHTML  = '<option value="">Todos</option>';
+    selJug.innerHTML = '';
+    const t = selTemp.value; if(!t) return;
+    const qs = new URLSearchParams({id_temporada:t});
+    if (selCat.value) qs.set('id_categoria', selCat.value);
+    const teams = await GET(`/adminGeneral/rendimiento/equipos?`+qs.toString());
+    teams.forEach(e=>{ const o=document.createElement('option'); o.value=e.id_equipo_temporada; o.textContent=e.nombre; selEq.appendChild(o); });
+  }
+  async function loadPlayers(){
+    selJug.innerHTML = '';
+    const t = selTemp.value; if(!t) return;
+    const qs = new URLSearchParams({id_temporada:t});
+    if (selCat.value) qs.set('id_categoria', selCat.value);
+    if (selEq.value)  qs.set('id_equipo_temporada', selEq.value);
+    const js = await GET(`/adminGeneral/rendimiento/jugadores?`+qs.toString());
+    selJug.innerHTML = js.map(j=>`<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+  }
+
+  selTemp.addEventListener('change', async()=>{ await loadCats(); await loadTeams(); await loadPlayers(); });
+  selCat .addEventListener('change',  async()=>{ await loadTeams(); await loadPlayers(); });
+  selEq  .addEventListener('change',  loadPlayers);
+
+  (async function init(){ await loadCats(); await loadTeams(); await loadPlayers(); })();
+})();
+</script>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/CoordRegistrarRendimiento') %>; });
+  </script>
+  <% } %>
+
+  <script>
+async function GET(url){
+  try{
+    const r = await fetch(url, { headers:{ 'x-requested-with':'XMLHttpRequest' } });
+    if(!r.ok){ console.error('HTTP', r.status, url); return []; }
+    const ct = r.headers.get('content-type') || '';
+    if(!ct.includes('application/json')){ console.error('No JSON', url); return []; }
+    return await r.json();
+  }catch(e){ console.error('FETCH', url, e); return []; }
+}
+</script>
+
+</body>
+</html>
+
+
+

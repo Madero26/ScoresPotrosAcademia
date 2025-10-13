@@ -1,0 +1,112 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Inscribir jugador en equipo</h1>
+
+    <div class="card">
+      <form method="POST" action="/adminGeneral/jugadorEquipoTemporada" id="frm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada *</label>
+            <select id="selTemp" name="id_temporada" class="input" required>
+              <% (temporadas||[]).forEach(t=>{ %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select id="selCat" name="id_categoria" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Equipo *</label>
+            <select id="selEq" name="id_equipo_temporada" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Buscar jugador</label>
+            <input id="inpQ" class="input" placeholder="Escribe nombre o apellidos">
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Jugador *</label>
+            <select id="selJug" name="id_jugador" class="input" size="8" required></select>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha de alta</label>
+            <input type="date" class="input" name="fecha_alta">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Guardar</button>
+          <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const selEq  =document.getElementById('selEq');
+  const selJug =document.getElementById('selJug');
+  const inpQ   =document.getElementById('inpQ');
+
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Selecciona</option>';
+    selEq.innerHTML ='<option value="">Selecciona</option>';
+    selJug.innerHTML='';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/inscripcion/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+    await loadPlayers(); // desde temporada aun sin cat lista inicial
+  }
+  async function loadTeams(){
+    selEq.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value, c=selCat.value; if(!(t&&c)) return;
+    const es=await GET(`/adminGeneral/inscripcion/equipos?id_temporada=${t}&id_categoria=${c}`);
+    es.forEach(e=>{ const o=document.createElement('option'); o.value=e.id_equipo_temporada; o.textContent=e.nombre; selEq.appendChild(o); });
+  }
+  async function loadPlayers(){
+    selJug.innerHTML='';
+    const t=selTemp.value, c=selCat.value||0, q=inpQ.value.trim();
+    if(!t) return;
+    const qs=new URLSearchParams({id_temporada:t,id_categoria:c,q});
+    const js=await GET(`/adminGeneral/inscripcion/jugadores?`+qs.toString());
+    selJug.innerHTML = js.map(j=>`<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+  }
+  function debounce(fn,ms){ let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); }; }
+
+  selTemp.addEventListener('change', async()=>{ await loadCats(); await loadTeams(); });
+  selCat .addEventListener('change',  async()=>{ await loadTeams(); await loadPlayers(); });
+  inpQ   .addEventListener('input', debounce(loadPlayers, 250));
+
+  (async function init(){ await loadCats(); await loadTeams(); await loadPlayers(); })();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formInscribirJugadorEquipo') %>; });
+</script>
+<% } %>
+</body></html>

@@ -1,0 +1,111 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+<main class="container">
+  <h1>Registrar equipo en temporada</h1>
+
+  <div class="card">
+    <form action="/adminGeneral/equipoTemporada" method="POST" enctype="multipart/form-data">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Temporada *</label>
+          <select id="selTemp" name="id_temporada" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select id="selCat" name="id_categoria" class="input" required>
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Equipo catálogo</label>
+          <select id="selEquipoBase" name="id_equipo" class="input">
+            <option value="">Ninguno</option>
+          </select>
+        </div>
+        <div class="form-group">
+  <label>Entrenador</label>
+  <select id="selCoach" name="id_entrenador" class="input">
+    <option value="">Sin entrenador</option>
+  </select>
+</div>
+
+
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Nombre mostrado *</label>
+          <input name="nombre" class="input" required placeholder="Nombre del equipo en la categoría">
+        </div>
+
+        <div class="form-group">
+          <label>Colores</label>
+          <input name="colores" class="input" placeholder="Ej. azul/blanco">
+        </div>
+
+       <div class="form-group" style="grid-column:1/-1">
+    <label>Foto (opcional)</label>
+    <input class="input" type="file" name="foto" accept="image/*">
+  </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script>
+(function(){
+  const selTemp = document.getElementById('selTemp');
+  const selCat  = document.getElementById('selCat');
+  const selEqB  = document.getElementById('selEquipoBase');
+  const selCoach= document.getElementById('selCoach');
+
+  const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML = '<option value="">Selecciona</option>';
+    const t = selTemp.value; if(!t) return;
+    const cats = await GET(`/adminGeneral/equipoTemporada/categorias?id_temporada=${t}`);
+    cats.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+  }
+  async function loadEquiposBase(){
+    selEqB.innerHTML = '<option value="">Ninguno</option>';
+    const es = await GET(`/adminGeneral/equipoTemporada/equiposBase`);
+    es.forEach(e=>{ const o=document.createElement('option'); o.value=e.id_equipo; o.textContent=e.nombre_corto; selEqB.appendChild(o); });
+  }
+  async function loadCoaches(){
+    const t = selTemp.value;
+    selCoach.innerHTML = '<option value="">Sin entrenador</option>';
+    if(!t) return;
+    const cs = await GET(`/adminGeneral/equipoTemporada/entrenadores?id_temporada=${t}`);
+    cs.forEach(x=>{ const o=document.createElement('option'); o.value=x.id_entrenador; o.textContent=x.nombre; selCoach.appendChild(o); });
+  }
+
+  selTemp.addEventListener('change', async()=>{ await loadCats(); await loadCoaches(); });
+
+  (async function init(){ await loadCats(); await loadEquiposBase(); await loadCoaches(); })();
+})();
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formCrearEquipoTemporada') %>; });
+</script>
+<% } %>
+</body></html>

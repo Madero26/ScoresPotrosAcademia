@@ -1,122 +1,208 @@
-<!DOCTYPE html><html lang="es"><head>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
   <%- include('../../partials/head') %>
-  <link rel="stylesheet" href="/resources/styles/styleJugadorPerfil.css"><!-- NUEVO -->
-</head><body>
+    <link rel="stylesheet" href="/resources/styles/styleJugadorPerfil.css"><!-- NUEVO -->
+</head>
+
+<body>
   <%- include('../../partials/navbar_public') %>
 
-  <section class="pf-wrap">
-    <%
-// dd/mm/aaaa
-const fmt = (v) => {
-  if (!v) return '';
-  const d = new Date(v);
-  const dd = String(d.getDate()).padStart(2,'0');
-  const mm = String(d.getMonth()+1).padStart(2,'0');
-  const yy = d.getFullYear();
-  return `${dd}/${mm}/${yy}`;
-};
-%>
+    <section class="pf-wrap">
+      <% const fmt=v=> { if(!v) return ''; const d=new Date(v); return
+        `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; };
+        const B = bateo || {}; // bateo seguro
+        const P = pitcheo || {}; // pitcheo seguro
+        const R = Array.isArray(rendimiento) ? rendimiento : [];
+        const nz = v => Number(v || 0);
+        const fix3 = v => Number(v || 0).toFixed(3);
+        %>
 
-    <header class="pf-head">
-  <img class="pf-photo" src="/resources<%= jugador.url_foto || 'resources/imgs/logo.png' %>" alt="Foto jugador">
-  <div>
-    <h1 class="pf-name"><%= jugador.nombres %> <%= jugador.apellido_paterno %> <%= jugador.apellido_materno %></h1>
-    <div class="pf-meta">
-      <span>Categoría: <b><%= categoriaNombre %></b></span>
-      <span>Equipo: <b><%= equipoNombre %></b></span>
-      <span>Nacimiento: <b><%= fmt(jugador.fecha_nacimiento) %></b></span>
-    </div>
-  </div>
-</header>
+        <header class="pf-head">
+          <img class="pf-photo" src="/resources<%= jugador.url_foto || 'resources/imgs/logo.png' %>" alt="Foto jugador">
+          <div>
+            <h1 class="pf-name">
+              <%= jugador.nombres %>
+                <%= jugador.apellido_paterno %>
+                  <%= jugador.apellido_materno %>
+            </h1>
+            <div class="pf-meta">
+              <span>Categoría: <b>
+                  <%= categoriaNombre %>
+                </b></span>
+              <span>Equipo: <b>
+                  <%= equipoNombre %>
+                </b></span>
+              <span>Nacimiento: <b>
+                  <%= fmt(jugador.fecha_nacimiento) %>
+                </b></span>
+            </div>
+          </div>
+        </header>
 
 
-    <div class="pf-tabs">
-      <button class="tab-button active" data-t="bat">Bateo</button>
-      <button class="tab-button" data-t="pit">Pitcheo</button>
-      <button class="tab-button" data-t="rend">Rendimiento</button>
-    </div>
+        <div class="pf-tabs">
+          <button class="tab-button active" data-t="bat">Bateo</button>
+          <button class="tab-button" data-t="pit">Pitcheo</button>
+          <button class="tab-button" data-t="rend">Rendimiento</button>
+        </div>
 
-    <!-- Bateo -->
-    <div class="table-card tab-content show" id="tab-bat">
-      <h3 class="t-sub">Bateo</h3>
-      <table class="t t-full">
-        <thead>
-          <tr><th>AB</th><th>H</th><th>BB</th><th>R</th><th>RBI</th><th>1B</th><th>2B</th><th>3B</th><th>HR</th><th>SB</th><th>AVG</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><%= bateo.apariciones_al_bat || bateo.turnos || 0 %></td>
-            <td><%= bateo.hits || 0 %></td>
-            <td><%= bateo.bases_por_bolas || 0 %></td>
-            <td><%= bateo.carreras || 0 %></td>
-            <td><%= bateo.carreras_producidas || 0 %></td>
-            <td><%= bateo.sencillos || 0 %></td>
-            <td><%= bateo.dobles || 0 %></td>
-            <td><%= bateo.triples || 0 %></td>
-            <td><%= bateo.home_runs || 0 %></td>
-            <td><%= bateo.bases_robadas || 0 %></td>
-            <td><%= (bateo.promedio_bateo || 0).toFixed ? bateo.promedio_bateo.toFixed(3) : (bateo.promedio_bateo || '0.000') %></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        <!-- Bateo -->
+        <div class="table-card tab-content show" id="tab-bat">
+          <h3 class="t-sub">Bateo</h3>
+          <table class="t t-full">
+            <thead>
+              <tr>
+                <th>AB</th>
+                <th>H</th>
+                <th>BB</th>
+                <th>R</th>
+                <th>RBI</th>
+                <th>1B</th>
+                <th>2B</th>
+                <th>3B</th>
+                <th>HR</th>
+                <th>SB</th>
+                <th>AVG</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <%= nz(B.apariciones_al_bat || B.turnos) %>
+                </td>
+                <td>
+                  <%= nz(B.hits) %>
+                </td>
+                <td>
+                  <%= nz(B.bases_por_bolas) %>
+                </td>
+                <td>
+                  <%= nz(B.carreras) %>
+                </td>
+                <td>
+                  <%= nz(B.carreras_producidas) %>
+                </td>
+                <td>
+                  <%= nz(B.sencillos) %>
+                </td>
+                <td>
+                  <%= nz(B.dobles) %>
+                </td>
+                <td>
+                  <%= nz(B.triples) %>
+                </td>
+                <td>
+                  <%= nz(B.home_runs) %>
+                </td>
+                <td>
+                  <%= nz(B.bases_robadas) %>
+                </td>
+                <td>
+                  <%= fix3(B.promedio_bateo) %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    <!-- Pitcheo -->
-    <div class="table-card tab-content" id="tab-pit">
-      <h3 class="t-sub">Pitcheo</h3>
-      <table class="t t-full">
-        <thead>
-          <tr><th>IP</th><th>BB</th><th>K</th><th>W</th><th>L</th><th>ERA</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><%= pitcheo.entradas_lanzadas || 0 %></td>
-            <td><%= pitcheo.bases_por_bolas || 0 %></td>
-            <td><%= pitcheo.ponches || 0 %></td>
-            <td><%= pitcheo.victorias || 0 %></td>
-            <td><%= pitcheo.derrotas || 0 %></td>
-            <td><%= (pitcheo.efectividad || 0).toFixed ? pitcheo.efectividad.toFixed(3) : (pitcheo.efectividad || '0.000') %></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        <!-- Pitcheo -->
+        <div class="table-card tab-content" id="tab-pit">
+          <h3 class="t-sub">Pitcheo</h3>
+          <table class="t t-full">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>BB</th>
+                <th>K</th>
+                <th>W</th>
+                <th>L</th>
+                <th>ERA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <%= nz(P.entradas_lanzadas) %>
+                </td>
+                <td>
+                  <%= nz(P.bases_por_bolas) %>
+                </td>
+                <td>
+                  <%= nz(P.ponches) %>
+                </td>
+                <td>
+                  <%= nz(P.victorias) %>
+                </td>
+                <td>
+                  <%= nz(P.derrotas) %>
+                </td>
+                <td>
+                  <%= fix3(P.efectividad) %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    <!-- Rendimiento mensual -->
-    <div class="table-card tab-content" id="tab-rend">
-      <h3 class="t-sub">Rendimiento</h3>
-      <table class="t t-full">
-        <thead>
-          <tr>
-            <th>Fecha</th><th>60 yd (s)</th><th>Vel pit (mph)</th><th>Brazo (mph)</th><th>Pop (s)</th><th>Bat (mph)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% rendimiento.forEach(r=>{ %>
-            <tr>
-              <td><%= fmt(r.fecha_medicion) %></td>
-              <td><%= r.tiempo_carrera_seg %></td>
-              <td><%= r.vel_lanzamiento_mph %></td>
-              <td><%= r.potencia_brazo_mph %></td>
-              <td><%= r.pop_time_seg %></td>
-              <td><%= r.vel_bate_mph %></td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
-  </section>
+        <!-- Rendimiento mensual -->
+        <div class="table-card tab-content" id="tab-rend">
+          <h3 class="t-sub">Rendimiento</h3>
+          <table class="t t-full">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>60 yd (s)</th>
+                <th>Vel pit (mph)</th>
+                <th>Brazo (mph)</th>
+                <th>Pop (s)</th>
+                <th>Bat (mph)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% R.forEach(r=>{ %>
+                <tr>
+                  <td>
+                    <%= fmt(r.fecha_medicion) %>
+                  </td>
+                  <td>
+                    <%= nz(r.tiempo_carrera_seg) %>
+                  </td>
+                  <td>
+                    <%= nz(r.vel_lanzamiento_mph) %>
+                  </td>
+                  <td>
+                    <%= nz(r.potencia_brazo_mph) %>
+                  </td>
+                  <td>
+                    <%= nz(r.pop_time_seg) %>
+                  </td>
+                  <td>
+                    <%= nz(r.vel_bate_mph) %>
+                  </td>
+                </tr>
+                <% }) %>
+                  <% if (!R.length) { %>
+                    <tr>
+                      <td colspan="6" style="text-align:center">Sin registros</td>
+                    </tr>
+                    <% } %>
+            </tbody>
+          </table>
+        </div>
+    </section>
 
-  <script>
-    document.querySelectorAll('.pf-tabs .tab-button').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        document.querySelectorAll('.pf-tabs .tab-button').forEach(x=>x.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('show'));
-        b.classList.add('active');
-        document.getElementById('tab-'+b.dataset.t).classList.add('show');
+    <script>
+      document.querySelectorAll('.pf-tabs .tab-button').forEach(b => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('.pf-tabs .tab-button').forEach(x => x.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('show'));
+          b.classList.add('active');
+          document.getElementById('tab-' + b.dataset.t).classList.add('show');
+        });
       });
-    });
-  </script>
-</body></html>
+    </script>
+</body>
 
-
-
+</html>

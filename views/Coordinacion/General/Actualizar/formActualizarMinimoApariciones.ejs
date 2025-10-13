@@ -1,0 +1,85 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Configurar mínimo de apariciones (actualizar)</h1>
+    <div class="card">
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada *</label>
+          <select id="selTemp" class="input">
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+
+      <form id="frm" action="/adminGeneral/minimoApariciones/actualizar" method="POST">
+        <input type="hidden" name="id" id="hidId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Mínimo de apariciones *</label>
+            <input id="inpMin" class="input" type="number" name="min_apariciones" min="0" value="0" required disabled>
+          </div>
+          <label class="switch-row">
+            <input id="chkHab" type="checkbox" name="habilitado" value="1" disabled>
+            <span>Habilitado</span>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button id="btnUpd" class="btn btn-primary" type="submit" disabled>Actualizar</button>
+          <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <form id="frmDel" action="#" method="POST" onsubmit="return confirm('¿Eliminar configuración?')">
+          <button id="btnDel" class="btn btn-danger" type="submit" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function(){
+    const selTemp = document.getElementById('selTemp');
+    const hidId = document.getElementById('hidId');
+    const inpMin = document.getElementById('inpMin');
+    const chkHab = document.getElementById('chkHab');
+    const btnUpd = document.getElementById('btnUpd');
+    const btnDel = document.getElementById('btnDel');
+    const frmDel = document.getElementById('frmDel');
+
+    const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+    async function loadRule(){
+      hidId.value=''; inpMin.value='0'; chkHab.checked=false;
+      inpMin.disabled = chkHab.disabled = btnUpd.disabled = btnDel.disabled = true;
+      frmDel.action = '#';
+
+      const t = selTemp.value; if(!t) return;
+      const r = await GET(`/adminGeneral/minimoApariciones/porTemporada?id_temporada=${t}`);
+      if(r){
+        hidId.value = r.id;
+        inpMin.value = r.min_apariciones;
+        chkHab.checked = !!r.habilitado;
+        inpMin.disabled = chkHab.disabled = btnUpd.disabled = btnDel.disabled = false;
+        frmDel.action = `/adminGeneral/minimoApariciones/${r.id}/eliminar`;
+      }
+    }
+    selTemp.addEventListener('change', loadRule);
+    loadRule();
+  })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert!=='undefined' && alert) { %>
+  <script>
+    Swal.fire({title:<%- JSON.stringify(alertTitle) %>,text:<%- JSON.stringify(alertMessage) %>,icon:<%- JSON.stringify(alertIcon) %>,
+               showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,timer:<%- (timer==null?'null':Number(timer)) %>})
+      .then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formActualizarMinimoApariciones') %>; });
+  </script><% } %>
+</body></html>

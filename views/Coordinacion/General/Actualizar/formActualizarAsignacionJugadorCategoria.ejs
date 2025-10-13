@@ -1,0 +1,186 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar asignación de jugador</h1>
+
+    <div class="card">
+      <!-- Filtros actuales -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada actual *</label>
+          <select id="selTemp" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoría actual</label>
+          <select id="selCat" class="input"><option value="">Todas</option></select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Jugador asignado</label>
+          <input id="inpQ" class="input" placeholder="Filtrar por nombre">
+          <select id="selAsig" class="input" size="8" style="margin-top:.5rem">
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Editor -->
+      <form id="frm" method="POST" action="#">
+        <input type="hidden" id="hidId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Jugador</label>
+            <select id="selJugEdit" name="id_jugador" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Temporada destino *</label>
+            <select id="selTempEdit" name="id_temporada" class="input" required>
+              <% (temporadas||[]).forEach(t=>{ %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categoría destino *</label>
+            <select id="selCatEdit" name="id_categoria" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="btnUpd" class="btn btn-primary" type="submit" disabled>Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <form id="frmDel" method="POST" action="#" onsubmit="return false">
+          <button id="btnDel" class="btn btn-danger" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const inpQ   =document.getElementById('inpQ');
+  const selAsig=document.getElementById('selAsig');
+
+  const hidId  =document.getElementById('hidId');
+  const frm    =document.getElementById('frm');
+  const btnUpd =document.getElementById('btnUpd');
+  const btnDel =document.getElementById('btnDel');
+  const frmDel =document.getElementById('frmDel');
+
+  const selJugEdit = document.getElementById('selJugEdit');
+  const selTempEdit= document.getElementById('selTempEdit');
+  const selCatEdit = document.getElementById('selCatEdit');
+
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCatsActual(){
+    selCat.innerHTML='<option value="">Todas</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/jugadorCat/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+    await loadAsignados();
+  }
+
+  async function loadAsignados(){
+    const t=selTemp.value; if(!t) return;
+    const qs=new URLSearchParams({id_temporada:t});
+    if (selCat.value) qs.set('id_categoria', selCat.value);
+    const list=await GET(`/adminGeneral/jugadorCat/lista?`+qs.toString());
+    // filtro local por q
+    const q = inpQ.value.trim().toLowerCase();
+    const f = q ? list.filter(x=>x.nombre_jugador.toLowerCase().includes(q)) : list;
+    selAsig.innerHTML = f.map(x=>`<option value="${x.id}" data-payload='${JSON.stringify(x)}'>${x.nombre_jugador} · ${x.nombre_categoria}</option>`).join('');
+    resetEditor();
+  }
+
+  async function loadCatsDestino(){
+    selCatEdit.innerHTML='<option value="">Selecciona</option>';
+    const t=selTempEdit.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/jugadorCat/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCatEdit.appendChild(o); });
+  }
+
+  async function loadPlayersForEdit(){
+    const q=''; // carga todos y deja al usuario elegir
+    const res = await GET(`/adminGeneral/jugadorCat/buscar?q=${encodeURIComponent(q)}`);
+    selJugEdit.innerHTML = '<option value="">Selecciona</option>'+res.map(j=>`<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+  }
+
+  function resetEditor(){
+    hidId.value=''; frm.action='#'; btnUpd.disabled=true; btnDel.disabled=true; frmDel.action='#';
+    selJugEdit.value=''; selTempEdit.value=selTemp.value; loadCatsDestino().then(()=>{ selCatEdit.value=''; });
+  }
+
+  async function fillEditor(x){
+    hidId.value = x.id;
+    frm.action  = `/adminGeneral/jugadorTemporadaCategoria/${x.id}`;
+    frmDel.action = `/adminGeneral/jugadorTemporadaCategoria/${x.id}/eliminar`;
+    // set jugador, temporada, categoría
+    await loadPlayersForEdit();
+    selJugEdit.value = x.id_jugador;
+    selTempEdit.value = x.id_temporada;
+    await loadCatsDestino();
+    selCatEdit.value = x.id_categoria;
+    btnUpd.disabled=false; btnDel.disabled=false;
+  }
+
+  function debounce(fn,ms){ let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); }; }
+
+  selTemp.addEventListener('change', loadCatsActual);
+  selCat .addEventListener('change',  loadAsignados);
+  inpQ   .addEventListener('input', debounce(loadAsignados, 250));
+  selAsig.addEventListener('change', ()=>{
+    const opt=selAsig.selectedOptions[0];
+    if (!opt || !opt.dataset.payload) return resetEditor();
+    fillEditor(JSON.parse(opt.dataset.payload));
+  });
+
+  selTempEdit.addEventListener('change', loadCatsDestino);
+
+  (async function init(){
+    await loadCatsActual();
+    await loadPlayersForEdit();
+    await loadCatsDestino();
+  })();
+
+  // Sweet confirm eliminar
+  btnDel.addEventListener('click', ()=>{
+    if (!frmDel.action || frmDel.action==='#') return;
+    Swal.fire({
+      title:'¿Eliminar vínculo?', text:'El jugador quedará libre en esta temporada.',
+      icon:'warning', showCancelButton:true, confirmButtonText:'Sí, eliminar'
+    }).then(r=>{ if(r.isConfirmed) frmDel.submit(); });
+  });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formActualizarAsignacionJugadorCategoria') %>; });
+</script>
+<% } %>
+</body></html>

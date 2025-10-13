@@ -37,7 +37,7 @@
     <div class="equipos-grid">
       <% teams.forEach(t=>{ %>
         <div class="equipo-card">
-          <img src="/<%= t.url_foto || 'resources/imgs/logo.png' %>" class="equipo-img" alt="Equipo">
+          <img src="/resources<%= t.url_foto || 'resources/imgs/logo.png' %>" class="equipo-img" alt="Equipo">
           <div class="equipo-info">
             <h2><%= t.nombre %></h2>
             <div class="botones">

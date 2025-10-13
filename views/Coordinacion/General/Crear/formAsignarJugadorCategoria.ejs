@@ -1,0 +1,88 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Asignar jugador a categoría (por temporada)</h1>
+
+    <div class="card">
+      <form id="frm" method="POST" action="/adminGeneral/jugadorTemporadaCategoria">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada *</label>
+            <select id="selTemp" name="id_temporada" class="input" required>
+              <% (temporadas||[]).forEach(t=>{ %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select id="selCat" name="id_categoria" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/ -1">
+            <label>Buscar jugador</label>
+            <input id="inpQ" class="input" placeholder="Escribe nombre o apellidos">
+          </div>
+
+          <div class="form-group" style="grid-column:1/ -1">
+            <label>Jugador *</label>
+            <select id="selJug" name="id_jugador" class="input" required size="8"></select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Guardar</button>
+          <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const inpQ   =document.getElementById('inpQ');
+  const selJug =document.getElementById('selJug');
+
+  const GET = u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/jugadorCat/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+  }
+  async function searchPlayers(){
+    const q = inpQ.value.trim();
+    const res = await GET(`/adminGeneral/jugadorCat/buscar?q=${encodeURIComponent(q)}`);
+    selJug.innerHTML = res.map(j=>`<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+  }
+
+  function debounce(fn,ms){ let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); }; }
+  const onType = debounce(searchPlayers, 250);
+
+  selTemp.addEventListener('change', loadCats);
+  inpQ.addEventListener('input', onType);
+
+  (async function init(){ await loadCats(); await searchPlayers(); })();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formAsignarJugadorCategoria') %>; });
+</script>
+<% } %>
+</body></html>

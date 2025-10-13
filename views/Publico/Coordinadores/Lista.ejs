@@ -10,26 +10,37 @@
   <section class="co-wrap">
     <h1 class="co-title">Coordinadores</h1>
 
+    <form method="get" class="selector-temporada">
+      <label>Temporada:</label>
+      <select name="temporada" onchange="this.form.submit()">
+        <% (temporadas||[]).forEach(t=>{ %>
+          <option value="<%= t.id_temporada %>" <%= String(t.id_temporada)===String(idTemp) ? 'selected' : '' %>>
+            <%= t.nombre %>
+          </option>
+        <% }) %>
+      </select>
+    </form>
+
     <div class="co-grid">
-      <% if (coordinadores.length) { %>
+      <% if ((coordinadores||[]).length) { %>
         <% coordinadores.forEach(c => { %>
           <article class="co-card">
-            <img class="co-img" src="/<%= c.url_foto %>" alt="Foto de <%= c.nombres %> <%= c.apellido_paterno %>">
+            <img class="co-img"
+                 src="<%= c.url_foto ? ('/resources' + c.url_foto) : '/resources/imgs/logo.png' %>"
+                 alt="Foto de <%= c.nombres %> <%= c.apellido_paterno %>">
             <h3 class="co-name"><%= c.nombres %> <%= c.apellido_paterno %> <%= c.apellido_materno %></h3>
             <p class="co-cats">
               <b>Categoría:</b>
-              <% if (c.categorias?.length) { %>
-                <%= c.categorias.join(', ') %>
-              <% } else { %>
-                — Sin asignación —
-              <% } %>
+              <%= c.categorias.join(', ') %>
             </p>
           </article>
         <% }) %>
       <% } else { %>
-        <p class="co-empty">No hay coordinadores registrados.</p>
+        <p class="co-empty">Esta temporada no tiene coordinadores asignados.</p>
       <% } %>
     </div>
   </section>
 </body>
 </html>
+
+

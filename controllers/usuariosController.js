@@ -72,12 +72,10 @@ exports.crear = async (req, res) => {
     }
 };
 
-/* ===== Actualizar ===== */
 exports.actualizar = async (req, res) => {
   const { id } = req.params;
   const back = `/adminGeneral/formActualizarUsuario?id=${id}`;
   try {
-    // toma usuario del JWT (middleware isAuthenticated) o del locals
     const editor = req.user || res.locals?.usuario || null;
     if (!editor) {
       if (wantsJSON(req)) return res.status(401).json({ error: 'no auth' });
@@ -116,17 +114,17 @@ exports.actualizar = async (req, res) => {
           }, back);
     }
 
-    const current    = curQ[0];
-    const selfChange = Number(editor.id_usuario) === Number(id);
+    const current     = curQ[0];
+    const selfChange  = Number(editor.id_usuario) === Number(id);
     const roleChanged = String(current.rol).toUpperCase() !== incomingRol;
 
-    // ADMIN logeado NO puede cambiar su propio rol
+    // ADMIN logueado NO puede cambiar su propio rol
     if (selfChange && editorRol === 'ADMIN' && roleChanged) {
       return wantsJSON(req)
         ? res.status(403).json({ error: 'no puedes cambiar tu propio rol' })
         : res.flash({
             alertTitle: 'Operación no permitida',
-            alertMessage: 'No puedes cambiar tu propio rol mientras estás logeado.',
+            alertMessage: 'No puedes cambiar tu propio rol mientras estás logueado.',
             alertIcon: 'warning', showConfirmButton: true, timer: null, ruta: back
           }, back);
     }
@@ -142,7 +140,7 @@ exports.actualizar = async (req, res) => {
           }, back);
     }
 
-    // Unicidad de nombre de usuario
+    // Unicidad usuario
     const dup = await db.query(
       `SELECT 1 FROM UsuarioAdministradores WHERE usuario=? AND id_usuario<>? LIMIT 1`,
       [usuario, id]
@@ -157,6 +155,53 @@ exports.actualizar = async (req, res) => {
           }, back);
     }
 
+    // ***** Sincronía con UsuarioRolTemporadaCategoria *****
+    if (roleChanged) {
+      if (editorRol === 'ADMIN') {
+        // ADMIN: libera cualquier vínculo que tuviera este usuario
+        await db.query(`DELETE FROM UsuarioRolTemporadaCategoria WHERE id_usuario=?`, [id]);
+      } else {
+        // No-ADMIN (en la práctica no entrará aquí por regla anterior),
+        // pero dejamos la lógica por si habilitas autoedición en el futuro:
+        if (incomingRol === 'ADMIN') {
+          // Si lo suben a ADMIN, libera sus vínculos
+          await db.query(`DELETE FROM UsuarioRolTemporadaCategoria WHERE id_usuario=?`, [id]);
+        } else {
+          // Cambios entre COORDINADOR <-> ESTADISTICAS
+          const link = await db.query(
+            `SELECT id, id_temporada, id_categoria FROM UsuarioRolTemporadaCategoria WHERE id_usuario=? LIMIT 1`,
+            [id]
+          );
+          if (link.length) {
+            const { id: linkId, id_temporada, id_categoria } = link[0];
+
+            // ¿ya hay alguien con el rol de destino en esa (temp,categ)?
+            const clash = await db.query(
+              `SELECT 1 FROM UsuarioRolTemporadaCategoria 
+                 WHERE id_temporada=? AND id_categoria=? AND rol=? AND id<>? LIMIT 1`,
+              [id_temporada, id_categoria, incomingRol, linkId]
+            );
+            if (clash.length) {
+              const msg = `El rol ${incomingRol.toLowerCase()} ya está ocupado en esa categoría.`;
+              return wantsJSON(req)
+                ? res.status(409).json({ error: msg })
+                : res.flash({
+                    alertTitle: 'No permitido',
+                    alertMessage: msg,
+                    alertIcon: 'warning', showConfirmButton: true, timer: null, ruta: back
+                  }, back);
+            }
+            // Actualiza el rol en la misma fila
+            await db.query(
+              `UPDATE UsuarioRolTemporadaCategoria SET rol=? WHERE id=?`,
+              [incomingRol, linkId]
+            );
+          }
+        }
+      }
+    }
+
+    // ***** Actualiza usuario *****
     // Si es selfChange+ADMIN, conserva rol actual
     const finalRol = (selfChange && editorRol === 'ADMIN') ? current.rol : incomingRol;
 
@@ -200,6 +245,7 @@ exports.actualizar = async (req, res) => {
         }, back);
   }
 };
+
 
 /* ===== Eliminar ===== */
 exports.eliminar = async (req, res) => {

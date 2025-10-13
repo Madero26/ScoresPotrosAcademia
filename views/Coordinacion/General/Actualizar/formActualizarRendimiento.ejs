@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar / eliminar rendimiento mensual</h1>
+
+    <div class="card">
+      <form id="frmRend" method="POST" action="#">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada *</label>
+            <select id="selTemp" name="id_temporada" class="input" required>
+              <% (temporadas||[]).forEach(t=>{ %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categoría</label>
+            <select id="selCat" class="input"><option value="">Todas</option></select>
+          </div>
+
+          <div class="form-group">
+            <label>Equipo</label>
+            <select id="selEquipo" class="input"><option value="">Todos</option></select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Jugador *</label>
+            <select id="selJugador" name="id_jugador" class="input" required></select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Fecha registrada *</label>
+            <select id="selFecha" class="input" required>
+              <option value="">Selecciona fecha</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha de medición *</label>
+            <input id="inpFecha" type="date" name="fecha_medicion" class="input" required>
+          </div>
+
+          <div class="form-group"><label>Tiempo carrera (s)</label>
+            <input id="tc" type="number" step="0.01" min="0" name="tiempo_carrera_seg" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Vel. lanzamiento (mph)</label>
+            <input id="vl" type="number" step="0.01" min="0" name="vel_lanzamiento_mph" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Potencia brazo (mph)</label>
+            <input id="pb" type="number" step="0.01" min="0" name="potencia_brazo_mph" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Pop time (s)</label>
+            <input id="pt" type="number" step="0.01" min="0" name="pop_time_seg" class="input" value="0.00">
+          </div>
+          <div class="form-group"><label>Vel. bate (mph)</label>
+            <input id="vb" type="number" step="0.01" min="0" name="vel_bate_mph" class="input" value="0.00">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="btnUpd" type="submit" class="btn btn-primary" disabled>Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form id="frmDel" method="POST" action="#" onsubmit="return confirm('¿Eliminar definitivamente este registro?')">
+          <button id="btnDel" type="submit" class="btn btn-danger" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat=document.getElementById('selCat');
+  const selEq=document.getElementById('selEquipo');
+  const selJug=document.getElementById('selJugador');
+  const selFecha=document.getElementById('selFecha');
+  const frm=document.getElementById('frmRend');
+  const frmDel=document.getElementById('frmDel');
+  const btnUpd=document.getElementById('btnUpd');
+  const btnDel=document.getElementById('btnDel');
+  const inpFecha=document.getElementById('inpFecha');
+  const tc=document.getElementById('tc'), vl=document.getElementById('vl'), pb=document.getElementById('pb'), pt=document.getElementById('pt'), vb=document.getElementById('vb');
+
+  const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Todas</option>';
+    selEq.innerHTML ='<option value="">Todos</option>';
+    selJug.innerHTML=''; selFecha.innerHTML='<option value="">Selecciona fecha</option>';
+    const t=selTemp.value; if(!t) return;
+    const cats=await GET(`/adminGeneral/rendimiento/categorias?id_temporada=${t}`);
+    cats.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+  }
+  async function loadTeams(){
+    selEq.innerHTML ='<option value="">Todos</option>';
+    selJug.innerHTML=''; selFecha.innerHTML='<option value="">Selecciona fecha</option>';
+    const t=selTemp.value; if(!t) return;
+    const qs=new URLSearchParams({id_temporada:t});
+    if(selCat.value) qs.set('id_categoria', selCat.value);
+    const teams=await GET(`/adminGeneral/rendimiento/equipos?`+qs.toString());
+    teams.forEach(e=>{ const o=document.createElement('option'); o.value=e.id_equipo_temporada; o.textContent=e.nombre; selEq.appendChild(o); });
+  }
+  async function loadPlayers(){
+    selJug.innerHTML=''; selFecha.innerHTML='<option value="">Selecciona fecha</option>';
+    const t=selTemp.value; if(!t) return;
+    const qs=new URLSearchParams({id_temporada:t});
+    if(selCat.value) qs.set('id_categoria', selCat.value);
+    if(selEq.value)  qs.set('id_equipo_temporada', selEq.value);
+    const js=await GET(`/adminGeneral/rendimiento/jugadores?`+qs.toString());
+    selJug.innerHTML=js.map(j=>`<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+    await loadDates();
+  }
+  async function loadDates(){
+    selFecha.innerHTML='<option value="">Selecciona fecha</option>';
+    btnUpd.disabled=btnDel.disabled=true;
+    const t=selTemp.value, j=selJug.value; if(!t||!j) return;
+    const fs=await GET(`/adminGeneral/rendimiento/fechas?id_temporada=${t}&id_jugador=${j}`);
+    fs.forEach(x=>{ const o=document.createElement('option'); o.value=x.id_estadistica; o.textContent=x.fecha_medicion; selFecha.appendChild(o); });
+    if (fs.length){ selFecha.value=fs[0].id_estadistica; await loadRegistro(); }
+    else clearForm();
+  }
+  async function loadRegistro(){
+    const id=selFecha.value; if(!id){ clearForm(); return; }
+    const r=await GET(`/adminGeneral/rendimiento/${id}`);
+    frm.action=`/adminGeneral/rendimiento/${id}`;
+    frmDel.action=`/adminGeneral/rendimiento/${id}/eliminar`;
+    inpFecha.value=r.fecha_medicion; tc.value=r.tiempo_carrera_seg; vl.value=r.vel_lanzamiento_mph;
+    pb.value=r.potencia_brazo_mph; pt.value=r.pop_time_seg; vb.value=r.vel_bate_mph;
+    btnUpd.disabled=false; btnDel.disabled=false;
+  }
+  function clearForm(){
+    frm.action='#'; frmDel.action='#';
+    inpFecha.value=''; tc.value='0.00'; vl.value='0.00'; pb.value='0.00'; pt.value='0.00'; vb.value='0.00';
+    btnUpd.disabled=btnDel.disabled=true;
+  }
+
+  selTemp.addEventListener('change', async()=>{ await loadCats(); await loadTeams(); await loadPlayers(); });
+  selCat .addEventListener('change',  async()=>{ await loadTeams(); await loadPlayers(); });
+  selEq  .addEventListener('change',  loadPlayers);
+  selJug .addEventListener('change',  loadDates);
+  selFecha.addEventListener('change', loadRegistro);
+
+  (async function init(){ await loadCats(); await loadTeams(); await loadPlayers(); })();
+})();
+</script>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formActualizarEstadisticasRendimiento') %>; });
+  </script>
+  <% } %>
+
+  <script>
+async function GET(url){
+  try{
+    const r = await fetch(url, { headers:{ 'x-requested-with':'XMLHttpRequest' } });
+    if(!r.ok){ console.error('HTTP', r.status, url); return []; }
+    const ct = r.headers.get('content-type') || '';
+    if(!ct.includes('application/json')){ console.error('No JSON', url); return []; }
+    return await r.json();
+  }catch(e){ console.error('FETCH', url, e); return []; }
+}
+</script>
+
+</body>
+</html>
+
+
+

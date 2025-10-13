@@ -1,0 +1,121 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Actualizar coordinador por categoría</h1>
+
+    <div class="card">
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada *</label>
+          <select id="selTemp" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select id="selCat" class="input"><option value="">Selecciona</option></select>
+        </div>
+      </div>
+
+      <form id="frm" method="POST" action="#">
+        <input type="hidden" id="hidId" />
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Coordinador</label>
+            <select id="selCoord" name="id_coordinador" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button id="btnUpd" class="btn btn-primary" type="submit" disabled>Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <form id="frmDel" method="POST" action="#">
+  <button id="btnDel" class="btn btn-danger" disabled>Eliminar</button>
+</form>
+<script>
+document.getElementById('frmDel')?.addEventListener('submit', e=>{
+  e.preventDefault();
+  Swal.fire({
+    title:'¿Eliminar asignación?',
+    text:'Esta acción no se puede deshacer.',
+    icon:'warning', showCancelButton:true, confirmButtonText:'Sí, eliminar'
+  }).then(r=>{ if(r.isConfirmed) e.target.submit(); });
+});
+</script>
+
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const selCoord=document.getElementById('selCoord');
+  const hidId=document.getElementById('hidId');
+  const btnUpd=document.getElementById('btnUpd');
+  const btnDel=document.getElementById('btnDel');
+  const frm=document.getElementById('frm');
+  const frmDel=document.getElementById('frmDel');
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/coordCat/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+    clearAssignment();
+  }
+  function clearAssignment(){
+    hidId.value=''; selCoord.innerHTML='<option value="">Selecciona</option>';
+    btnUpd.disabled=btnDel.disabled=true; frm.action='#'; frmDel.action='#';
+  }
+  async function loadAssignment(){
+    clearAssignment();
+    const t=selTemp.value, c=selCat.value; if(!t||!c) return;
+    // carga asignación actual
+    const asg=await GET(`/adminGeneral/coordCat/actual?id_temporada=${t}&id_categoria=${c}`);
+    // carga disponibles + actual
+    const opts=await GET(`/adminGeneral/coordCat/coordinadores?id_temporada=${t}&id_categoria=${c}`);
+    selCoord.innerHTML='<option value="">Selecciona</option>';
+    opts.forEach(x=>{ const o=document.createElement('option'); o.value=x.id_coordinador; o.textContent=x.nombre; selCoord.appendChild(o); });
+
+    if (asg){
+      hidId.value=asg.id;
+      selCoord.value=asg.id_coordinador;
+      frm.action=`/adminGeneral/coordinadorTemporadaCategoria/${asg.id}`;
+      frmDel.action=`/adminGeneral/coordinadorTemporadaCategoria/${asg.id}/eliminar`;
+      btnUpd.disabled=false; btnDel.disabled=false;
+    }
+  }
+
+  selTemp.addEventListener('change', loadCats);
+  selCat .addEventListener('change', loadAssignment);
+
+  (async function init(){ await loadCats(); })();
+})();
+</script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: <%- JSON.stringify(alertTitle) %>,
+    text:  <%- JSON.stringify(alertMessage) %>,
+    icon:  <%- JSON.stringify(alertIcon) %>,
+    showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+    timer: <%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location = <%- JSON.stringify(ruta || request.originalUrl) %>; });
+</script>
+<% } %>
+
+</body></html>

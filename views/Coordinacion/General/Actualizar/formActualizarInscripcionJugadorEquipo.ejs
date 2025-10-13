@@ -1,0 +1,166 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+
+  <main class="container">
+    <h1>Actualizar inscripción de jugador a equipo</h1>
+
+    <div class="card">
+      <!-- Filtros -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada *</label>
+          <select id="selTemp" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <select id="selCat" class="input"><option value="">Todas</option></select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Buscar jugador</label>
+          <input id="inpQ" class="input" placeholder="Filtrar por nombre">
+          <select id="selList" class="input" size="8" style="margin-top:.5rem">
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Editor -->
+      <form id="frm" method="POST" action="#">
+        <input type="hidden" id="hidId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Equipo *</label>
+            <select id="selEqEdit" name="id_equipo_temporada" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha alta</label>
+            <input id="fAlta" type="date" class="input" name="fecha_alta">
+          </div>
+          <div class="form-group">
+            <label>Fecha baja</label>
+            <input id="fBaja" type="date" class="input" name="fecha_baja">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="btnUpd" class="btn btn-primary" type="submit" disabled>Actualizar</button>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <form id="frmDel" method="POST" action="#" onsubmit="return false">
+          <button id="btnDel" class="btn btn-danger" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const selTemp=document.getElementById('selTemp');
+  const selCat =document.getElementById('selCat');
+  const inpQ   =document.getElementById('inpQ');
+  const selList=document.getElementById('selList');
+
+  const selEqEdit=document.getElementById('selEqEdit');
+  const fAlta=document.getElementById('fAlta');
+  const fBaja=document.getElementById('fBaja');
+  const hidId=document.getElementById('hidId');
+  const frm=document.getElementById('frm');
+  const frmDel=document.getElementById('frmDel');
+  const btnUpd=document.getElementById('btnUpd');
+  const btnDel=document.getElementById('btnDel');
+
+  const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadCats(){
+    selCat.innerHTML='<option value="">Todas</option>';
+    const t=selTemp.value; if(!t) return;
+    const cs=await GET(`/adminGeneral/inscripcion/categorias?id_temporada=${t}`);
+    cs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; selCat.appendChild(o); });
+    await loadList();
+  }
+
+  async function loadTeams(){
+    selEqEdit.innerHTML='<option value="">Selecciona</option>';
+    const t=selTemp.value, c=selCat.value||0; if(!t) return;
+    // si no hay cat, trae todas; al llenar registro se valida temporada
+    const qs=new URLSearchParams({id_temporada:t});
+    if (c) qs.set('id_categoria', c);
+    const es=await GET(`/adminGeneral/inscripcion/equipos?`+qs.toString());
+    es.forEach(e=>{ const o=document.createElement('option'); o.value=e.id_equipo_temporada; o.textContent=e.nombre; selEqEdit.appendChild(o); });
+  }
+
+  async function loadList(){
+    const t=selTemp.value; if(!t) return;
+    const qs=new URLSearchParams({id_temporada:t});
+    if (selCat.value) qs.set('id_categoria', selCat.value);
+    if (inpQ.value.trim()) qs.set('q', inpQ.value.trim());
+    const list=await GET(`/adminGeneral/inscripcion/lista?`+qs.toString());
+    selList.innerHTML = list.map(x=>`<option value="${x.id}" data-payload='${JSON.stringify(x)}'>${x.nombre_jugador} · ${x.nombre_equipo} · ${x.nombre_categoria}</option>`).join('');
+    disableEditor();
+  }
+
+  function disableEditor(){
+    hidId.value=''; frm.action='#'; frmDel.action='#';
+    fAlta.value=''; fBaja.value=''; btnUpd.disabled=true; btnDel.disabled=true;
+    selEqEdit.innerHTML='<option value="">Selecciona</option>';
+  }
+
+  async function fillEditor(x){
+    hidId.value=x.id;
+    await loadTeams();            // llena opciones
+    selEqEdit.value = x.id_equipo_temporada;
+    fAlta.value = x.fecha_alta || '';
+    fBaja.value = x.fecha_baja || '';
+    frm.action    = `/adminGeneral/jugadorEquipoTemporada/${x.id}`;
+    frmDel.action = `/adminGeneral/jugadorEquipoTemporada/${x.id}/eliminar`;
+    btnUpd.disabled=false; btnDel.disabled=false;
+  }
+
+  function debounce(fn,ms){ let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); }; }
+
+  selTemp.addEventListener('change', loadCats);
+  selCat .addEventListener('change',  ()=>{ loadTeams(); loadList(); });
+  inpQ   .addEventListener('input', debounce(loadList, 250));
+  selList.addEventListener('change', ()=>{
+    const opt=selList.selectedOptions[0];
+    if (!opt || !opt.dataset.payload) return disableEditor();
+    fillEditor(JSON.parse(opt.dataset.payload));
+  });
+
+  (async function init(){ await loadCats(); await loadTeams(); await loadList(); })();
+
+  // Confirm eliminar
+  btnDel.addEventListener('click', ()=>{
+    if (!frmDel.action || frmDel.action==='#') return;
+    Swal.fire({
+      title:'¿Eliminar inscripción?',
+      text:'También se eliminarán sus estadísticas de la temporada.',
+      icon:'warning', showCancelButton:true, confirmButtonText:'Sí, eliminar'
+    }).then(r=>{ if(r.isConfirmed) frmDel.submit(); });
+  });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+    icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+    timer:<%- (timer==null?'null':Number(timer)) %>
+  }).then(()=>{ window.location=<%- JSON.stringify(ruta || '/adminGeneral/formActualizarInscripcionJugadorEquipo') %>; });
+</script>
+<% } %>
+</body></html>
