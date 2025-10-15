@@ -42,6 +42,7 @@ const { isAuthenticated } = require('./middlewares/auth');
 app.use('/', require('./Rutas/index'));
 app.use('/adminGeneral', isAuthenticated, require('./Rutas/adminGeneral'));
 app.use('/Coordinadores', require('./Rutas/coordinador'));
+app.use('/adminEstadisticas',isAuthenticated, require('./Rutas/adminEstadisticas'));
 
 
 app.listen(3000, () => console.log('http://localhost:3000'));

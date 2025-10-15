@@ -1,0 +1,94 @@
+/* ===== ancho simétrico y diseño limpio ===== */
+:root{
+  --sb-max: 1500px;           /* ancho máximo del módulo */
+  --sb-gutter: 32px;          /* margen lateral simétrico */
+  --sb-head: #0c2b52;
+}
+
+.sb-bleed{
+  width: min(var(--sb-max), calc(100vw - var(--sb-gutter)*2));
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+}
+
+.sb-title{
+  color:#fff;
+  font-family:"Anton",sans-serif;
+  font-size:clamp(1.9rem,1.1rem + 2.2vw,3rem);
+  margin:0 0 1.2rem;
+}
+
+/* El global limita form a 720px; anúlalo aquí */
+.sb-form{ width:100% !important; margin:0 !important }
+.sb-card{
+  width:100%;
+  max-width:none;
+  padding:1.2rem 1.4rem;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(6px);
+  border-radius:14px;
+  box-shadow:0 14px 34px rgba(0,0,0,.24);
+}
+
+/* ===== tabla ===== */
+.sb-table{ width:100%; margin-top:.9rem; overflow-x:hidden }
+.sb-grid{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;     /* reparte ancho y evita barra */
+  color:#fff;
+  font-size:1rem;
+}
+.sb-grid thead{ background:var(--sb-head) }
+.sb-grid th{
+  padding:.75rem .6rem;
+  border-bottom:2px solid rgba(255,255,255,.12);
+  text-transform:uppercase; letter-spacing:.5px; font-weight:700;
+  text-align:center;
+}
+.sb-grid td{
+  padding:.55rem .5rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.05);
+}
+.sb-grid tr:nth-child(even) td{ background:rgba(255,255,255,.08) }
+.sb-grid td:first-child{
+  text-align:left; font-weight:600; color:#f8fafc; white-space:normal;
+}
+
+/* ===== píldoras - 0 + ===== */
+.qty{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.45rem;
+  padding:.34rem .56rem;
+  background:rgba(255,255,255,.10);
+  border-radius:.7rem;
+  min-width:118px;
+}
+.qty input{
+  width:58px; text-align:center;
+  border:none; background:transparent; color:#fff;
+  font-weight:700; font-size:1rem; outline:none;
+}
+.qty input::-webkit-outer-spin-button,
+.qty input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+.qty input{ -moz-appearance:textfield }
+.qty button{
+  width:28px; height:28px; border:0; border-radius:.45rem;
+  background:#12325f; color:#fff; font-weight:800; cursor:pointer;
+  transition:filter .15s ease;
+}
+.qty button:hover{ filter:brightness(1.08) }
+
+/* acciones */
+.sb-actions{ display:flex; justify-content:flex-end; gap:.8rem; margin-top:1.2rem }
+
+/* ===== móvil: permitir scroll X si no cabe ===== */
+@media (max-width: 1024px){
+  .sb-bleed{ width: calc(100vw - var(--sb-gutter)) }
+  .sb-table{ overflow-x:auto }
+  .sb-grid{ min-width: 980px; table-layout:auto }
+}
+
+
+

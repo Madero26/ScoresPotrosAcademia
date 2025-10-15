@@ -1,0 +1,52 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head><body>
+  <%- include('../../../partials/navbar_adminEstadisticas') %>
+
+  <main class="container">
+    <h1>Cargar estadísticas del equipo</h1>
+    <form method="POST" action="/adminEstadisticas/StatsCargarEstadisticaEquipo" class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Equipo *</label>
+          <select name="id_equipo_temporada" class="input" required>
+            <option value="">Selecciona</option>
+            <% (equipos||[]).forEach(e=>{ %>
+              <option value="<%= e.id_equipo_temporada %>"><%= e.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group"><label>CA favor</label><input class="input" name="carreras_a_favor"   type="number" min="0" value="0"></div>
+        <div class="form-group"><label>CA contra</label><input class="input" name="carreras_en_contra" type="number" min="0" value="0"></div>
+        <div class="form-group"><label>Ganados</label><input class="input" name="ganados"   type="number" min="0" value="0"></div>
+        <div class="form-group"><label>Perdidos</label><input class="input" name="perdidos"  type="number" min="0" value="0"></div>
+        <div class="form-group"><label>Empatados</label><input class="input" name="empatados" type="number" min="0" value="0"></div>
+        <div class="form-group"><label>Errores</label><input class="input" name="errores"    type="number" min="0" value="0"></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Cargar</button>
+        <a class="btn btn-outline" href="/adminEstadisticas">Cancelar</a>
+      </div>
+    </form>
+  </main>
+  
+</body>
+<!-- Mensajes -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: <%- JSON.stringify(alertTitle) %>,
+    text:  <%- JSON.stringify(alertMessage) %>,
+    icon:  <%- JSON.stringify(alertIcon) %>,
+    showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+    timer: <%- (timer==null?'null':Number(timer)) %>
+  }).then(() => {
+    <% if (ruta) { %> location.href = <%- JSON.stringify(ruta) %>; <% } %>
+  });
+</script>
+<% } %>
+</html>

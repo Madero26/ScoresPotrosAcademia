@@ -5,31 +5,7 @@
   <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
 </head>
 <body>
-  <% 
-    // Rol normalizado
-    let R = '';
-    try {
-      R = (usuario && (usuario.rol || usuario.role || usuario.tipo)) ? String(usuario.rol || usuario.role || usuario.tipo).toUpperCase() : '';
-      if (R === 'ADMINISTRADORESTADISTICAS') R = 'ESTADISTICAS';
-    } catch(e){ R=''; }
-
-    // Navbar por rol
-    if (R === 'ADMIN') { %>
-      <%- include('../../../partials/navbar_adminGeneral') %>
-  <% } else if (R === 'COORDINADOR') { %>
-      <%- include('../../../partials/navbar_adminCoordinador') %>
-  <% } else if (R === 'ESTADISTICAS') { %>
-      <%- include('../../../partials/navbar_adminEstadisticas') %>
-  <% } else { %>
-      <%- include('../../../partials/navbar_public') %>
-  <% } 
-
-    // Link cancelar por rol
-    const CANCEL = (R==='ADMIN') ? '/adminGeneral/inicio'
-                  : (R==='COORDINADOR') ? '/Coordinacion/inicio'
-                  : (R==='ESTADISTICAS') ? '/AdminEstadisticas/inicio'
-                  : '/Login';
-  %>
+  <%- include('../../../partials/navbar_adminGeneral') %>
 
   <main class="container">
     <h1>Cambiar contraseña</h1>
@@ -40,12 +16,13 @@
           <div class="form-group" style="grid-column:1/-1">
             <label>Nueva contraseña *</label>
             <input class="input" type="password" name="nueva" required placeholder="Nueva contraseña">
+
           </div>
         </div>
 
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Actualizar y cerrar sesión</button>
-          <a href="<%= CANCEL %>" class="btn btn-outline">Cancelar</a>
+          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
         </div>
       </form>
     </div>
@@ -65,4 +42,3 @@
   <% } %>
 </body>
 </html>
-

@@ -144,8 +144,242 @@ button[type="submit"]:hover, form input[type="submit"]:hover{filter:brightness(1
   form label{font-size:1.05rem}
   form input, form select{font-size:1rem}
 }
+/* =========================
+   Extiende fondo y centra contenido del módulo estadísticas
+========================= */
+.stats-wrap {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--blue-700) 0%, var(--blue-500) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 3rem 1rem 5rem;
+}
+
+.stats-wrap h1,
+.stats-wrap .titulo {
+  color: #fff;
+  text-align: center;
+  margin-bottom: 1.8rem;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.8rem, 1.2rem + 2vw, 2.8rem);
+}
+
+/* Formulario centrado con sombra */
+.stats-form {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  border-radius: 1.4rem;
+  padding: 2rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  width: min(90%, 800px);
+}
+
+.stats-form label {
+  color: #fff;
+  font-weight: 700;
+  font-family: "Source Sans 3", system-ui, sans-serif;
+}
+
+.stats-form select,
+.stats-form input {
+  background: #fff;
+  color: var(--blue-700);
+  border-radius: 0.7rem;
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem 0.9rem;
+  width: 100%;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.stats-form button {
+  background: linear-gradient(180deg, #0c2b52, #12325f);
+  color: #fff;
+  border: none;
+  border-radius: 0.8rem;
+  padding: 0.9rem 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.stats-form button:hover {
+  filter: brightness(1.1);
+}
+
+/* Ajuste responsive */
+@media (max-width: 720px) {
+  .stats-form {
+    padding: 1.5rem;
+  }
+  .stats-wrap h1 {
+    font-size: 1.8rem;
+  }
+}
+/* ===== Stats layout ancho ===== */
+.stats-wrap{min-height:100vh;background:linear-gradient(180deg,var(--blue-700),var(--blue-500));padding:2.5rem 1rem 5rem;display:flex;flex-direction:column;gap:1.25rem}
+.stats-title{color:#fff;text-align:center;font-family:"Anton",sans-serif;font-size:clamp(1.8rem,1.2rem + 2vw,2.6rem);margin:0}
+
+.stats-card{width:min(1200px,95vw);margin:0 auto;background:rgba(255,255,255,.06);border-radius:1rem;box-shadow:0 14px 34px rgba(0,0,0,.24);backdrop-filter:blur(6px);padding:1rem}
+.stats-card .form-group label{color:#fff}
+
+.stats-table{width:min(1200px,95vw);margin:0 auto;background:#fff;border-radius:1rem;box-shadow:0 14px 34px rgba(0,0,0,.24);overflow:hidden}
+.stats-table__inner{overflow:auto;max-height:62vh}
+.stats-table table{width:100%;border-collapse:collapse}
+.stats-table th,.stats-table td{border-bottom:1px solid #e5e7eb;padding:.55rem .6rem;text-align:center;white-space:nowrap}
+.stats-table thead th{position:sticky;top:0;background:#0c2b52;color:#fff;z-index:1}
+.stats-table td:first-child,.stats-table th:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:2}
+
+.qty{display:flex;justify-content:center;gap:.35rem}
+.qty input{width:64px;text-align:center}
+.qty button{padding:.25rem .55rem;border-radius:.45rem;border:1px solid #e5e7eb;background:#f8fafc;cursor:pointer}
+
+.stats-actions{width:min(1200px,95vw);margin:0 auto;display:flex;gap:.7rem;justify-content:flex-end}
+
+/* ===== TABLA DE CARGA MASIVA ===== */
+.stats-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.stats-table thead {
+  background: #0c2b52;
+}
+
+.stats-table th {
+  text-transform: uppercase;
+  padding: 0.75rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.stats-table td {
+  text-align: center;
+  padding: 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.stats-table tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.stats-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+/* Controles - 0 + dentro de la celda */
+.qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.6rem;
+  padding: 0.3rem 0.5rem;
+  justify-content: center;
+  min-width: 90px;
+}
+
+.qty input {
+  width: 50px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.qty button {
+  background: #12325f;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 0.4rem;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.qty button:hover {
+  background: #1e4b8a;
+}
+
+/* Botones inferiores */
+.stats-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+/* === Ancho amplio para módulo de estadísticas === */
+:root{ --stats-max: 1400px; }           /* ajusta 1400–1600px si quieres más */
+
+/* contenedor general con menos margen lateral visual */
+.stats-wrap{
+  padding-left: clamp(12px, 2vw, 32px);
+  padding-right: clamp(12px, 2vw, 32px);
+}
+
+/* tarjetas, tabla y barra de acciones ocupan casi todo el ancho */
+.stats-card,
+.stats-table,
+.stats-actions{
+  width: min(var(--stats-max), 98vw);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* interior desplazable de la tabla un poco más alto */
+.stats-table__inner{ max-height: 68vh; }
+
+/* obliga a la tabla a ser más ancha para que las columnas respiren */
+.stats-table table{ min-width: 1280px; }  /* sube a 1400px si tienes muchas columnas */
+
+/* cabezal y primera columna pegajosos conservan fondo correcto al ensanchar */
+.stats-table thead th{ background:#0c2b52; }
+.stats-table td:first-child,
+.stats-table th:first-child{
+  background:#0b2342; /* o #fff si usas modo claro en esa fila */
+  color:#fff;
+}
+
+/* controles -0+ un poco más anchos para que no se compriman */
+.qty{ min-width: 110px; }
+.qty input{ width: 62px; }
 
 
 
+/* ancho amplio solo en esta vista */
+form.stats-form-wide{
+  width:min(1400px, 98vw);
+  margin:0 auto;
+}
+form.stats-form-wide .card{width:100%; max-width:none}
 
+/* tabla ocupa 100% del card, sin min-width */
+form.stats-form-wide .stats-table{width:100%}
+form.stats-form-wide .stats-table table{
+  width:100%;
+  min-width:0;              /* anula tu min-width */
+  table-layout:fixed;       /* compacta columnas */
+}
+form.stats-form-wide .stats-table th,
+form.stats-form-wide .stats-table td{
+  white-space:normal;       /* permite salto de línea */
+}
 
+/* opcional: en móviles vuelve al scroll horizontal */
+@media (max-width: 880px){
+  form.stats-form-wide .stats-table{overflow-x:auto}
+  form.stats-form-wide .stats-table table{min-width:980px; table-layout:auto}
+}

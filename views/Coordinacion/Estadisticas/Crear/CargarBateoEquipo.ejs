@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  
+  <style>
+    /* ===== TABLA DE CARGA MASIVA ===== */
+    .stats-wrap{max-width:1600px;margin:0 auto}
+    .stats-table{width:100%;overflow-x:auto}
+    .stats-table table{width:100%;border-collapse:collapse;font-size:1rem;color:#fff}
+    .stats-table thead{background:#0c2b52}
+    .stats-table th{padding:.75rem;border-bottom:2px solid rgba(255,255,255,.1);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+    .stats-table td{padding:.65rem;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05)}
+    .stats-table tr:nth-child(even) td{background:rgba(255,255,255,.08)}
+    .stats-table td:first-child{text-align:left;font-weight:600;color:#f8fafc}
+
+    /* Controles - 0 + */
+    .qty{display:inline-flex;align-items:center;gap:.45rem;background:rgba(255,255,255,.1);border-radius:.6rem;padding:.3rem .5rem;justify-content:center;min-width:100px}
+    .qty input{width:54px;text-align:center;border:none;background:transparent;color:#fff;font-weight:700;font-size:1rem}
+    .qty button{background:#12325f;border:none;color:#fff;font-weight:800;font-size:1rem;border-radius:.4rem;width:28px;height:28px;cursor:pointer;transition:background .2s}
+    .qty button:hover{background:#1e4b8a}
+
+    .stats-actions{display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.2rem}
+
+    
+  </style>
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminEstadisticas') %>
+
+  <main class="container">
+    <div class="stats-wrap">
+      <h1>Cargar bateo por equipo</h1>
+
+      <form class="stats-form-wide" method="POST" action="/adminEstadisticas/StatsCargarBateoEquipo">
+  <div class="card stats-card-right" id="statsCard" style="padding:1rem 1.2rem">
+    <div class="form-group" style="max-width:560px">
+      <label>Equipo *</label>
+      <select id="selEq" name="id_equipo_temporada" class="input" required>
+        <option value="">Selecciona</option>
+        <% (equipos||[]).forEach(e=>{ %>
+          <option value="<%= e.id_equipo_temporada %>"><%= e.nombre %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="stats-table no-scroll-desktop" id="tblWrap">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th>AB</th><th>H</th><th>BB</th><th>R</th><th>RBI</th>
+            <th>1B</th><th>2B</th><th>3B</th><th>HR</th><th>SB</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="11">Selecciona un equipo…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="stats-actions">
+      <button class="btn btn-primary" type="submit">Cargar</button>
+      <a class="btn btn-outline" href="/adminEstadisticas">Cancelar</a>
+    </div>
+  </div>
+</form>
+
+    </div>
+  </main>
+
+  <script>
+    const $tbody = document.getElementById('tbody');
+
+    function row(id, nombre){
+  const cols=['apariciones_al_bat','hits','bases_por_bolas','carreras','carreras_producidas','sencillos','dobles','triples','home_runs','bases_robadas'];
+  const tr=document.createElement('tr');
+  tr.innerHTML = `
+    <td>${nombre}<input type="hidden" name="id_jugador[]" value="${id}"></td>
+    ${cols.map(c=>`
+      <td>
+        <div class="qty">
+          <button type="button" onclick="dec(this)">−</button>
+          <input type="number" name="${c}[]" value="0" min="0" step="1">
+          <button type="button" onclick="inc(this)">+</button>
+        </div>
+      </td>`).join('')}
+  `;
+  return tr;
+}
+
+    window.inc = (b)=>{ const i=b.previousElementSibling; i.value = Math.max(0, Number(i.value||0)+1); };
+    window.dec = (b)=>{ const i=b.nextElementSibling;   i.value = Math.max(0, Number(i.value||0)-1); };
+
+    document.getElementById('selEq').addEventListener('change', async (e)=>{
+      const id = e.target.value;
+      $tbody.innerHTML = `<tr><td colspan="11">Cargando…</td></tr>`;
+      if(!id){ $tbody.innerHTML=`<tr><td colspan="11">Selecciona un equipo…</td></tr>`; return; }
+      const r = await fetch(`/adminEstadisticas/ajax/plantel?id_equipo_temporada=${id}`);
+      const js = await r.json();
+      if(!js.length){ $tbody.innerHTML=`<tr><td colspan="11">Sin plantel.</td></tr>`; return; }
+      $tbody.innerHTML='';
+      js.forEach(j => $tbody.appendChild(row(j.id_jugador, j.nombre)));
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>,
+      text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>,
+      showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ if(<%- !!ruta %>) location.href=<%- JSON.stringify(ruta) %>; });
+  </script>
+  <% } %>
+
+  <script>
+    if (!window.__statsNavInit) {
+      window.__statsNavInit = true;
+      const BASE = '/adminEstadisticas';
+      window.redirigirStats = function (select) {
+        const url = select.value;
+        if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
+          const target = url.startsWith('/adminEstadisticas') ? url : (BASE + url);
+          location.href = target;
+        }
+        setTimeout(() => (select.selectedIndex = 0), 200);
+      };
+    }
+  </script>
+  
+</body>
+</html>
+
+
+

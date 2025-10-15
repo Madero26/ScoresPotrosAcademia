@@ -52,20 +52,7 @@
         </select>
       </div>
 
-      <!-- ELIMINAR (filtro por jugador/equipo) -->
-      <div class="action">
-        <label for="stats-eliminar">Eliminar</label>
-        <select id="stats-eliminar" class="select" onchange="redirigirStats(this)">
-          <option>ELIMINAR</option>
-          <optgroup label="Por jugador">
-            <option value="/StatsEliminarBateoJugador">Eliminar bateo de jugador</option>
-            <option value="/StatsEliminarPitcheoJugador">Eliminar pitcheo de jugador</option>
-          </optgroup>
-          <optgroup label="Por equipo">
-            <option value="/StatsEliminarEstadisticaEquipo">Eliminar estadísticas del equipo</option>
-          </optgroup>
-        </select>
-      </div>
+      
 
     </div>
   </div>
@@ -73,13 +60,17 @@
 
 
 <script>
-  if (!window.__statsNavInit) {
-    window.__statsNavInit = true;
+  if (!window.__statsNavInitV2) {
+    window.__statsNavInitV2 = true;
     window.redirigirStats = function (select) {
-      const url = select.value;
-      if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) location.href = url;
+      let url = select.value;
+      if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
+        if (!url.startsWith('/adminEstadisticas')) url = '/adminEstadisticas' + url;
+        location.href = url;
+      }
       setTimeout(() => (select.selectedIndex = 0), 200);
     };
   }
 </script>
+
 

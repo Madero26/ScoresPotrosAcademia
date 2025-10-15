@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>
+    .wrap{max-width:980px;margin:0 auto}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem}
+    .card-pad{padding:1rem 1.2rem}
+    .avg-box{background:#0c2b52;color:#fff;border-radius:.6rem;padding:.6rem .8rem;font-weight:800;text-align:center}
+  </style>
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminEstadisticas') %>
+
+  <main class="container wrap">
+    <h1>Editar bateo de jugador</h1>
+
+    <div class="card card-pad">
+      <div class="form-grid" style="margin-bottom:.6rem">
+        <div class="form-group">
+          <label>Equipo</label>
+          <select id="selEq" class="input">
+            <option value="">Selecciona</option>
+            <% (equipos||[]).forEach(e=>{ %>
+              <option value="<%= e.id_equipo_temporada %>"><%= e.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Jugador</label>
+          <input id="busc" class="input" placeholder="Busca por nombre…">
+          <select id="selJug" class="input" size="6" style="margin-top:.5rem"></select>
+        </div>
+      </div>
+
+      <form id="frm" method="POST" action="/adminEstadisticas/StatsEditarBateoJugador">
+        <input type="hidden" name="id_equipo_temporada" id="id_eq">
+        <input type="hidden" name="id_jugador" id="id_jug">
+
+        <div class="form-grid">
+          <div class="form-group"><label>AB</label><input class="input" name="apariciones_al_bat" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>H</label><input class="input" name="hits" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>BB</label><input class="input" name="bases_por_bolas" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>R</label><input class="input" name="carreras" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>RBI</label><input class="input" name="carreras_producidas" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>1B</label><input class="input" name="sencillos" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>2B</label><input class="input" name="dobles" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>3B</label><input class="input" name="triples" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>HR</label><input class="input" name="home_runs" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>SB</label><input class="input" name="bases_robadas" type="number" min="0" value="0"></div>
+          <div class="form-group"><label>AVG</label><div class="avg-box"><span id="avg">0.000</span></div></div>
+        </div>
+
+        <div class="form-actions" style="margin-top:.8rem">
+          <button type="submit" class="btn btn-primary" disabled id="btnSave">Guardar</button>
+          <a class="btn btn-outline" href="/adminEstadisticas">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const selEq  = document.getElementById('selEq');
+    const selJug = document.getElementById('selJug');
+    const busc   = document.getElementById('busc');
+    const id_eq  = document.getElementById('id_eq');
+    const id_jug = document.getElementById('id_jug');
+    const btn    = document.getElementById('btnSave');
+    const avgEl  = document.getElementById('avg');
+
+    let full = [];
+
+    async function loadPlantel(){
+      selJug.innerHTML = '';
+      id_eq.value = selEq.value || '';
+      btn.disabled = true;
+      if(!selEq.value) return;
+      const r = await fetch(`/adminEstadisticas/ajax/plantel?id_equipo_temporada=${selEq.value}`);
+      full = await r.json();
+      renderList('');
+    }
+
+    function renderList(filter){
+      const f = String(filter||'').toLowerCase();
+      selJug.innerHTML = '';
+      full.filter(x => x.nombre.toLowerCase().includes(f))
+          .forEach(x=>{
+            const o = document.createElement('option');
+            o.value = x.id_jugador;
+            o.textContent = x.nombre;
+            selJug.appendChild(o);
+          });
+    }
+
+    busc.addEventListener('input', e=> renderList(e.target.value));
+    selEq.addEventListener('change', loadPlantel);
+
+    selJug.addEventListener('change', async ()=>{
+      id_jug.value = selJug.value || '';
+      btn.disabled = !selJug.value || !selEq.value;
+      if(!selJug.value) return;
+      const r = await fetch(`/adminEstadisticas/ajax/bateoJugador?id_jugador=${selJug.value}`);
+      const js = await r.json() || {};
+      const set = (name, val)=>{ const el=document.querySelector(`[name="${name}"]`); if(el) el.value = Number(val||0); };
+      set('apariciones_al_bat', js.apariciones_al_bat);
+      set('hits', js.hits);
+      set('bases_por_bolas', js.bases_por_bolas);
+      set('carreras', js.carreras);
+      set('carreras_producidas', js.carreras_producidas);
+      set('sencillos', js.sencillos);
+      set('dobles', js.dobles);
+      set('triples', js.triples);
+      set('home_runs', js.home_runs);
+      set('bases_robadas', js.bases_robadas);
+      avgEl.textContent = (typeof js.promedio_bateo==='number') ? js.promedio_bateo.toFixed(3) : '0.000';
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>,
+      text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>,
+      showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ if(<%- !!ruta %>) location.href=<%- JSON.stringify(ruta) %>; });
+  </script>
+  <% } %>
+
+  <script>
+    if (!window.__statsNavInit) {
+      window.__statsNavInit = true;
+      const BASE = '/adminEstadisticas';
+      window.redirigirStats = function (select) {
+        const url = select.value;
+        if (url && !/^(CREAR|ACTUALIZAR|ELIMINAR)$/.test(url)) {
+          const target = url.startsWith('/adminEstadisticas') ? url : (BASE + url);
+          location.href = target;
+        }
+        setTimeout(() => (select.selectedIndex = 0), 200);
+      };
+    }
+  </script>
+</body>
+</html>
+
+
+
