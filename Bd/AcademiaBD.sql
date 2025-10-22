@@ -22,17 +22,17 @@ CREATE TABLE Categorias (
   url_foto VARCHAR(255) NULL
 );
 
--- 3) Rangos por temporada
-CREATE TABLE CategoriaTemporadaRango (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  id_temporada INT NOT NULL,
-  id_categoria INT NOT NULL,
-  nacimiento_desde DATE NOT NULL,
-  nacimiento_hasta DATE NOT NULL,
-  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
-  FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria) ON DELETE RESTRICT,
-  UNIQUE KEY uq_cat_temp (id_temporada, id_categoria)
-);
+	-- 3) Rangos por temporada
+	CREATE TABLE CategoriaTemporadaRango (
+	  id INT AUTO_INCREMENT PRIMARY KEY,
+	  id_temporada INT NOT NULL,
+	  id_categoria INT NOT NULL,
+	  nacimiento_desde DATE NOT NULL,
+	  nacimiento_hasta DATE NOT NULL,
+	  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
+	  FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria) ON DELETE RESTRICT,
+	  UNIQUE KEY uq_cat_temp (id_temporada, id_categoria)
+	);
 
 -- 4) Usuarios (admin / coordinador / estadísticas)
 CREATE TABLE UsuarioAdministradores (
@@ -98,19 +98,19 @@ CREATE TABLE UsuarioRolTemporadaCategoria (
 	  activo TINYINT(1) DEFAULT 1
 	);
 
--- 10) Asignación del jugador a categoría por temporada
-CREATE TABLE JugadorTemporadaCategoria (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  id_jugador INT NOT NULL,
-  id_temporada INT NOT NULL,
-  id_categoria INT NOT NULL,
-  asignado_automatico TINYINT(1) DEFAULT 1,
-  fecha_asignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
-  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
-  FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria) ON DELETE RESTRICT,
-  UNIQUE KEY uq_jug_temp (id_jugador, id_temporada)  -- una categoría por temporada
-);
+		-- 10) Asignación del jugador a categoría por temporada
+		CREATE TABLE JugadorTemporadaCategoria (
+		  id INT AUTO_INCREMENT PRIMARY KEY,
+		  id_jugador INT NOT NULL,
+		  id_temporada INT NOT NULL,
+		  id_categoria INT NOT NULL,
+		  asignado_automatico TINYINT(1) DEFAULT 1,
+		  fecha_asignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
+		  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
+		  FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria) ON DELETE RESTRICT,
+		  UNIQUE KEY uq_jug_temp (id_jugador, id_temporada)  -- una categoría por temporada
+		);
 
 	-- 11) Equipos (identidad base)
 	CREATE TABLE Equipos (
@@ -136,69 +136,69 @@ CREATE TABLE EquipoTemporada (
   UNIQUE KEY uq_equipo_temp_nombre (id_temporada, id_categoria, nombre)
 );
 
--- 13) Pertenencia del jugador al equipo en la temporada
-CREATE TABLE JugadorEquipoTemporada (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  id_jugador INT NOT NULL,
-  id_equipo_temporada INT NOT NULL,
-  fecha_alta DATE DEFAULT NULL,
-  fecha_baja DATE DEFAULT NULL,
-  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
-  FOREIGN KEY (id_equipo_temporada) REFERENCES EquipoTemporada(id_equipo_temporada) ON DELETE CASCADE,
-  UNIQUE KEY uq_plantel (id_jugador, id_equipo_temporada)
-);
+	-- 13) Pertenencia del jugador al equipo en la temporada
+	CREATE TABLE JugadorEquipoTemporada (
+	  id INT AUTO_INCREMENT PRIMARY KEY,
+	  id_jugador INT NOT NULL,
+	  id_equipo_temporada INT NOT NULL,
+	  fecha_alta DATE DEFAULT NULL,
+	  fecha_baja DATE DEFAULT NULL,
+	  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
+	  FOREIGN KEY (id_equipo_temporada) REFERENCES EquipoTemporada(id_equipo_temporada) ON DELETE CASCADE,
+	  UNIQUE KEY uq_plantel (id_jugador, id_equipo_temporada)
+	);
 
--- 14) Estadísticas de bateo por temporada (totales)
-CREATE TABLE EstadisticasBateoTemporada (
-  id_estadistica INT AUTO_INCREMENT PRIMARY KEY,
-  id_temporada INT NOT NULL,
-  id_jugador INT NOT NULL,
-  id_equipo_temporada INT NULL,          -- referencia del equipo del jugador en esa temporada
-  apariciones_al_bat INT DEFAULT 0,      -- antes "turnos"
-  hits INT DEFAULT 0,
-  bases_por_bolas INT DEFAULT 0,
-  carreras INT DEFAULT 0,
-  carreras_producidas INT DEFAULT 0,
-  sencillos INT DEFAULT 0,
-  dobles INT DEFAULT 0,
-  triples INT DEFAULT 0,
-  home_runs INT DEFAULT 0,
-  bases_robadas INT DEFAULT 0,
-  promedio_bateo DECIMAL(5,3) GENERATED ALWAYS AS (
-    CASE WHEN apariciones_al_bat > 0
-         THEN ROUND(hits / apariciones_al_bat, 3)
-         ELSE 0.000
-    END
-  ) STORED,
-  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
-  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
-  FOREIGN KEY (id_equipo_temporada) REFERENCES EquipoTemporada(id_equipo_temporada) ON DELETE SET NULL,
-  UNIQUE KEY uq_bateo (id_temporada, id_jugador)
-);
+	-- 14) Estadísticas de bateo por temporada (totales)
+	CREATE TABLE EstadisticasBateoTemporada (
+	  id_estadistica INT AUTO_INCREMENT PRIMARY KEY,
+	  id_temporada INT NOT NULL,
+	  id_jugador INT NOT NULL,
+	  id_equipo_temporada INT NULL,          -- referencia del equipo del jugador en esa temporada
+	  apariciones_al_bat INT DEFAULT 0,      -- antes "turnos"
+	  hits INT DEFAULT 0,
+	  bases_por_bolas INT DEFAULT 0,
+	  carreras INT DEFAULT 0,
+	  carreras_producidas INT DEFAULT 0,
+	  sencillos INT DEFAULT 0,
+	  dobles INT DEFAULT 0,
+	  triples INT DEFAULT 0,
+	  home_runs INT DEFAULT 0,
+	  bases_robadas INT DEFAULT 0,
+	  promedio_bateo DECIMAL(5,3) GENERATED ALWAYS AS (
+		CASE WHEN apariciones_al_bat > 0
+			 THEN ROUND(hits / apariciones_al_bat, 3)
+			 ELSE 0.000
+		END
+	  ) STORED,
+	  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
+	  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
+	  FOREIGN KEY (id_equipo_temporada) REFERENCES EquipoTemporada(id_equipo_temporada) ON DELETE SET NULL,
+	  UNIQUE KEY uq_bateo (id_temporada, id_jugador)
+	);
 
--- 15) Estadísticas de pitcheo por temporada (totales)
-CREATE TABLE EstadisticasPitcheoTemporada (
-  id_estadistica INT AUTO_INCREMENT PRIMARY KEY,
-  id_temporada INT NOT NULL,
-  id_jugador INT NOT NULL,
-  id_equipo_temporada INT NULL,          -- referencia del equipo del jugador en esa temporada
-  bases_por_bolas INT DEFAULT 0,
-  victorias INT DEFAULT 0,
-  derrotas INT DEFAULT 0,
-  entradas_lanzadas DECIMAL(5,1) DEFAULT 0.0,
-  carreras_limpias INT DEFAULT 0,
-  ponches INT DEFAULT 0,
-  efectividad DECIMAL(6,3) GENERATED ALWAYS AS (
-    CASE WHEN entradas_lanzadas > 0
-         THEN ROUND((carreras_limpias * 9) / entradas_lanzadas, 3)
-         ELSE 0.000
-    END
-  ) STORED,
-  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
-  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
-  FOREIGN KEY (id_equipo_temporada) REFERENCES EquipoTemporada(id_equipo_temporada) ON DELETE SET NULL,
-  UNIQUE KEY uq_pitcheo (id_temporada, id_jugador)
-);
+	-- 15) Estadísticas de pitcheo por temporada (totales)
+	CREATE TABLE EstadisticasPitcheoTemporada (
+	  id_estadistica INT AUTO_INCREMENT PRIMARY KEY,
+	  id_temporada INT NOT NULL,
+	  id_jugador INT NOT NULL,
+	  id_equipo_temporada INT NULL,          -- referencia del equipo del jugador en esa temporada
+	  bases_por_bolas INT DEFAULT 0,
+	  victorias INT DEFAULT 0,
+	  derrotas INT DEFAULT 0,
+	  entradas_lanzadas DECIMAL(5,1) DEFAULT 0.0,
+	  carreras_limpias INT DEFAULT 0,
+	  ponches INT DEFAULT 0,
+	  efectividad DECIMAL(6,3) GENERATED ALWAYS AS (
+		CASE WHEN entradas_lanzadas > 0
+			 THEN ROUND((carreras_limpias * 9) / entradas_lanzadas, 3)
+			 ELSE 0.000
+		END
+	  ) STORED,
+	  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
+	  FOREIGN KEY (id_jugador) REFERENCES Jugadores(id_jugador) ON DELETE CASCADE,
+	  FOREIGN KEY (id_equipo_temporada) REFERENCES EquipoTemporada(id_equipo_temporada) ON DELETE SET NULL,
+	  UNIQUE KEY uq_pitcheo (id_temporada, id_jugador)
+	);
 
 -- 16) Estadísticas de equipo por temporada
 CREATE TABLE EstadisticasEquipoTemporada (
@@ -216,20 +216,20 @@ CREATE TABLE EstadisticasEquipoTemporada (
   UNIQUE KEY uq_team_stats (id_temporada, id_equipo_temporada)
 );
 
--- 17) Métricas mensuales por jugador y temporada (básica, sin UNIQUE extra)
-CREATE TABLE IF NOT EXISTS EstadisticasRendimientoMensual (
-  id_estadistica INT AUTO_INCREMENT PRIMARY KEY,
-  id_temporada INT NOT NULL,
-  id_jugador INT NOT NULL,
-  fecha_medicion DATE NOT NULL,
-  tiempo_carrera_seg   DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- s
-  vel_lanzamiento_mph  DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- mph
-  potencia_brazo_mph   DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- mph
-  pop_time_seg         DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- s
-  vel_bate_mph         DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- mph
-  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
-  FOREIGN KEY (id_jugador)   REFERENCES Jugadores(id_jugador)   ON DELETE CASCADE
-);
+	-- 17) Métricas mensuales por jugador y temporada (básica, sin UNIQUE extra)
+	CREATE TABLE IF NOT EXISTS EstadisticasRendimientoMensual (
+	  id_estadistica INT AUTO_INCREMENT PRIMARY KEY,
+	  id_temporada INT NOT NULL,
+	  id_jugador INT NOT NULL,
+	  fecha_medicion DATE NOT NULL,
+	  tiempo_carrera_seg   DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- s
+	  vel_lanzamiento_mph  DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- mph
+	  potencia_brazo_mph   DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- mph
+	  pop_time_seg         DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- s
+	  vel_bate_mph         DECIMAL(5,2) NOT NULL DEFAULT 0.00,  -- mph
+	  FOREIGN KEY (id_temporada) REFERENCES Temporadas(id_temporada) ON DELETE CASCADE,
+	  FOREIGN KEY (id_jugador)   REFERENCES Jugadores(id_jugador)   ON DELETE CASCADE
+	);
 
 CREATE TABLE MinimoAparicionesBateoTemporada (
   id INT AUTO_INCREMENT PRIMARY KEY,
