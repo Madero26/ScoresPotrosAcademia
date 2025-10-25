@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <%- include('../../../partials/headAdmin') %>
+        <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+        <style>
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 12px
+            }
+
+            .card form .grid {
+                margin-bottom: 12px
+            }
+        </style>
+</head>
+
+<body>
+    <%- include('../../../partials/navbar_adminGeneral') %>
+        <main class="container">
+            <h1>Editar bateo de jugador</h1>
+
+            <form method="POST" action="/adminGeneral/stats/editarBateoJugador">
+                <div class="card" style="padding:1rem 1.2rem">
+                    <div class="grid">
+                        <div>
+                            <label>Temporada *</label>
+                            <select id="selTemp" name="id_temporada" class="input" required>
+                                <% (temporadas||[]).forEach(t=>{ %>
+                                    <option value="<%= t.id_temporada %>">
+                                        <%= t.nombre %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Categoría *</label>
+                            <select id="selCat" class="input" required>
+                                <option value="">Selecciona</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Equipo *</label>
+                            <select id="selEq" name="id_equipo_temporada" class="input" required>
+                                <option value="">Selecciona</option>
+                            </select>
+                        </div>
+                        <div style="grid-column:1/-1">
+                            <label>Jugador *</label>
+                            <select id="selJug" name="id_jugador" class="input" size="8" required></select>
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div><label>AB</label><input class="input" type="number" name="apariciones_al_bat" min="0"
+                                value="0"></div>
+                        <div><label>H</label><input class="input" type="number" name="hits" min="0" value="0"></div>
+                        <div><label>BB</label><input class="input" type="number" name="bases_por_bolas" min="0"
+                                value="0"></div>
+                        <div><label>R</label><input class="input" type="number" name="carreras" min="0" value="0"></div>
+                        <div><label>RBI</label><input class="input" type="number" name="carreras_producidas" min="0"
+                                value="0"></div>
+                        <div><label>1B</label><input class="input" type="number" name="sencillos" min="0" value="0">
+                        </div>
+                        <div><label>2B</label><input class="input" type="number" name="dobles" min="0" value="0"></div>
+                        <div><label>3B</label><input class="input" type="number" name="triples" min="0" value="0"></div>
+                        <div><label>HR</label><input class="input" type="number" name="home_runs" min="0" value="0">
+                        </div>
+                        <div><label>SB</label><input class="input" type="number" name="bases_robadas" min="0" value="0">
+                        </div>
+                        <div><label>AVG</label><input class="input" id="avg" type="text" value="0.000" disabled></div>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.2rem">
+                        <button class="btn btn-primary" type="submit">Actualizar</button>
+                        <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <script>
+            const GET = u => fetch(u, { headers: { 'x-requested-with': 'XMLHttpRequest' } }).then(r => r.json());
+            const $selTemp = document.getElementById('selTemp');
+            const $selCat = document.getElementById('selCat');
+            const $selEq = document.getElementById('selEq');
+            const $selJug = document.getElementById('selJug');
+            const $avg = document.getElementById('avg');
+
+            async function loadCats() {
+                $selCat.innerHTML = '<option value="">Selecciona</option>';
+                $selEq.innerHTML = '<option value="">Selecciona</option>';
+                $selJug.innerHTML = '';
+                const t = $selTemp.value; if (!t) return;
+                const cs = await GET(`/adminGeneral/stats/categorias?id_temporada=${t}`);
+                cs.forEach(c => { const o = document.createElement('option'); o.value = c.id_categoria; o.textContent = c.nombre; $selCat.appendChild(o); });
+            }
+            async function loadTeams() {
+                $selEq.innerHTML = '<option value="">Selecciona</option>';
+                $selJug.innerHTML = '';
+                const t = $selTemp.value, c = $selCat.value; if (!t || !c) return;
+                const es = await GET(`/adminGeneral/stats/equipos?id_temporada=${t}&id_categoria=${c}`);
+                es.forEach(e => { const o = document.createElement('option'); o.value = e.id_equipo_temporada; o.textContent = e.nombre; $selEq.appendChild(o); });
+            }
+            function calcAVG() {
+                const ab = Number(document.querySelector('input[name="apariciones_al_bat"]').value) || 0;
+                const h = Number(document.querySelector('input[name="hits"]').value) || 0;
+                $avg.value = ab > 0 ? (h / ab).toFixed(3) : '0.000';
+            }
+
+            // recalcula cuando cambien AB o H
+            ['apariciones_al_bat', 'hits'].forEach(n => {
+                const el = document.querySelector(`input[name="${n}"]`);
+                el.addEventListener('input', calcAVG);
+                el.addEventListener('change', calcAVG);
+            });
+            async function loadRoster() {
+                $selJug.innerHTML = '';
+                const id = $selEq.value; if (!id) return;
+                const js = await GET(`/adminGeneral/stats/plantel?id_equipo_temporada=${id}`);
+                $selJug.innerHTML = js.map(j => `<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+                if (js.length) await hydrateStats(js[0].id_jugador);
+            }
+            async function hydrateStats(idJugador) {
+                const t = $selTemp.value; if (!t || !idJugador) return;
+                const s = await GET(`/adminGeneral/stats/bateoJugador?id_temporada=${t}&id_jugador=${idJugador}`);
+                const set = (n) => {
+                    const i = document.querySelector(`input[name="${n}"]`);
+                    if (i) i.value = s ? Number(s[n]) || 0 : 0;
+                    calcAVG();
+
+                };
+
+                ['apariciones_al_bat', 'hits', 'bases_por_bolas', 'carreras', 'carreras_producidas', 'sencillos', 'dobles', 'triples', 'home_runs', 'bases_robadas'].forEach(k => set(k, 0));
+            }
+            $selTemp.addEventListener('change', loadCats);
+            $selCat.addEventListener('change', loadTeams);
+            $selEq.addEventListener('change', loadRoster);
+            $selJug.addEventListener('change', e => hydrateStats(e.target.value));
+
+            (async function init() {
+                await loadCats();
+            })();
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <% if (typeof alert !=='undefined' && alert) { %>
+            <script>
+                Swal.fire({
+                    title:<% - JSON.stringify(alertTitle) %>,
+                    text:<% - JSON.stringify(alertMessage) %>,
+                    icon:<% - JSON.stringify(alertIcon) %>,
+                    showConfirmButton:<% - JSON.stringify(showConfirmButton) %>,
+                    timer:<% - (timer == null ? 'null' : Number(timer)) %>
+    }).then(() => { if (<% - !!ruta %>) location.href =<% - JSON.stringify(ruta) %>; });
+            </script>
+            <% } %>
+</body>
+
+</html>

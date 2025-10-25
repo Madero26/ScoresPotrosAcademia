@@ -7,16 +7,18 @@
     </div>
     <div class="topbar__right">
       <% if (usuario) { %>
-        <span class="user">Usuario: <strong><%= usuario.usuario %></strong></span>
+        <span class="user">Usuario: <strong>
+            <%= usuario.usuario %>
+          </strong></span>
         <script>
           window.__currentUser = {
             id: <%= Number(usuario.id_usuario || 0) %>,
             rol: '<%= String(usuario.rol || "").toUpperCase() %>'
           };
         </script>
-      <% } %>
-      <a href="/AdminContra" class="btn btn-outline">Cambiar contraseña</a>
-      <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+        <% } %>
+          <a href="/AdminContra" class="btn btn-outline">Cambiar contraseña</a>
+          <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
     </div>
   </div>
 </header>
@@ -59,9 +61,17 @@
           </optgroup>
 
           <optgroup label="Controles de temporada">
-            
+
             <option value="/formCrearMinimoApariciones">Configurar mínimo de apariciones de bateo (temporada)</option>
           </optgroup>
+
+          <optgroup label="Estadísticas (general)">
+            <option value="/formStatsCargarBateoEquipo">Cargar bateo por equipo</option>
+            <option value="/formStatsCargarPitcheoEquipo">Cargar pitcheo por equipo</option>
+            <option value="/formStatsCargarEstadisticaEquipo">Cargar estadísticas del equipo</option>
+          </optgroup>
+
+
         </select>
       </div>
 
@@ -99,9 +109,9 @@
           </optgroup>
 
           <optgroup label="Estadísticas (solo edición)">
-            <option value="/formActualizarEstadisticasBateo">Bateo</option>
-            <option value="/formActualizarEstadisticasPitcheo">Pitcheo</option>
-            <option value="/formActualizarEstadisticasEquipo">Equipo</option>
+            <option value="/formStatsEditarBateoJugador">Editar bateo de jugador</option>
+            <option value="/formStatsEditarPitcheoJugador">Editar pitcheo de jugador</option>
+            <option value="/formStatsEditarEstadisticaEquipo">Editar estadísticas del equipo</option>
             <option value="/formActualizarEstadisticasRendimiento">Rendimiento</option>
           </optgroup>
         </select>
@@ -124,4 +134,3 @@
     };
   }
 </script>
-

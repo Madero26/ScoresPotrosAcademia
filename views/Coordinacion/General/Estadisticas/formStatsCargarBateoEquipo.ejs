@@ -1,0 +1,149 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>
+    .stats-wrap{max-width:1600px;margin:0 auto}
+    .stats-table{width:100%;overflow-x:auto}
+    .stats-table table{width:100%;border-collapse:collapse;font-size:1rem;color:#fff}
+    .stats-table thead{background:#0c2b52}
+    .stats-table th{padding:.75rem;border-bottom:2px solid rgba(255,255,255,.1);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+    .stats-table td{padding:.65rem;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05)}
+    .stats-table tr:nth-child(even) td{background:rgba(255,255,255,.08)}
+    .stats-table td:first-child{text-align:left;font-weight:600;color:#f8fafc}
+    .qty{display:inline-flex;align-items:center;gap:.45rem;background:rgba(255,255,255,.1);border-radius:.6rem;padding:.3rem .5rem;justify-content:center;min-width:100px}
+    .qty input{width:54px;text-align:center;border:none;background:transparent;color:#fff;font-weight:700;font-size:1rem}
+    .qty button{background:#12325f;border:none;color:#fff;font-weight:800;font-size:1rem;border-radius:.4rem;width:28px;height:28px;cursor:pointer}
+    .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+  </style>
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <div class="stats-wrap">
+      <h1>Cargar bateo por equipo</h1>
+
+      <form class="stats-form-wide" method="POST" action="/adminGeneral/stats/cargarBateoEquipo">
+        <div class="card" style="padding:1rem 1.2rem">
+          <div class="filters">
+            <div>
+              <label>Temporada *</label>
+              <select id="selTemp" name="id_temporada" class="input" required>
+                <% (temporadas||[]).forEach(t=>{ %>
+                  <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div>
+              <label>Categoría *</label>
+              <select id="selCat" name="id_categoria" class="input" required>
+                <option value="">Selecciona</option>
+              </select>
+            </div>
+            <div>
+              <label>Equipo *</label>
+              <select id="selEq" name="id_equipo_temporada" class="input" required>
+                <option value="">Selecciona</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="stats-table" id="tblWrap">
+            <table id="tbl">
+              <thead>
+                <tr>
+                  <th>Jugador</th>
+                  <th>AB</th><th>H</th><th>BB</th><th>R</th><th>RBI</th>
+                  <th>1B</th><th>2B</th><th>3B</th><th>HR</th><th>SB</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <tr><td colspan="11">Selecciona filtros…</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="stats-actions" style="display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.2rem">
+            <button class="btn btn-primary" type="submit">Cargar</button>
+            <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const $selTemp = document.getElementById('selTemp');
+    const $selCat  = document.getElementById('selCat');
+    const $selEq   = document.getElementById('selEq');
+    const $tbody   = document.getElementById('tbody');
+
+    const GET = u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+    const row = (id,nombre)=>{
+      const cols=['apariciones_al_bat','hits','bases_por_bolas','carreras','carreras_producidas','sencillos','dobles','triples','home_runs','bases_robadas'];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${nombre}<input type="hidden" name="id_jugador[]" value="${id}"></td>
+        ${cols.map(c=>`
+          <td>
+            <div class="qty">
+              <button type="button" onclick="this.nextElementSibling.value=Math.max(0,Number(this.nextElementSibling.value||0)-1)">−</button>
+              <input type="number" name="${c}[]" value="0" min="0" step="1">
+              <button type="button" onclick="this.previousElementSibling.value=Math.max(0,Number(this.previousElementSibling.value||0)+1)">+</button>
+            </div>
+          </td>`).join('')}
+      `;
+      return tr;
+    };
+
+    async function loadCats(){
+      $selCat.innerHTML='<option value="">Selecciona</option>';
+      $selEq.innerHTML ='<option value="">Selecciona</option>';
+      $tbody.innerHTML ='<tr><td colspan="11">Selecciona filtros…</td></tr>';
+      const t = $selTemp.value; if(!t) return;
+      const cs = await GET(`/adminGeneral/stats/categorias?id_temporada=${t}`);
+      cs.forEach(c=>{
+        const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; $selCat.appendChild(o);
+      });
+    }
+    async function loadTeams(){
+      $selEq.innerHTML ='<option value="">Selecciona</option>';
+      $tbody.innerHTML ='<tr><td colspan="11">Selecciona equipo…</td></tr>';
+      const t=$selTemp.value, c=$selCat.value; if(!t||!c) return;
+      const es = await GET(`/adminGeneral/stats/equipos?id_temporada=${t}&id_categoria=${c}`);
+      es.forEach(e=>{
+        const o=document.createElement('option'); o.value=e.id_equipo_temporada; o.textContent=e.nombre; $selEq.appendChild(o);
+      });
+    }
+    async function loadRoster(){
+      const id = $selEq.value;
+      if(!id){ $tbody.innerHTML='<tr><td colspan="11">Selecciona equipo…</td></tr>'; return; }
+      $tbody.innerHTML='<tr><td colspan="11">Cargando…</td></tr>';
+      const js = await GET(`/adminGeneral/stats/plantel?id_equipo_temporada=${id}`);
+      if(!js.length){ $tbody.innerHTML='<tr><td colspan="11">Sin plantel.</td></tr>'; return; }
+      $tbody.innerHTML='';
+      js.forEach(j=> $tbody.appendChild(row(j.id_jugador,j.nombre)));
+    }
+
+    $selTemp.addEventListener('change', loadCats);
+    $selCat.addEventListener('change', loadTeams);
+    $selEq.addEventListener('change', loadRoster);
+
+    (async function init(){
+      // Carga inicial de temporadas viene desde servidor en <%= temporadas %> si la inyectas
+      await loadCats();
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>,
+      text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>,
+      showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ if(<%- !!ruta %>) location.href=<%- JSON.stringify(ruta) %>; });
+  </script>
+  <% } %>
+</body></html>
