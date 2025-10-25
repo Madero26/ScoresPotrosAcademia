@@ -29,6 +29,10 @@ const estRendCtrl = require('../controllers/estadisticasRendimientoMensualContro
 const minimoAparCtrl = require('../controllers/minimoAparicionesController');
 const usuariosCtrl = require('../controllers/usuariosController');
 
+const statsGenBateo = require('../controllers/bateoGeneralController');
+const statsGenPitcheo = require('../controllers/pitcheoGeneralController');
+const statsGenEquipo = require('../controllers/equipoGeneralController');
+
 /* ====== CONTEXTO EN VISTAS + FLASH GLOBAL ====== */
 router.use((req, res, next) => {
   res.locals.usuario = req.user;
@@ -568,6 +572,61 @@ bind('post', '/estadisticas/bateo', estBateoCtrl.upsert, 'estadisticasBateo.upse
 bind('post', '/estadisticas/pitcheo', estPitcheoCtrl.upsert, 'estadisticasPitcheo.upsert');
 bind('post', '/estadisticas/equipo', estEquipoCtrl.upsert, 'estadisticasEquipo.upsert');
 bind('post', '/estadisticas/rendimiento', estRendCtrl.crear, 'estadisticasRendimiento.crear');
+
+// ===== VISTAS DE FORMULARIOS (ESTADÍSTICAS GENERAL) =====
+router.get('/formStatsCargarBateoEquipo', async (req,res)=>{
+  const temporadas = await db.query('SELECT id_temporada,nombre FROM Temporadas ORDER BY fecha_inicio DESC');
+  res.render('Coordinacion/General/Estadisticas/formStatsCargarBateoEquipo', { ...res.locals, temporadas });
+});
+router.get('/formStatsEditarBateoJugador', async (req,res)=>{
+  const temporadas = await db.query('SELECT id_temporada,nombre FROM Temporadas ORDER BY fecha_inicio DESC');
+  res.render('Coordinacion/General/Estadisticas/formStatsEditarBateoJugador', { ...res.locals, temporadas });
+});
+
+
+// ===== AJAX CASCADA (TEMPORADA -> CATEGORÍA -> EQUIPO -> JUGADORES) =====
+bind('get','/stats/categorias', statsGenBateo.categoriasPorTemporada, 'stats.categoriasPorTemporada'); // ?id_temporada
+bind('get','/stats/equipos',    statsGenBateo.equiposPorTempCat,     'stats.equiposPorTempCat');       // ?id_temporada&id_categoria
+bind('get','/stats/plantel',    statsGenBateo.plantelPorEquipo,      'stats.plantelPorEquipo');        // ?id_equipo_temporada
+bind('get','/stats/bateoJugador', statsGenBateo.obtenerBateoJugador, 'stats.obtenerBateoJugador');     // ?id_temporada&id_jugador
+
+// ===== ACCIONES =====
+bind('post','/stats/cargarBateoEquipo', statsGenBateo.batchUpsertBateoEquipo, 'stats.batchUpsertBateoEquipo');
+bind('post','/stats/editarBateoJugador', statsGenBateo.actualizarBateoJugador, 'stats.actualizarBateoJugador');
+
+// Forms
+router.get('/formStatsCargarPitcheoEquipo', async (req,res)=>{
+  const temporadas = await db.query('SELECT id_temporada,nombre FROM Temporadas ORDER BY fecha_inicio DESC');
+  res.render('Coordinacion/General/Estadisticas/formStatsCargarPitcheoEquipo', { ...res.locals, temporadas });
+});
+router.get('/formStatsEditarPitcheoJugador', async (req,res)=>{
+  const temporadas = await db.query('SELECT id_temporada,nombre FROM Temporadas ORDER BY fecha_inicio DESC');
+  res.render('Coordinacion/General/Estadisticas/formStatsEditarPitcheoJugador', { ...res.locals, temporadas });
+});
+
+// AJAX (reutiliza cascada)
+bind('get','/stats/pitcheoJugador', statsGenPitcheo.obtenerPitcheoJugador, 'stats.obtenerPitcheoJugador'); // ?id_temporada&id_jugador
+
+// Actions
+bind('post','/stats/cargarPitcheoEquipo',  statsGenPitcheo.batchUpsertPitcheoEquipo,  'stats.batchUpsertPitcheoEquipo');
+bind('post','/stats/editarPitcheoJugador', statsGenPitcheo.actualizarPitcheoJugador,  'stats.actualizarPitcheoJugador');
+
+// Forms
+router.get('/formStatsCargarEstadisticaEquipo', async (req,res)=>{
+  const temporadas = await db.query('SELECT id_temporada,nombre FROM Temporadas ORDER BY fecha_inicio DESC');
+  res.render('Coordinacion/General/Estadisticas/formStatsCargarEstadisticaEquipo', { ...res.locals, temporadas });
+});
+router.get('/formStatsEditarEstadisticaEquipo', async (req,res)=>{
+  const temporadas = await db.query('SELECT id_temporada,nombre FROM Temporadas ORDER BY fecha_inicio DESC');
+  res.render('Coordinacion/General/Estadisticas/formStatsEditarEstadisticaEquipo', { ...res.locals, temporadas });
+});
+
+// AJAX
+bind('get','/stats/equipo', statsGenEquipo.obtenerEquipo, 'statsEquipo.obtener'); // ?id_temporada&id_equipo_temporada
+
+// Actions
+bind('post','/stats/cargarEstadisticaEquipo', statsGenEquipo.sumar,       'statsEquipo.sumar');
+bind('post','/stats/editarEstadisticaEquipo',  statsGenEquipo.actualizar, 'statsEquipo.actualizar');
 
 module.exports = router;
 

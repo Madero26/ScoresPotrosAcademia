@@ -1,0 +1,77 @@
+<!doctype html><html lang="es"><head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}</style>
+</head><body>
+  <%- include('../../../partials/navbar_adminGeneral') %>
+  <main class="container">
+    <h1>Cargar estadísticas del equipo</h1>
+    <form method="POST" action="/adminGeneral/stats/cargarEstadisticaEquipo" class="card" style="padding:1rem 1.2rem">
+      <div class="grid">
+        <div>
+          <label>Temporada *</label>
+          <select id="selTemp" name="id_temporada" class="input" required>
+            <% (temporadas||[]).forEach(t=>{ %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div>
+          <label>Categoría *</label>
+          <select id="selCat" name="id_categoria" class="input" required>
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+        <div>
+          <label>Equipo *</label>
+          <select id="selEq" name="id_equipo_temporada" class="input" required>
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+
+        <div><label>CA favor</label><input class="input" name="carreras_a_favor"   type="number" min="0" value="0"></div>
+        <div><label>CA contra</label><input class="input" name="carreras_en_contra" type="number" min="0" value="0"></div>
+        <div><label>Ganados</label><input class="input" name="ganados"   type="number" min="0" value="0"></div>
+        <div><label>Perdidos</label><input class="input" name="perdidos"  type="number" min="0" value="0"></div>
+        <div><label>Empatados</label><input class="input" name="empatados" type="number" min="0" value="0"></div>
+        <div><label>Errores</label><input class="input" name="errores"    type="number" min="0" value="0"></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Cargar</button>
+        <a class="btn btn-outline" href="/adminGeneral/inicio">Cancelar</a>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const GET=u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+    const $t=document.getElementById('selTemp'),$c=document.getElementById('selCat'),$e=document.getElementById('selEq');
+
+    async function loadCats(){
+      $c.innerHTML='<option value="">Selecciona</option>';
+      $e.innerHTML='<option value="">Selecciona</option>';
+      const cs=await GET(`/adminGeneral/stats/categorias?id_temporada=${$t.value}`);
+      cs.forEach(x=>{const o=document.createElement('option');o.value=x.id_categoria;o.textContent=x.nombre;$c.appendChild(o);});
+    }
+    async function loadTeams(){
+      $e.innerHTML='<option value="">Selecciona</option>';
+      const es=await GET(`/adminGeneral/stats/equipos?id_temporada=${$t.value}&id_categoria=${$c.value}`);
+      es.forEach(x=>{const o=document.createElement('option');o.value=x.id_equipo_temporada;o.textContent=x.nombre;$e.appendChild(o);});
+    }
+    $t.addEventListener('change',loadCats);
+    $c.addEventListener('change',loadTeams);
+    (async function init(){ await loadCats(); })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>, text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>, showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ if(<%- !!ruta %>) location.href=<%- JSON.stringify(ruta) %>; });
+  </script>
+  <% } %>
+</body></html>
