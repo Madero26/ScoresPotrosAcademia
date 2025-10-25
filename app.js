@@ -45,6 +45,17 @@ app.use('/Coordinadores', require('./Rutas/coordinador'));
 app.use('/adminEstadisticas',isAuthenticated, require('./Rutas/adminEstadisticas'));
 
 
-app.listen(3000, () => console.log('http://localhost:3000'));
+// manejador de errores útil en Render
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send('Internal Server Error');
+});
+
+// health checks opcionales
+app.get('/health', (_, res) => res.send('ok'));
+
+const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
+app.listen(PORT, HOST, () => console.log(`http://${HOST}:${PORT}`));
 
 
