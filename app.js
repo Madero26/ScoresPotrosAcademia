@@ -74,18 +74,17 @@ app.get('/dbcheck', async (_, res) => {
   }
 });
 
-// === Manejo de errores ===
 app.use((err, req, res, next) => {
-  console.error('App error:', err);
+  console.error(err);
   res.status(500).send('Internal Server Error');
 });
 
-// === Servidor local ===
+// health checks opcionales
+app.get('/health', (_, res) => res.send('ok'));
+
 const PORT = process.env.PORT || 3000;
-const HOST = 'localhost';
-app.listen(PORT, HOST, () => {
-  console.log(`Servidor local en: http://${HOST}:${PORT}`);
-});
+const HOST = '0.0.0.0';
+app.listen(PORT, HOST, () => console.log(`http://${HOST}:${PORT}`));
 
 module.exports = app;
 
