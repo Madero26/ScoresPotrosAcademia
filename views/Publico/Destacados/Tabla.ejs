@@ -35,8 +35,8 @@
 
     <div class="paginacion">
       <% for (let i = 1; i <= totalPaginas; i++) { %>
-        <a href="/JugadoresD/categoria/<%= categoriaID %>/estadisticas/<%= tipo %>?pagina=<%= i %>"
-           class="<%= i === paginaActual ? 'activo' : '' %>"><%= i %></a>
+        <a href="/JugadoresD/categoria/<%= categoriaID %>/estadisticas/<%= tipo %>?temporada=<%= idTemp %>&pagina=<%= i %>"
+   class="<%= i === paginaActual ? 'activo' : '' %>"><%= i %></a>
       <% } %>
     </div>
   </section>
