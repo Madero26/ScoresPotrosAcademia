@@ -1,9 +1,12 @@
+/* ===== CONTENEDOR GENERAL ===== */
 .equipos-section {
-  padding: 2rem;
+  padding: 2rem 1.5rem;
   background-color: #0070b8;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
+/* Título */
 .titulo {
   color: white;
   text-align: center;
@@ -11,14 +14,16 @@
   margin-bottom: 2rem;
 }
 
+/* ===== GRID DE EQUIPOS (DESKTOP) ===== */
 .equipos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
   justify-content: center;
   padding: 0 1rem;
 }
 
+/* Card */
 .equipo-card {
   background-color: white;
   border-radius: 16px;
@@ -28,11 +33,14 @@
   flex-direction: column;
   align-items: center;
   transition: transform 0.3s ease;
+  padding: 0;
 }
+
 .equipo-card:hover {
   transform: scale(1.03);
 }
 
+/* Imagen */
 .equipo-img {
   width: 100%;
   height: 160px;
@@ -41,6 +49,7 @@
   padding: 1rem;
 }
 
+/* Info */
 .equipo-info {
   padding: 1rem;
   text-align: center;
@@ -52,12 +61,14 @@
   color: #000;
 }
 
+/* Botones dentro de la card */
 .botones {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+/* Botones generales */
 .btn {
   display: inline-block;
   background-color: #EC2227;
@@ -66,7 +77,9 @@
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
+  text-align: center;
 }
+
 .btn:hover {
   background-color: #ff4d4f;
 }
@@ -74,10 +87,12 @@
 .btn-secundario {
   background-color: #555;
 }
+
 .btn-secundario:hover {
   background-color: #777;
 }
 
+/* ===== BUSCADOR POR NOMBRE (si lo usas) ===== */
 .busqueda-form {
   display: flex;
   justify-content: center;
@@ -107,55 +122,224 @@
   background-color: #0066c0;
 }
 
-/* Finder (select + botón) centrado y lindo */
-.finder{
-  max-width: 860px;
-  margin: -6px auto 24px;
+/* ===== FINDER (select + botón) ===== */
+.finder {
+  max-width: 540px;
+  margin: 0 auto 1.5rem;
   display: flex;
   gap: 10px;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
-.finder__select{
-  flex: 1 1 560px;
-  min-width: 260px;
-  padding: 12px 16px;
+
+/* base del select dentro del finder (no se verá porque lo sobreescribe .select-equipos) */
+.finder__select {
+  flex: 1 1 260px;
+  min-width: 0;
   border: none;
-  border-radius: 999px;
-  outline: none;
-  box-shadow: 0 8px 20px rgba(0,0,0,.12);
-  font-size: 15px;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
 }
-.finder__btn{
-  padding: 12px 18px;
-  border: none;
+
+/* BOTÓN "VER PERFIL" */
+.finder__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 130px;
+  padding: 10px 20px;
+  border: none !important;
   border-radius: 999px;
-  background: #0b5f97;
-  color: #fff;
+  background: #0b5f97 !important;
+  color: #fff !important;
   font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0,0,0,.12);
-}
-.finder__btn:hover{ background:#094c78; }
-
-/* responsive */
-@media (max-width:600px){
-  .finder{ flex-direction: column; gap: 8px; }
-  .finder__select{ width:100%; }
-  .finder__btn{ width:100%; }
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  white-space: nowrap;
 }
 
+.finder__btn:hover {
+  background: #094c78 !important;
+}
+
+/* ===== SELECT EXCLUSIVO PARA LA PÁGINA DE EQUIPOS ===== */
+.select-equipos {
+  width: 100%;
+  max-width: 360px;
+  height: 44px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #00345f;
+
+  background: #ffffff;
+  border: 2px solid #004a87;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23004a87' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.select-equipos:hover {
+  border-color: #0066c0;
+}
+
+.select-equipos:focus {
+  outline: none;
+  border-color: #0b5f97;
+  box-shadow: 0 0 0 3px rgba(11,95,151,.35);
+}
+
+.select-equipos option {
+  font-size: 1rem;
+  padding: 8px;
+}
+
+/* ============ RESPONSIVE ============ */
+
+/* Finder en columna */
+@media (max-width: 600px) {
+  .finder {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .select-equipos {
+    max-width: 100%;
+  }
+
+  .finder__btn {
+    width: 100%;
+  }
+}
+
+/* Cards apiladas + ajustes generales */
 @media (max-width: 768px) {
+  .equipos-section {
+    padding: 1.5rem 0.75rem 2rem;
+  }
+
+  .titulo {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+
   .equipos-grid {
-    grid-template-columns: repeat(auto-fit, minmax(80%, 1fr));
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    grid-template-columns: 1fr;
+    padding: 0;
   }
 
   .equipo-card {
-    min-width: 80%;
-    scroll-snap-align: center;
+    max-width: 100%;
   }
+
+  .equipo-img {
+    height: 140px;
+  }
+
+  .botones {
+    width: 100%;
+  }
+
+  .btn,
+  .btn-secundario {
+    width: 100%;
+  }
+
+  .busqueda-form {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 .5rem;
+  }
+
+  .busqueda-input {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: .5rem;
+  }
+
+  .busqueda-btn {
+    width: 100%;
+    border-radius: 5px;
+  }
+}
+
+/* Teléfonos muy pequeños */
+@media (max-width: 420px) {
+  .titulo {
+    font-size: 1.4rem;
+  }
+
+  .equipo-info h2 {
+    font-size: 1.05rem;
+  }
+}
+
+/* ===== ELIMINAR EL ÓVALO: CARD GLOBAL QUE ENVUELVE ESTA SECCIÓN ===== */
+.card:has(.equipos-section) {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.card:has(.equipos-section)::before,
+.card:has(.equipos-section)::after {
+  content: none !important;
+}
+
+
+
+/* ==== FIX FINAL PARA EL CUADRO DEL SELECT (COMPACTO Y HORIZONTAL) ==== */
+
+/* Que el finder NUNCA crezca hacia abajo */
+.finder {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 auto 1rem !important;
+
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Forzar que NADA dentro se estire verticalmente */
+.finder > * {
+  height: auto !important;
+  flex-shrink: 0 !important;
+}
+
+/* El select: conservar ancho bueno y reducir altura */
+.select-equipos {
+  max-width: 260px;
+  width: 100%;
+
+  height: 40px !important;
+  padding: 8px 12px !important;
+
+  border-radius: 12px;
+  font-size: 1rem;
+}
+
+/* El botón: ajustarlo a la nueva altura */
+.finder__btn {
+  height: 40px !important;
+  padding: 0 20px !important;
+  font-size: 0.9rem !important;
+  border-radius: 12px !important;
 }
