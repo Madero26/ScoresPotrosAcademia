@@ -113,15 +113,23 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
     }
 
     // Query base
-    const baseRows = await q(`
-      SELECT j.id_jugador,
-             CONCAT(j.apellido_paterno,' ',j.apellido_materno,' ',j.nombres) AS nombre,
-             ${meta.col} AS valor,
-             ${selectPa} AS pa
-      ${fromJoin}
-      ${whereBase}
-      ORDER BY ${meta.col} ${meta.order}, nombre ASC
-    `, [idTemp, idTemp, idCat]);
+    let baseRows = await q(`
+  SELECT j.id_jugador,
+         CONCAT(j.apellido_paterno,' ',j.apellido_materno,' ',j.nombres) AS nombre,
+         ${meta.col} AS valor,
+         ${selectPa} AS pa,
+         IFNULL(p.entradas_lanzadas,0) AS ip,
+         IFNULL(p.carreras_limpias,0) AS er
+  ${fromJoin}
+  ${whereBase}
+  ORDER BY ${meta.col} ${meta.order}, nombre ASC
+`, [idTemp, idTemp, idCat]);
+
+// FILTRO SOLO PARA EFECTIVIDAD
+if (tipo === 'efectividad') {
+  baseRows = baseRows.filter(r => r.ip > 0);
+}
+
 
     // Filtro por PA mínimo si aplica
     let rowsToUse = baseRows;

@@ -54,64 +54,125 @@
     </form>
   </main>
 
-  <script>
-  const GET = u => fetch(u, {headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
-  const $t = document.getElementById('selTemp');
-  const $c = document.getElementById('selCat');
-  const $e = document.getElementById('selEq');
-  const $j = document.getElementById('selJug');
+ <script>
+  const GET = u => fetch(u, { headers: { 'x-requested-with': 'XMLHttpRequest' } }).then(r => r.json());
+
+  const $t   = document.getElementById('selTemp');
+  const $c   = document.getElementById('selCat');
+  const $e   = document.getElementById('selEq');
+  const $j   = document.getElementById('selJug');
   const $era = document.getElementById('era');
 
-  async function loadCats(){
-    $c.innerHTML='<option value="">Selecciona</option>';
-    $e.innerHTML='<option value="">Selecciona</option>';
-    $j.innerHTML='';
-    const cs = await GET(`/adminGeneral/stats/categorias?id_temporada=${$t.value}`);
-    cs.forEach(x=>{ const o=document.createElement('option'); o.value=x.id_categoria; o.textContent=x.nombre; $c.appendChild(o); });
-  }
-  async function loadTeams(){
-    $e.innerHTML='<option value="">Selecciona</option>';
-    $j.innerHTML='';
-    const es = await GET(`/adminGeneral/stats/equipos?id_temporada=${$t.value}&id_categoria=${$c.value}`);
-    es.forEach(x=>{ const o=document.createElement('option'); o.value=x.id_equipo_temporada; o.textContent=x.nombre; $e.appendChild(o); });
-  }
-  async function loadRoster(){
-    $j.innerHTML='';
-    if(!$e.value) return;
-    const js = await GET(`/adminGeneral/stats/plantel?id_equipo_temporada=${$e.value}`);
-    $j.innerHTML = js.map(z=>`<option value="${z.id_jugador}">${z.nombre}</option>`).join('');
-    if(js.length) await hydrate(js[0].id_jugador);
+  async function loadCats() {
+    $c.innerHTML = '<option value="">Selecciona</option>';
+    $e.innerHTML = '<option value="">Selecciona</option>';
+    $j.innerHTML = '';
+
+    const tempVal = $t.value;
+    if (!tempVal) return;
+
+    const cs = await GET(`/adminGeneral/stats/categorias?id_temporada=${tempVal}`);
+    cs.forEach(x => {
+      const o = document.createElement('option');
+      o.value = x.id_categoria;
+      o.textContent = x.nombre;
+      $c.appendChild(o);
+    });
+
+    // si hay categorías, selecciona la primera y carga equipos
+    if (cs.length) {
+      $c.value = String(cs[0].id_categoria);
+      await loadTeams();
+    }
   }
 
-  async function hydrate(idJugador){
-    if(!$t.value || !idJugador) return;
-    const s = await GET(`/adminGeneral/stats/pitcheoJugador?id_temporada=${$t.value}&id_jugador=${idJugador}`) || {};
-    const set = (n, fmt) => {
-      const el = document.querySelector(`input[name="${n}"]`);
-      if(!el) return;
-      const v = s[n];
+  async function loadTeams() {
+    $e.innerHTML = '<option value="">Selecciona</option>';
+    $j.innerHTML = '';
+
+    const tempVal = $t.value;
+    const catVal  = $c.value;
+    if (!tempVal || !catVal) return;
+
+    const es = await GET(`/adminGeneral/stats/equipos?id_temporada=${tempVal}&id_categoria=${catVal}`);
+    es.forEach(x => {
+      const o = document.createElement('option');
+      o.value = x.id_equipo_temporada;
+      o.textContent = x.nombre;
+      $e.appendChild(o);
+    });
+
+    if (es.length) {
+      $e.value = String(es[0].id_equipo_temporada);
+      await loadRoster();
+    }
+  }
+
+  async function loadRoster() {
+    $j.innerHTML = '';
+    if (!$e.value) return;
+
+    const js = await GET(`/adminGeneral/stats/plantel?id_equipo_temporada=${$e.value}`);
+    $j.innerHTML = js.map(z =>
+      `<option value="${z.id_jugador}">${z.nombre}</option>`
+    ).join('');
+
+    // hidratar automáticamente el primer jugador
+    if (js.length) await hydrate(js[0].id_jugador);
+  }
+
+  async function hydrate(idJugador) {
+    if (!$t.value || !idJugador) return;
+
+    const s = await GET(
+      `/adminGeneral/stats/pitcheoJugador?id_temporada=${$t.value}&id_jugador=${idJugador}`
+    ) || {};
+
+    console.log('pitcheoJugador', s); // deja este log para verificar en consola
+
+    const set = (name, fmt) => {
+      const el = document.querySelector(`input[name="${name}"]`);
+      if (!el) return;
+      const v = s[name];
       el.value = fmt ? fmt(v) : Number(v || 0);
     };
+
     set('bases_por_bolas');
     set('victorias');
     set('derrotas');
     set('entradas_lanzadas', v => {
       const n = Number(v || 0);
-      return (Math.round(Math.max(0,n)*10)/10).toFixed(1);
+      return (Math.round(Math.max(0, n) * 10) / 10).toFixed(1);
     });
     set('carreras_limpias');
     set('ponches');
 
-    $era.value = typeof s.efectividad === 'number' ? s.efectividad.toFixed(3) : '0.000';
+    // ERA calculada por el controlador
+    $era.value = typeof s.efectividad === 'number'
+      ? s.efectividad.toFixed(3)
+      : '0.000';
+
     const ipEl = document.querySelector('input[name="entradas_lanzadas"]');
-    if(ipEl) snapIP(ipEl);
+    if (ipEl && typeof snapIP === 'function') snapIP(ipEl);
   }
 
+  // listeners
   $t.addEventListener('change', loadCats);
   $c.addEventListener('change', loadTeams);
   $e.addEventListener('change', loadRoster);
   $j.addEventListener('change', e => hydrate(e.target.value));
+
+  // inicializar al cargar la página
+  (async function init() {
+    // si no hay temporada seleccionada, toma la primera
+    if (!$t.value && $t.options.length) {
+      $t.selectedIndex = 0;
+    }
+    await loadCats();
+  })();
 </script>
+
+
 
 
   <script>

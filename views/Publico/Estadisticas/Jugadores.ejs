@@ -83,6 +83,7 @@
                 <th>K</th>
                 <th>W</th>
                 <th>L</th>
+                <th>ER</th>   <!-- Carreras limpias -->
                 <th>ERA</th>
               </tr>
             </thead>
@@ -99,6 +100,7 @@
                   <td><%= (j.ponches ?? 0) %></td>
                   <td><%= (j.victorias ?? 0) %></td>
                   <td><%= (j.derrotas ?? 0) %></td>
+                  <td><%= (j.carreras_limpias ?? j.cl ?? 0) %></td>
                   <td><%= Number(j.efectividad ?? j.era ?? 0).toFixed(3) %></td>
                 </tr>
               <% }) %>
@@ -124,4 +126,3 @@
   </script>
 </body>
 </html>
-
