@@ -20,15 +20,23 @@
   </div>
 </div>
 
-<nav>
+<!-- Botón hamburguesa SOLO en móvil -->
+<button class="nav-toggle" id="navToggle" aria-expanded="false">
+  ☰
+</button>
+
+<nav id="publicNav">
   <img src="/resources/imgs/potros.png" alt="POTROS ITSON">
+
   <div><a href="/"             class="link <%= currentPath === '/' ? 'active' : '' %>">INICIO</a></div>
   <div><a href="/Estadisticas" class="link <%= isOn('/Estadisticas') ? 'active' : '' %>">ESTADISTICAS</a></div>
   <div><a href="/JugadoresD"   class="link <%= isOn('/JugadoresD')   ? 'active' : '' %>">JUGADORES DESTACADOS</a></div>
   <div><a href="/Coord"        class="link <%= isOn('/Coord')        ? 'active' : '' %>">COORDINADORES</a></div>
   <div><a href="/Standing"     class="link <%= isOn('/Standing')     ? 'active' : '' %>">STANDING</a></div>
+
   <img src="/resources/imgs/logo.png" alt="Logo">
 </nav>
+
 
 <section class="content02"></section>
 
@@ -51,3 +59,23 @@
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal && modal.getAttribute('aria-hidden')==='false') close(); });
   }
 </script>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const publicNav = document.getElementById('publicNav');
+
+  navToggle.addEventListener('click', ()=>{
+    const open = publicNav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open);
+  });
+
+  // Cerrar al hacer click fuera (solo móvil)
+  document.addEventListener('click', e=>{
+    if(window.innerWidth > 720) return;
+    if(!publicNav.contains(e.target) && e.target !== navToggle){
+      publicNav.classList.remove('open');
+      navToggle.setAttribute('aria-expanded','false');
+    }
+  });
+</script>
+

@@ -22,8 +22,6 @@
     .qty button:hover{background:#1e4b8a}
 
     .stats-actions{display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.2rem}
-
-    
   </style>
 </head>
 <body>
@@ -34,38 +32,38 @@
       <h1>Cargar bateo por equipo</h1>
 
       <form class="stats-form-wide" method="POST" action="/adminEstadisticas/StatsCargarBateoEquipo">
-  <div class="card stats-card-right" id="statsCard" style="padding:1rem 1.2rem">
-    <div class="form-group" style="max-width:560px">
-      <label>Equipo *</label>
-      <select id="selEq" name="id_equipo_temporada" class="input" required>
-        <option value="">Selecciona</option>
-        <% (equipos||[]).forEach(e=>{ %>
-          <option value="<%= e.id_equipo_temporada %>"><%= e.nombre %></option>
-        <% }) %>
-      </select>
-    </div>
+        <div class="card stats-card-right" id="statsCard" style="padding:1rem 1.2rem">
+          <div class="form-group" style="max-width:560px">
+            <label>Equipo *</label>
+            <select id="selEq" name="id_equipo_temporada" class="input" required>
+              <option value="">Selecciona</option>
+              <% (equipos||[]).forEach(e=>{ %>
+                <option value="<%= e.id_equipo_temporada %>"><%= e.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
 
-    <div class="stats-table no-scroll-desktop" id="tblWrap">
-      <table id="tbl">
-        <thead>
-          <tr>
-            <th>Jugador</th>
-            <th>AB</th><th>H</th><th>BB</th><th>R</th><th>RBI</th>
-            <th>1B</th><th>2B</th><th>3B</th><th>HR</th><th>SB</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <tr><td colspan="11">Selecciona un equipo…</td></tr>
-        </tbody>
-      </table>
-    </div>
+          <div class="stats-table no-scroll-desktop" id="tblWrap">
+            <table id="tbl">
+              <thead>
+                <tr>
+                  <th>Jugador</th>
+                  <th>AB</th><th>H</th><th>BB</th><th>R</th><th>RBI</th>
+                  <th>1B</th><th>2B</th><th>3B</th><th>HR</th><th>SB</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <tr><td colspan="11">Selecciona un equipo…</td></tr>
+              </tbody>
+            </table>
+          </div>
 
-    <div class="stats-actions">
-      <button class="btn btn-primary" type="submit">Cargar</button>
-      <a class="btn btn-outline" href="/adminEstadisticas">Cancelar</a>
-    </div>
-  </div>
-</form>
+          <div class="stats-actions">
+            <button class="btn btn-primary" type="submit">Cargar</button>
+            <a class="btn btn-outline" href="/adminEstadisticas">Cancelar</a>
+          </div>
+        </div>
+      </form>
 
     </div>
   </main>
@@ -74,34 +72,84 @@
     const $tbody = document.getElementById('tbody');
 
     function row(id, nombre){
-  const cols=['apariciones_al_bat','hits','bases_por_bolas','carreras','carreras_producidas','sencillos','dobles','triples','home_runs','bases_robadas'];
-  const tr=document.createElement('tr');
-  tr.innerHTML = `
-    <td>${nombre}<input type="hidden" name="id_jugador[]" value="${id}"></td>
-    ${cols.map(c=>`
-      <td>
-        <div class="qty">
-          <button type="button" onclick="dec(this)">−</button>
-          <input type="number" name="${c}[]" value="0" min="0" step="1">
-          <button type="button" onclick="inc(this)">+</button>
-        </div>
-      </td>`).join('')}
-  `;
-  return tr;
-}
+      const cols=[
+        'apariciones_al_bat', // AB
+        'hits',               // H
+        'bases_por_bolas',    // BB
+        'carreras',           // R
+        'carreras_producidas',// RBI
+        'sencillos',          // 1B
+        'dobles',             // 2B
+        'triples',            // 3B
+        'home_runs',          // HR
+        'bases_robadas'       // SB
+      ];
+      const tr=document.createElement('tr');
+      tr.innerHTML = `
+        <td>${nombre}<input type="hidden" name="id_jugador[]" value="${id}"></td>
+        ${cols.map(c=>`
+          <td>
+            <div class="qty">
+              <button type="button" onclick="dec(this)">−</button>
+              <input type="number" name="${c}[]" data-field="${c}" value="0" min="0" step="1">
+              <button type="button" onclick="inc(this)">+</button>
+            </div>
+          </td>`).join('')}
+      `;
+      return tr;
+    }
 
-    window.inc = (b)=>{ const i=b.previousElementSibling; i.value = Math.max(0, Number(i.value||0)+1); };
-    window.dec = (b)=>{ const i=b.nextElementSibling;   i.value = Math.max(0, Number(i.value||0)-1); };
+    // ++ y -- disparan evento input (burbujeando) para recalcular H
+    window.inc = (b)=>{
+      const i=b.previousElementSibling;
+      i.value = Math.max(0, Number(i.value||0)+1);
+      i.dispatchEvent(new Event('input',{bubbles:true}));
+    };
+    window.dec = (b)=>{
+      const i=b.nextElementSibling;
+      i.value = Math.max(0, Number(i.value||0)-1);
+      i.dispatchEvent(new Event('input',{bubbles:true}));
+    };
 
+    // Carga plantel por equipo
     document.getElementById('selEq').addEventListener('change', async (e)=>{
       const id = e.target.value;
       $tbody.innerHTML = `<tr><td colspan="11">Cargando…</td></tr>`;
-      if(!id){ $tbody.innerHTML=`<tr><td colspan="11">Selecciona un equipo…</td></tr>`; return; }
+      if(!id){
+        $tbody.innerHTML=`<tr><td colspan="11">Selecciona un equipo…</td></tr>`;
+        return;
+      }
       const r = await fetch(`/adminEstadisticas/ajax/plantel?id_equipo_temporada=${id}`);
       const js = await r.json();
-      if(!js.length){ $tbody.innerHTML=`<tr><td colspan="11">Sin plantel.</td></tr>`; return; }
+      if(!js.length){
+        $tbody.innerHTML=`<tr><td colspan="11">Sin plantel.</td></tr>`;
+        return;
+      }
       $tbody.innerHTML='';
       js.forEach(j => $tbody.appendChild(row(j.id_jugador, j.nombre)));
+    });
+
+    // ===== AUTOCÁLCULO DE H: 1B + 2B + 3B + HR =====
+    $tbody.addEventListener('input', function(e){
+      const input = e.target;
+      const field = input.dataset.field;
+      if (!field) return;
+
+      if (!["sencillos","dobles","triples","home_runs"].includes(field)) return;
+
+      const tr = input.closest('tr');
+      if (!tr) return;
+
+      const getVal = f => Number(tr.querySelector(`input[data-field="${f}"]`)?.value || 0);
+
+      const totalHits =
+        getVal("sencillos") +
+        getVal("dobles") +
+        getVal("triples") +
+        getVal("home_runs");
+
+      const hInput = tr.querySelector('input[data-field="hits"]');
+      if (hInput) hInput.value = totalHits;
     });
   </script>
 
@@ -135,6 +183,7 @@
   
 </body>
 </html>
+
 
 
 

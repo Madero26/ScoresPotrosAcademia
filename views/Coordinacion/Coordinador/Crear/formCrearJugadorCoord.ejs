@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Crear jugador</h1>
+
+    <div class="card">
+      <form action="/adminCoordinador/jugadores" method="POST"
+            enctype="multipart/form-data" onsubmit="return validar()">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombres *</label>
+            <input class="input" type="text" name="nombres" required maxlength="100">
+          </div>
+          <div class="form-group">
+            <label>Apellido paterno *</label>
+            <input class="input" type="text" name="apellido_paterno" required maxlength="100">
+          </div>
+          <div class="form-group">
+            <label>Apellido materno *</label>
+            <input class="input" type="text" name="apellido_materno" required maxlength="100">
+          </div>
+          <div class="form-group">
+            <label>Fecha de nacimiento *</label>
+            <input class="input" type="date" name="fecha_nacimiento" required>
+          </div>
+
+          <label class="switch-row">
+            <input type="checkbox" name="activo" value="1" checked>
+            <span>Activo</span>
+          </label>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Foto (opcional)</label>
+            <input class="input" type="file" name="foto" accept="image/*">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a href="/adminCoordinador" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function validar(){
+      const f = new Date(document.querySelector('[name="fecha_nacimiento"]').value);
+      const hoy = new Date(); hoy.setHours(0,0,0,0);
+      if (f > hoy){
+        alert('La fecha de nacimiento no puede ser futura.');
+        return false;
+      }
+      return true;
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ 
+      window.location = <%- JSON.stringify(ruta || '/adminCoordinador/CoordCrearJugador') %>; 
+    });
+  </script>
+  <% } %>
+</body>
+</html>
+

@@ -1,20 +1,26 @@
-<!doctype html><html lang="es"><head>
+<!doctype html>
+<html lang="es">
+<head>
   <%- include('../../../partials/headAdmin') %>
   <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
   <style>.foto{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb}</style>
-</head><body>
-  <%- include('../../../partials/navbar_adminGeneral') %>
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
 
   <main class="container">
-    <h1>Actualizar jugador</h1>
+    <h1>Gestionar jugadores</h1>
 
     <div class="card">
-      <form id="formSel" method="GET" action="/adminGeneral/formActualizarJugador" class="form-group" style="margin-bottom:1rem">
+      <form id="formSel" method="GET" action="/adminCoordinador/CoordGestionarJugador"
+            class="form-group" style="margin-bottom:1rem">
         <label>Selecciona jugador</label>
-        <select class="input" name="id" onchange="document.getElementById('formSel').submit()">
+        <select class="input" name="id"
+                onchange="document.getElementById('formSel').submit()">
           <% const lista = Array.isArray(jugadores) ? jugadores : []; %>
           <% lista.forEach(x => { %>
-            <option value="<%= x.id_jugador %>" <%= (jugador && x.id_jugador===jugador.id_jugador)?'selected':'' %>>
+            <option value="<%= x.id_jugador %>"
+              <%= (jugador && x.id_jugador===jugador.id_jugador)?'selected':'' %>>
               <%= x.apellido_paterno %> <%= x.apellido_materno %>, <%= x.nombres %>
             </option>
           <% }) %>
@@ -26,29 +32,36 @@
         <p>No se encontró el jugador seleccionado.</p>
       <% } else { %>
 
-      <form action="/adminGeneral/jugadores/<%= j.id_jugador %>" method="POST" enctype="multipart/form-data" onsubmit="return validar()">
+      <form action="/adminCoordinador/jugadores/<%= j.id_jugador %>"
+            method="POST" enctype="multipart/form-data" onsubmit="return validar()">
         <div class="form-grid">
           <div class="form-group" style="grid-column:1/-1;display:flex;gap:12px;align-items:center">
-            <img class="foto" src="/resources<%= j.url_foto || '/resources/imgs/user-placeholder.png' %>" alt="">
+            <% if (j.url_foto) { %>
+              <img class="foto" src="/resources<%= j.url_foto %>" alt="">
+            <% } else { %>
+              <img class="foto" src="/resources/imgs/user-placeholder.png" alt="">
+            <% } %>
             <div style="flex:1">
               <label>Foto</label>
               <input class="input" type="file" name="foto" accept="image/*">
-              <!-- conservar ruta anterior si no se sube nueva -->
-              <input type="hidden" name="url_foto" value="resources<%= j.url_foto || '' %>">
+              <input type="hidden" name="url_foto" value="<%= j.url_foto || '' %>">
             </div>
           </div>
 
           <div class="form-group">
             <label>Nombres *</label>
-            <input class="input" type="text" name="nombres" required maxlength="100" value="<%= j.nombres %>">
+            <input class="input" type="text" name="nombres"
+                   required maxlength="100" value="<%= j.nombres %>">
           </div>
           <div class="form-group">
             <label>Apellido paterno *</label>
-            <input class="input" type="text" name="apellido_paterno" required maxlength="100" value="<%= j.apellido_paterno %>">
+            <input class="input" type="text" name="apellido_paterno"
+                   required maxlength="100" value="<%= j.apellido_paterno %>">
           </div>
           <div class="form-group">
             <label>Apellido materno *</label>
-            <input class="input" type="text" name="apellido_materno" required maxlength="100" value="<%= j.apellido_materno %>">
+            <input class="input" type="text" name="apellido_materno"
+                   required maxlength="100" value="<%= j.apellido_materno %>">
           </div>
           <div class="form-group">
   <label>Fecha de nacimiento *</label>
@@ -58,19 +71,20 @@
 
 
           <label class="switch-row">
-            <input type="checkbox" name="activo" value="1" <%= Number(j.activo)===1?'checked':'' %>>
+            <input type="checkbox" name="activo" value="1"
+              <%= Number(j.activo)===1?'checked':'' %>>
             <span>Activo</span>
           </label>
         </div>
 
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Actualizar</button>
-          <a href="/adminGeneral/inicio" class="btn btn-outline">Cancelar</a>
+          <a href="/adminCoordinador" class="btn btn-outline">Cancelar</a>
         </div>
       </form>
 
       <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
-        <form action="/adminGeneral/jugadores/<%= j.id_jugador %>/eliminar" method="POST"
+        <form action="/adminCoordinador/jugadores/<%= j.id_jugador %>/eliminar" method="POST"
               onsubmit="return confirm('¿Eliminar definitivamente este jugador?')">
           <button type="submit" class="btn btn-danger">Eliminar</button>
         </form>
@@ -84,7 +98,10 @@
     function validar(){
       const f = new Date(document.querySelector('[name="fecha_nacimiento"]').value);
       const hoy = new Date(); hoy.setHours(0,0,0,0);
-      if (f > hoy){ alert('La fecha de nacimiento no puede ser futura.'); return false; }
+      if (f > hoy){
+        alert('La fecha de nacimiento no puede ser futura.');
+        return false;
+      }
       return true;
     }
   </script>
@@ -98,8 +115,13 @@
       icon: <%- JSON.stringify(alertIcon) %>,
       showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
       timer: <%- (timer==null?'null':Number(timer)) %>
-    }).then(()=>{ window.location = <%- JSON.stringify(ruta || ('/adminGeneral/formActualizarJugador?id=' + (j ? j.id_jugador : ''))) %>; });
+    }).then(()=>{ 
+      window.location = <%- JSON.stringify(
+        ruta || ('/adminCoordinador/CoordGestionarJugador?id=' + (j ? j.id_jugador : ''))
+      ) %>;
+    });
   </script>
   <% } %>
-</body></html>
+</body>
+</html>
 
