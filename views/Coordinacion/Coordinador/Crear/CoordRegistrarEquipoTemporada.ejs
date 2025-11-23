@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Registrar equipo en mi categoría</h1>
+
+    <% if (sinAsignacion) { %>
+      <div class="card">
+        <p>
+          Tu usuario no tiene temporada y categoría asignadas.
+          Pide al administrador que configure tu acceso.
+        </p>
+      </div>
+    <% } else { %>
+
+    <div class="card">
+      <form action="/adminCoordinador/equiposTemporada" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id_temporada" value="<%= temporadaId %>">
+        <input type="hidden" name="id_categoria" value="<%= categoriaId %>">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada</label>
+            <input class="input" value="<%= temporada ? temporada.nombre : '' %>" disabled>
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <input class="input" value="<%= categoria ? categoria.nombre : '' %>" disabled>
+          </div>
+
+          <div class="form-group">
+            <label>Equipo catálogo</label>
+            <select name="id_equipo" class="input">
+              <option value="">Ninguno</option>
+              <% (equiposBase || []).forEach(e => { %>
+                <option value="<%= e.id_equipo %>"><%= e.nombre_corto %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Entrenador</label>
+            <select name="id_entrenador" class="input">
+              <option value="">Sin entrenador</option>
+              <% (entrenadores || []).forEach(c => { %>
+                <option value="<%= c.id_entrenador %>"><%= c.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Nombre mostrado *</label>
+            <input name="nombre" class="input" required placeholder="Nombre del equipo en tu categoría">
+          </div>
+
+          <div class="form-group">
+            <label>Colores</label>
+            <input name="colores" class="input" placeholder="Ej. azul/blanco">
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Foto (opcional)</label>
+            <input class="input" type="file" name="foto" accept="image/*">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Guardar</button>
+          <a class="btn btn-outline" href="/adminCoordinador">Cancelar</a>
+        </div>
+      </form>
+    </div>
+
+    <% } %>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text:  <%- JSON.stringify(alertMessage) %>,
+      icon:  <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(() => {
+      window.location = <%- JSON.stringify(ruta || '/adminCoordinador/CoordRegistrarEquipoTemporada') %>;
+    });
+  </script>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Asignar jugador a mi categoría</h1>
+
+    <% if (sinAsignacion) { %>
+      <div class="card">
+        <p>
+          Tu usuario no tiene temporada y categoría asignadas.
+          Pide al administrador que configure tu acceso.
+        </p>
+      </div>
+    <% } else { %>
+
+    <div class="card">
+
+      <!-- Info de temporada / categoría -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada</label>
+          <input class="input" value="<%= temporada ? temporada.nombre : '' %>" disabled>
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <input class="input" value="<%= categoria ? categoria.nombre : '' %>" disabled>
+        </div>
+      </div>
+
+      <!-- Formulario de asignación -->
+      <form id="frm" method="POST"
+            action="/adminCoordinador/jugadorTemporadaCategoria">
+        <input type="hidden" name="id_jugador" id="hidJugador">
+
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Buscar jugador *</label>
+            <input id="inpQ" class="input" placeholder="Nombre, apellidos...">
+            <select id="selJug" class="input" size="7" style="margin-top:.5rem">
+              <option value="">Escribe para buscar...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="btnGuardar" class="btn btn-primary" type="submit" disabled>Asignar</button>
+          <a href="/adminCoordinador" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <!-- Lista de ya asignados -->
+      <hr style="margin:1.5rem 0;border:none;border-top:1px solid rgba(255,255,255,.08)">
+
+      <h2 style="font-size:1rem;margin-bottom:.75rem">Jugadores ya asignados</h2>
+      <div id="listaAsignados">
+        <p>Cargando...</p>
+      </div>
+
+    </div>
+
+    <% } %>
+  </main>
+
+  <script>
+  (function(){
+    if (<%= sinAsignacion ? 'true' : 'false' %>) return;
+
+    const inpQ   = document.getElementById('inpQ');
+    const selJug = document.getElementById('selJug');
+    const hidJug = document.getElementById('hidJugador');
+    const btnGu  = document.getElementById('btnGuardar');
+    const divList= document.getElementById('listaAsignados');
+
+    const GET = u => fetch(u, { headers:{'x-requested-with':'XMLHttpRequest'} }).then(r=>r.json());
+
+    function debounce(fn,ms){
+      let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); };
+    }
+
+    async function buscar(){
+      const q = inpQ.value.trim();
+      const res = await GET('/adminCoordinador/jugadorCat/buscar?q='+encodeURIComponent(q));
+      if (!res.length){
+        selJug.innerHTML = '<option value="">Sin resultados</option>';
+        hidJug.value=''; btnGu.disabled=true;
+        return;
+      }
+      selJug.innerHTML = res.map(j =>
+        '<option value="'+j.id_jugador+'">'+j.nombre+'</option>'
+      ).join('');
+      // seleccionar primero por default
+      selJug.selectedIndex = 0;
+      hidJug.value = selJug.value;
+      btnGu.disabled = !selJug.value;
+    }
+
+    async function cargarAsignados(){
+      const data = await GET('/adminCoordinador/jugadorCat/lista');
+      if (!data.length){
+        divList.innerHTML = '<p>Aún no hay jugadores asignados en tu categoría.</p>';
+        return;
+      }
+      const html = data.map(x => `
+        <div class="form-group" style="display:flex;justify-content:space-between;align-items:center;gap:.75rem">
+          <div>
+            <div>${x.nombre_jugador}</div>
+            <small>Asignado: ${x.fecha_asignacion || ''}</small>
+          </div>
+          <form method="POST" action="/adminCoordinador/jugadorTemporadaCategoria/${x.id}/eliminar"
+                onsubmit="return confirm('¿Quitar a este jugador de tu categoría?');">
+            <button type="submit" class="btn btn-danger btn-sm">Quitar</button>
+          </form>
+        </div>
+      `).join('');
+      divList.innerHTML = html;
+    }
+
+    inpQ.addEventListener('input', debounce(buscar, 300));
+    selJug.addEventListener('change', () => {
+      hidJug.value = selJug.value;
+      btnGu.disabled = !selJug.value;
+    });
+
+    // carga inicial
+    (async function init(){
+      await buscar();
+      await cargarAsignados();
+    })();
+  })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text:  <%- JSON.stringify(alertMessage) %>,
+      icon:  <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=> {
+      window.location = <%- JSON.stringify(ruta || '/adminCoordinador/CoordAsignarJugadorCategoria') %>;
+    });
+  </script>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>
+    .foto{
+      width:80px;
+      height:80px;
+      object-fit:cover;
+      border-radius:8px;
+      border:1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Equipos en mi categoría</h1>
+
+    <% if (sinAsignacion) { %>
+      <div class="card">
+        <p>
+          Tu usuario no tiene temporada y categoría asignadas.
+          Pide al administrador que configure tu acceso.
+        </p>
+      </div>
+    <% } else { %>
+
+    <div class="card">
+
+      <!-- Datos fijos -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada</label>
+          <input class="input" value="<%= temporada ? temporada.nombre : '' %>" disabled>
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <input class="input" value="<%= categoria ? categoria.nombre : '' %>" disabled>
+        </div>
+      </div>
+
+      <!-- SELECTOR DE EQUIPO -->
+      <form id="formSel" method="GET"
+            action="/adminCoordinador/CoordGestionarEquipoTemporada"
+            class="form-group" style="margin-bottom:1rem">
+        <label>Selecciona equipo</label>
+        <select class="input" name="id"
+                onchange="document.getElementById('formSel').submit()">
+          <% (equipos || []).forEach(x => { %>
+            <option value="<%= x.id_equipo_temporada %>"
+              <%= (equipo && x.id_equipo_temporada === equipo.id_equipo_temporada) ? 'selected' : '' %>>
+              <%= x.nombre %> <% if(x.nombre_corto){ %> ( <%= x.nombre_corto %> ) <% } %>
+            </option>
+          <% }) %>
+        </select>
+      </form>
+
+      <% const et = equipo || null; %>
+
+      <% if (!et) { %>
+        <p>No se encontró el equipo seleccionado (o no tienes equipos en tu categoría).</p>
+      <% } else { %>
+
+      <!-- FORMULARIO -->
+      <form action="/adminCoordinador/equiposTemporada/<%= et.id_equipo_temporada %>"
+            method="POST" enctype="multipart/form-data">
+
+        <input type="hidden" name="url_foto" value="<%= et.url_foto || '' %>">
+
+        <div class="form-grid">
+
+          <!-- FOTO IGUAL QUE EN GESTIONAR JUGADORES -->
+          <div class="form-group" style="grid-column:1/-1;display:flex;gap:12px;align-items:center">
+            <img class="foto"
+     src="<%= et.url_foto
+              ? (et.url_foto.startsWith('/resources')
+                   ? et.url_foto
+                   : ('/resources' + et.url_foto))
+              : '/resources/imgs/user-placeholder.png' %>"
+     alt="">
+
+            <div style="flex:1">
+              <label>Foto</label>
+              <input class="input" type="file" name="foto" accept="image/*">
+
+              <% if (et.url_foto) { %>
+                <div style="margin-top:.5rem">
+                  <a href="/resources<%= et.url_foto %>" target="_blank">Ver actual</a>
+                </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Equipo catálogo -->
+          <div class="form-group">
+            <label>Equipo catálogo</label>
+            <select name="id_equipo" class="input">
+              <option value="">Ninguno</option>
+              <% (equiposBase || []).forEach(e => { %>
+                <option value="<%= e.id_equipo %>"
+                  <%= (et.id_equipo === e.id_equipo ? 'selected' : '') %>>
+                  <%= e.nombre_corto %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Entrenador -->
+          <div class="form-group">
+            <label>Entrenador</label>
+            <select name="id_entrenador" class="input">
+              <option value="">Sin entrenador</option>
+              <% (entrenadores || []).forEach(en => { %>
+                <option value="<%= en.id_entrenador %>"
+                  <%= (et.id_entrenador === en.id_entrenador ? 'selected' : '') %>>
+                  <%= en.nombre %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Nombre -->
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Nombre mostrado *</label>
+            <input class="input" name="nombre" required maxlength="80"
+                   value="<%= et.nombre %>">
+          </div>
+
+          <!-- Colores -->
+          <div class="form-group">
+            <label>Colores</label>
+            <input class="input" name="colores" maxlength="50"
+                   value="<%= et.colores || '' %>">
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+          <a href="/adminCoordinador" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <!-- ELIMINAR -->
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form action="/adminCoordinador/equiposTemporada/<%= et.id_equipo_temporada %>/eliminar"
+              method="POST"
+              onsubmit="return confirm('¿Eliminar definitivamente este equipo?')">
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+
+      <% } %>
+    </div>
+
+    <% } %>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text:  <%- JSON.stringify(alertMessage) %>,
+      icon:  <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer == null ? 'null' : Number(timer)) %>
+    }).then(() => {
+      window.location = <%- JSON.stringify(
+        ruta || (
+          '/adminCoordinador/CoordGestionarEquipoTemporada' +
+          (et ? ('?id=' + et.id_equipo_temporada) : '')
+        )
+      ) %>;
+    });
+  </script>
+  <% } %>
+
+</body>
+</html>
+

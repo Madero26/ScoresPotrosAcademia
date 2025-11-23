@@ -79,16 +79,37 @@
     const GET = u=>fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
 
     const row = (id,nombre)=>{
-      const cols=['apariciones_al_bat','hits','bases_por_bolas','carreras','carreras_producidas','sencillos','dobles','triples','home_runs','bases_robadas'];
+      const cols=[
+        'apariciones_al_bat', // AB
+        'hits',               // H
+        'bases_por_bolas',    // BB
+        'carreras',           // R
+        'carreras_producidas',// RBI
+        'sencillos',          // 1B
+        'dobles',             // 2B
+        'triples',            // 3B
+        'home_runs',          // HR
+        'bases_robadas'       // SB
+      ];
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${nombre}<input type="hidden" name="id_jugador[]" value="${id}"></td>
         ${cols.map(c=>`
           <td>
             <div class="qty">
-              <button type="button" onclick="this.nextElementSibling.value=Math.max(0,Number(this.nextElementSibling.value||0)-1)">−</button>
-              <input type="number" name="${c}[]" value="0" min="0" step="1">
-              <button type="button" onclick="this.previousElementSibling.value=Math.max(0,Number(this.previousElementSibling.value||0)+1)">+</button>
+              <button type="button"
+                onclick="
+                  const input=this.nextElementSibling;
+                  input.value=Math.max(0,Number(input.value||0)-1);
+                  input.dispatchEvent(new Event('input',{bubbles:true}));
+                ">−</button>
+              <input type="number" name="${c}[]" data-field="${c}" value="0" min="0" step="1">
+              <button type="button"
+                onclick="
+                  const input=this.previousElementSibling;
+                  input.value=Math.max(0,Number(input.value||0)+1);
+                  input.dispatchEvent(new Event('input',{bubbles:true}));
+                ">+</button>
             </div>
           </td>`).join('')}
       `;
@@ -102,24 +123,38 @@
       const t = $selTemp.value; if(!t) return;
       const cs = await GET(`/adminGeneral/stats/categorias?id_temporada=${t}`);
       cs.forEach(c=>{
-        const o=document.createElement('option'); o.value=c.id_categoria; o.textContent=c.nombre; $selCat.appendChild(o);
+        const o=document.createElement('option');
+        o.value=c.id_categoria;
+        o.textContent=c.nombre;
+        $selCat.appendChild(o);
       });
     }
+
     async function loadTeams(){
       $selEq.innerHTML ='<option value="">Selecciona</option>';
       $tbody.innerHTML ='<tr><td colspan="11">Selecciona equipo…</td></tr>';
       const t=$selTemp.value, c=$selCat.value; if(!t||!c) return;
       const es = await GET(`/adminGeneral/stats/equipos?id_temporada=${t}&id_categoria=${c}`);
       es.forEach(e=>{
-        const o=document.createElement('option'); o.value=e.id_equipo_temporada; o.textContent=e.nombre; $selEq.appendChild(o);
+        const o=document.createElement('option');
+        o.value=e.id_equipo_temporada;
+        o.textContent=e.nombre;
+        $selEq.appendChild(o);
       });
     }
+
     async function loadRoster(){
       const id = $selEq.value;
-      if(!id){ $tbody.innerHTML='<tr><td colspan="11">Selecciona equipo…</td></tr>'; return; }
+      if(!id){
+        $tbody.innerHTML='<tr><td colspan="11">Selecciona equipo…</td></tr>';
+        return;
+      }
       $tbody.innerHTML='<tr><td colspan="11">Cargando…</td></tr>';
       const js = await GET(`/adminGeneral/stats/plantel?id_equipo_temporada=${id}`);
-      if(!js.length){ $tbody.innerHTML='<tr><td colspan="11">Sin plantel.</td></tr>'; return; }
+      if(!js.length){
+        $tbody.innerHTML='<tr><td colspan="11">Sin plantel.</td></tr>';
+        return;
+      }
       $tbody.innerHTML='';
       js.forEach(j=> $tbody.appendChild(row(j.id_jugador,j.nombre)));
     }
@@ -129,9 +164,32 @@
     $selEq.addEventListener('change', loadRoster);
 
     (async function init(){
-      // Carga inicial de temporadas viene desde servidor en <%= temporadas %> si la inyectas
       await loadCats();
     })();
+
+    // ====== AUTOCÁLCULO DE H = 1B + 2B + 3B + HR ======
+    $tbody.addEventListener('input', function(e){
+      const input = e.target;
+      const field = input.dataset.field;
+      if (!field) return;
+
+      // Solo reaccionar cuando cambian 1B, 2B, 3B o HR
+      if (!["sencillos","dobles","triples","home_runs"].includes(field)) return;
+
+      const tr = input.closest('tr');
+      if (!tr) return;
+
+      const getVal = f => Number(tr.querySelector(`input[data-field="${f}"]`)?.value || 0);
+
+      const totalHits =
+        getVal("sencillos") +
+        getVal("dobles") +
+        getVal("triples") +
+        getVal("home_runs");
+
+      const hInput = tr.querySelector('input[data-field="hits"]');
+      if (hInput) hInput.value = totalHits;
+    });
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -147,3 +205,5 @@
   </script>
   <% } %>
 </body></html>
+
+

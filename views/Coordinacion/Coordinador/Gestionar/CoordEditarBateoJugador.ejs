@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .card form .grid{margin-bottom:12px}
+  </style>
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Editar bateo de jugador</h1>
+
+    <form method="POST" action="/adminCoordinador/stats/editarBateoJugador">
+      <!-- hidden para forzar temporada/categoría en el POST -->
+      <% const _idCat = Number(idCategoria || 0); %>
+      <input type="hidden" id="hidTemp" name="id_temporada" value="">
+      <input type="hidden" id="hidCat"  name="id_categoria" value="<%= _idCat %>">
+
+      <div class="card" style="padding:1rem 1.2rem">
+
+        <% const listaTemps = Array.isArray(temporadas) ? temporadas : []; %>
+
+        <div class="grid">
+          <div>
+            <label>Temporada *</label>
+            <!-- este select sólo es visual; el valor real lo manda hidTemp -->
+            <select id="selTemp" class="input" required disabled>
+              <% listaTemps.forEach(t => { %>
+                <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div>
+            <label>Categoría *</label>
+            <!-- se deshabilita, se llena vía AJAX y se fija a la categoría del coordinador -->
+            <select id="selCat" class="input" required disabled>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Equipo *</label>
+            <select id="selEq" name="id_equipo_temporada" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+
+          <div style="grid-column:1/-1">
+            <label>Jugador *</label>
+            <select id="selJug" name="id_jugador" class="input" size="8" required></select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div><label>AB</label><input class="input" type="number" name="apariciones_al_bat" min="0" value="0"></div>
+          <div><label>H</label><input class="input" type="number" name="hits" min="0" value="0"></div>
+          <div><label>BB</label><input class="input" type="number" name="bases_por_bolas" min="0" value="0"></div>
+          <div><label>R</label><input class="input" type="number" name="carreras" min="0" value="0"></div>
+          <div><label>RBI</label><input class="input" type="number" name="carreras_producidas" min="0" value="0"></div>
+          <div><label>1B</label><input class="input" type="number" name="sencillos" min="0" value="0"></div>
+          <div><label>2B</label><input class="input" type="number" name="dobles" min="0" value="0"></div>
+          <div><label>3B</label><input class="input" type="number" name="triples" min="0" value="0"></div>
+          <div><label>HR</label><input class="input" type="number" name="home_runs" min="0" value="0"></div>
+          <div><label>SB</label><input class="input" type="number" name="bases_robadas" min="0" value="0"></div>
+          <div><label>AVG</label><input class="input" id="avg" type="text" value="0.000" disabled></div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.2rem">
+          <button class="btn btn-primary" type="submit">Actualizar</button>
+          <a class="btn btn-outline" href="/adminCoordinador">Cancelar</a>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+    const $selTemp=document.getElementById('selTemp');
+    const $selCat =document.getElementById('selCat');
+    const $selEq  =document.getElementById('selEq');
+    const $selJug =document.getElementById('selJug');
+    const $avg    =document.getElementById('avg');
+    const $hidTemp=document.getElementById('hidTemp');
+    const $hidCat =document.getElementById('hidCat');
+
+    // valores acotados desde el servidor
+    const ID_CAT  = <%- Number(idCategoria || 0) %>;
+    const ID_TEMP = <%- (typeof idTemporada !== 'undefined' ? Number(idTemporada) : 0) %>;
+
+    // fija temporada inicial (si viene del token) y bloquea cambio
+    if (ID_TEMP) {
+      $selTemp.value = String(ID_TEMP);
+      $selTemp.disabled = true;
+      $hidTemp.value = String(ID_TEMP);
+    } else {
+      // si no viene en el token, tomamos la primera opción (si existe)
+      if ($selTemp.options.length > 0) {
+        $selTemp.selectedIndex = 0;
+        $hidTemp.value = $selTemp.value;
+      }
+    }
+
+    // categoría del coordinador ya viene fija en hidCat (ID_CAT) y en el backend
+    async function loadCats(){
+      $selCat.innerHTML='<option value="">Selecciona</option>';
+      $selEq.innerHTML ='<option value="">Selecciona</option>';
+      $selJug.innerHTML='';
+
+      const t=$selTemp.value;
+      if(!t) return;
+      $hidTemp.value = t; // sincroniza hidden
+
+      // siempre va a regresar sólo la categoría del coordinador (ver controlador)
+      const cs=await GET(`/adminCoordinador/stats/categorias?id_temporada=${t}`);
+      let selected = false;
+      cs.forEach(c=>{
+        const o=document.createElement('option');
+        o.value=c.id_categoria;
+        o.textContent=c.nombre;
+        if (ID_CAT && Number(c.id_categoria)===ID_CAT){
+          o.selected = true;
+          selected = true;
+        }
+        $selCat.appendChild(o);
+      });
+
+      if (!selected && cs.length){
+        $selCat.value = String(cs[0].id_categoria);
+      }
+      if (ID_CAT) $hidCat.value = String(ID_CAT);
+      else if ($selCat.value) $hidCat.value = $selCat.value;
+
+      if ($selCat.value) await loadTeams();
+    }
+
+    async function loadTeams(){
+      $selEq.innerHTML ='<option value="">Selecciona</option>';
+      $selJug.innerHTML='';
+
+      const t=$selTemp.value, c=$selCat.value;
+      if(!t||!c) return;
+
+      // endpoint ya fuerza id_categoria a la del coordinador
+      const es=await GET(`/adminCoordinador/stats/equipos?id_temporada=${t}&id_categoria=${c}`);
+      es.forEach(e=>{
+        const o=document.createElement('option');
+        o.value=e.id_equipo_temporada;
+        o.textContent=e.nombre;
+        $selEq.appendChild(o);
+      });
+    }
+
+    async function loadRoster(){
+      $selJug.innerHTML='';
+      const id=$selEq.value;
+      if(!id) return;
+
+      // sólo jugadores activos e inscritos en esa temporada
+      const js=await GET(`/adminCoordinador/stats/plantel?id_equipo_temporada=${id}`);
+      $selJug.innerHTML = js.map(j=>`<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+      if(js.length) await hydrateStats(js[0].id_jugador);
+    }
+
+    function calcAVG(){
+      const ab=Number(document.querySelector('input[name="apariciones_al_bat"]').value)||0;
+      const h =Number(document.querySelector('input[name="hits"]').value)||0;
+      $avg.value = ab>0 ? (h/ab).toFixed(3) : '0.000';
+    }
+
+    async function hydrateStats(idJugador){
+      const t=$selTemp.value;
+      if(!t||!idJugador) return;
+      const s=await GET(`/adminCoordinador/stats/bateoJugador?id_temporada=${t}&id_jugador=${idJugador}`);
+      const set=n=>{
+        const i=document.querySelector(`input[name="${n}"]`);
+        if(i) i.value = s ? Number(s[n])||0 : 0;
+      };
+      ['apariciones_al_bat','hits','bases_por_bolas','carreras','carreras_producidas',
+       'sencillos','dobles','triples','home_runs','bases_robadas'].forEach(set);
+      calcAVG();
+    }
+
+    $selTemp.addEventListener('change', loadCats);
+    $selCat .addEventListener('change', loadTeams);
+    $selEq  .addEventListener('change', loadRoster);
+    $selJug .addEventListener('change', e=>hydrateStats(e.target.value));
+
+    ['apariciones_al_bat','hits'].forEach(n=>{
+      const el=document.querySelector(`input[name="${n}"]`);
+      if(!el) return;
+      el.addEventListener('input',calcAVG);
+      el.addEventListener('change',calcAVG);
+    });
+
+    (async function init(){
+      // al entrar, carga categorías/equipos/jugadores pero siempre limitados por:
+      //  - categoriaId del coordinador (en el backend)
+      //  - plantel activo/inscrito (en el backend)
+      if ($selTemp.value) await loadCats();
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>,
+      text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>,
+      showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{ 
+      if (<%- JSON.stringify(!!ruta) %>) {
+        location.href=<%- JSON.stringify(ruta) %>;
+      }
+    });
+  </script>
+  <% } %>
+</body>
+</html>
+
+
+

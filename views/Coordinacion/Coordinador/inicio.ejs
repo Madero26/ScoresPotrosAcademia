@@ -1,26 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <%- include('../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+
+  <style>
+    .grid { 
+      display:grid; 
+      gap:16px; 
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); 
+    }
+    .lead { 
+      font-size:1.05rem; 
+      line-height:1.6; 
+      color:#94a3b8; 
+    }
+    .list { 
+      margin:.5rem 0 0 1rem; 
+      color:#cbd5e1; 
+    }
+    .links a { 
+      display:inline-block; 
+      margin:.25rem .35rem .25rem 0; 
+    }
+    .muted { color:#94a3b8; }
+  </style>
 </head>
+
 <body>
-    <%- include('../../partials/navbar_adminCoordinador') %>
+  <%- include('../../partials/navbar_adminCoordinador') %>
 
-    <script>
-  async function reping() {
-    try {
-      const r = await fetch('/auth/ping', { cache: 'no-store', credentials: 'same-origin' });
-      if (!r.ok) location.replace('/Login');
-    } catch { location.replace('/Login'); }
-  }
+  <main class="container">
+    <h1>Panel de coordinador</h1>
 
-  // Si vuelve desde BFCache o navegación atrás, revalida
-  window.addEventListener('pageshow', e => { if (e.persisted) reping(); });
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') reping();
-  });
-</script>
+    <div class="grid">
+
+      <!-- Qué es este panel -->
+      <section class="card">
+        <h2>¿Para qué sirve?</h2>
+        <p class="lead">
+          Este panel te permite administrar la <strong>categoría asignada</strong> dentro de la Academia ITSON.
+          Desde aquí puedes gestionar jugadores, equipos y estadísticas de la temporada vigente.
+        </p>
+        <ul class="list">
+          <li><strong>Tu categoría:</strong> solo ves tu categoría asignada por el administrador.</li>
+          <li><strong>Equipos de tu categoría:</strong> consulta planteles y estadísticas.</li>
+          <li><strong>Jugadores:</strong> gestionar altas por tu categoría/temporada.</li>
+          <li><strong>Bateo / Pitcheo:</strong> registrar y editar estadísticas individuales.</li>
+          <li><strong>Equipo:</strong> editar estadísticas globales del equipo.</li>
+        </ul>
+      </section>
+
+      <!-- Cómo usarlo -->
+      <section class="card">
+        <h2>Flujo recomendado</h2>
+        <ol class="list">
+          <li>Revisar los equipos disponibles en tu categoría.</li>
+          <li>Registrar o actualizar <strong>jugadores</strong>.</li>
+          <li>Actualizar estadísticas de <strong>bateo</strong> y <strong>pitcheo</strong>.</li>
+          <li>Actualizar estadísticas del <strong>equipo</strong>.</li>
+        </ol>
+        <p class="muted" style="margin-top:.5rem">
+          Usa las opciones de <em>CREAR</em> y <em>GESTIONAR</em> del menú superior.
+        </p>
+      </section>
+
+      <!-- Accesos rápidos -->
+      <section class="card links">
+        <h2>Accesos rápidos</h2>
+
+        <a href="/adminCoordinador/formCrearJugador" class="btn btn-outline">Crear jugador</a>
+        <a href="/adminCoordinador/CoordGestionarJugadores" class="btn btn-outline">Gestionar jugadores</a><br>
+
+        <a href="/adminCoordinador/CoordEditarBateoJugador" class="btn btn-outline">Registrar bateo</a>
+        <a href="/adminCoordinador/CoordGestionarEstadisticasBateo" class="btn btn-outline">Gestionar bateo</a><br>
+
+        <a href="/adminCoordinador/CoordEditarPitcheoJugador" class="btn btn-outline">Registrar pitcheo</a>
+        <a href="/adminCoordinador/CoordGestionarEstadisticasPitcheo" class="btn btn-outline">Gestionar pitcheo</a><br>
+
+        <a href="/adminCoordinador/CoordEditarEstadisticaEquipo" class="btn btn-outline">Estadística de equipo</a>
+        <a href="/adminCoordinador/CoordGestionarEstadisticasEquipo" class="btn btn-outline">Gestionar equipo</a>
+      </section>
+
+      <!-- Estado de sesión -->
+      <section class="card">
+        <h2>Estado</h2>
+
+        <p>Usuario: 
+          <strong><%= usuario?.usuario || '—' %></strong>
+        </p>
+
+        <p>Categoría asignada:  
+          <span class="muted"><%= usuario?.categoriaNombre || '—' %></span>
+        </p>
+
+        <p>Temporada vigente:
+          <span class="muted"><%= usuario?.temporadaNombre || '—' %></span>
+        </p>
+
+        <p>Fecha y hora: <span id="dt" class="muted">—</span></p>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    function fmt(n){ return n<10?'0'+n:n }
+    function tick(){
+      const d=new Date();
+      const s=[d.getFullYear(),fmt(d.getMonth()+1),fmt(d.getDate())].join('-')+' '+
+              fmt(d.getHours())+':'+fmt(d.getMinutes());
+      const el=document.getElementById('dt');
+      if(el) el.textContent=s;
+    }
+    tick(); setInterval(tick, 30000);
+
+    async function reping(){
+      try{
+        const r=await fetch('/auth/ping',{cache:'no-store',credentials:'same-origin'});
+        if(!r.ok) location.replace('/Login');
+      }catch{ location.replace('/Login'); }
+    }
+    window.addEventListener('pageshow',e=>{ if(e.persisted) reping(); });
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') reping(); });
+  </script>
 
 </body>
-
 </html>

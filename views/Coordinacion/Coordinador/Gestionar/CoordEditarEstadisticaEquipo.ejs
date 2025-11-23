@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Editar estadísticas del equipo</h1>
+
+    <% const _idCat = Number(idCategoria || 0); %>
+    <% const listaTemps = Array.isArray(temporadas) ? temporadas : []; %>
+
+    <form method="POST" action="/adminCoordinador/stats/editarEstadisticaEquipo"
+          class="card" style="padding:1rem 1.2rem">
+
+      <!-- Hidden para enviar categoría fija (aunque el controlador la toma del token) -->
+      <input type="hidden" id="hidCat" name="id_categoria" value="<%= _idCat %>">
+
+      <div class="grid">
+        <!-- TEMPORADA -->
+        <div>
+          <label>Temporada *</label>
+          <select id="selTemp" name="id_temporada" class="input" required>
+            <% listaTemps.forEach(t => { %>
+              <option value="<%= t.id_temporada %>"><%= t.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <!-- CATEGORÍA (deshabilitada, pero con nombre real) -->
+        <div>
+          <label>Categoría *</label>
+          <select id="selCat" class="input" disabled>
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+
+        <!-- EQUIPO -->
+        <div>
+          <label>Equipo *</label>
+          <select id="selEq" name="id_equipo_temporada" class="input" required>
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+
+        <!-- STATS -->
+        <div><label>CA favor</label><input class="input" name="carreras_a_favor"   type="number" min="0" value="0"></div>
+        <div><label>CA contra</label><input class="input" name="carreras_en_contra" type="number" min="0" value="0"></div>
+        <div><label>Ganados</label><input class="input" name="ganados"   type="number" min="0" value="0"></div>
+        <div><label>Perdidos</label><input class="input" name="perdidos"  type="number" min="0" value="0"></div>
+        <div><label>Empatados</label><input class="input" name="empatados" type="number" min="0" value="0"></div>
+        <div><label>Errores</label><input class="input" name="errores"    type="number" min="0" value="0"></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a class="btn btn-outline" href="/adminCoordinador">Cancelar</a>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const GET = u => fetch(u, {
+      headers: {'x-requested-with': 'XMLHttpRequest'}
+    }).then(r => r.json());
+
+    const ID_CAT  = <%- Number(idCategoria || 0) %>;
+    const ID_TEMP = <%- (typeof idTemporada !== 'undefined' ? Number(idTemporada) : 0) %>;
+
+    const $t      = document.getElementById('selTemp');
+    const $c      = document.getElementById('selCat');
+    const $e      = document.getElementById('selEq');
+    const $hidCat = document.getElementById('hidCat');
+
+    // Si coordinador tiene temporada fija, bloquearla
+    if (ID_TEMP) {
+      $t.value = String(ID_TEMP);
+      $t.disabled = true;
+    }
+
+    async function loadCats() {
+      // limpiamos categoría y equipos
+      $c.innerHTML = '<option value="">Selecciona</option>';
+      $e.innerHTML = '<option value="">Selecciona</option>';
+
+      if (!$t.value) return;
+
+      // sólo devuelve la categoría del coordinador para esa temporada
+      const cs = await GET(`/adminCoordinador/stats/categorias?id_temporada=${$t.value}`);
+
+      let selected = false;
+      cs.forEach(x => {
+        const o = document.createElement('option');
+        o.value = x.id_categoria;
+        o.textContent = x.nombre; // aquí se ve "7-8", "9-10", etc.
+        if (ID_CAT && Number(x.id_categoria) === ID_CAT) {
+          o.selected = true;
+          selected = true;
+        }
+        $c.appendChild(o);
+      });
+
+      if (!selected && cs.length) {
+        $c.value = String(cs[0].id_categoria);
+      }
+
+      if (ID_CAT) $hidCat.value = String(ID_CAT);
+      else if ($c.value) $hidCat.value = $c.value;
+
+      if ($c.value) await loadTeams();
+    }
+
+    async function loadTeams() {
+      $e.innerHTML = '<option value="">Selecciona</option>';
+
+      if (!$t.value || !$c.value) return;
+
+      const es = await GET(
+        `/adminCoordinador/stats/equipos?id_temporada=${$t.value}&id_categoria=${$c.value}`
+      );
+
+      es.forEach(x => {
+        const o = document.createElement('option');
+        o.value = x.id_equipo_temporada;
+        o.textContent = x.nombre;
+        $e.appendChild(o);
+      });
+    }
+
+    async function hydrate() {
+      if (!$t.value || !$e.value) return;
+
+      const s = await GET(
+        `/adminCoordinador/stats/equipo?id_temporada=${$t.value}&id_equipo_temporada=${$e.value}`
+      ) || {};
+
+      const set = (n) => {
+        const el = document.querySelector('input[name="' + n + '"]');
+        if (el) el.value = Number(s?.[n] || 0);
+      };
+
+      ['carreras_a_favor','carreras_en_contra','ganados','perdidos','empatados','errores']
+        .forEach(set);
+    }
+
+    // Eventos
+    $t.addEventListener('change', loadCats);
+    $e.addEventListener('change', hydrate);
+
+    // Init automático
+    (async function init() {
+      await loadCats();
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title:<%- JSON.stringify(alertTitle) %>,
+      text:<%- JSON.stringify(alertMessage) %>,
+      icon:<%- JSON.stringify(alertIcon) %>,
+      showConfirmButton:<%- JSON.stringify(showConfirmButton) %>,
+      timer:<%- (timer==null?'null':Number(timer)) %>
+    }).then(()=>{
+      if(<%- JSON.stringify(!!ruta) %>) location.href=<%- JSON.stringify(ruta) %>;
+    });
+  </script>
+  <% } %>
+
+</body>
+</html>
+
+
+
+
+

@@ -112,18 +112,43 @@
 }
 
 /* Responsive */
-@media (max-width:720px){
+@media (max-width: 720px){
   .categorias-grid{
-    grid-template-columns:repeat(auto-fit,minmax(78%,1fr));
-    display:flex;
-    flex-wrap:nowrap;
-    overflow-x:auto;
-    scroll-snap-type:x mandatory;
+    max-width: 420px;
+    margin: 0 auto;
+    grid-template-columns: 1fr;   /* una tarjeta por fila */
+    gap: 14px;
   }
+
   .categoria-card{
-    min-width:78%;
-    scroll-snap-align:center;
+    min-width: 100%;
   }
 }
+
+@media (max-width: 480px){
+  .categorias-section{
+    padding: 24px 12px;
+  }
+
+  .categoria-card{
+    padding: 16px 14px;
+    border-radius: 16px;
+  }
+
+  .categoria-img{
+    width: 82px;
+    height: 82px;
+  }
+
+  .categoria-info h2{
+    font-size: 0.95rem;
+  }
+
+  .boton-ir{
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+  }
+}
+
 
 

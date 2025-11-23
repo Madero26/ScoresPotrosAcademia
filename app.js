@@ -50,6 +50,7 @@ app.use('/', require('./Rutas/index'));
 app.use('/adminGeneral', isAuthenticated, require('./Rutas/adminGeneral'));
 app.use('/Coordinadores', require('./Rutas/coordinador'));
 app.use('/adminEstadisticas', isAuthenticated, require('./Rutas/adminEstadisticas'));
+app.use('/adminCoordinador', isAuthenticated, require('./Rutas/adminCoordinador'));
 
 // === Health check local ===
 app.get('/health', (_, res) => res.send('ok'));

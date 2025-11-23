@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Gestionar inscripciones de jugadores a equipos</h1>
+
+    <% if (sinAsignacion) { %>
+      <div class="card">
+        <p>Tu usuario no tiene temporada y categoría asignadas. Pide al administrador que configure tu acceso.</p>
+      </div>
+    <% } else { %>
+
+    <div class="card">
+
+      <!-- Info fija -->
+      <div class="form-grid" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>Temporada</label>
+          <input class="input" value="<%= temporada ? temporada.nombre : '' %>" disabled>
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <input class="input" value="<%= categoria ? categoria.nombre : '' %>" disabled>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Buscar jugador</label>
+          <input id="inpQ" class="input" placeholder="Filtrar por nombre">
+          <select id="selList" class="input" size="8" style="margin-top:.5rem">
+            <option value="">Selecciona</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Editor -->
+      <form id="frm" method="POST" action="#">
+        <input type="hidden" id="hidId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Equipo *</label>
+            <select id="selEqEdit" name="id_equipo_temporada" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha alta</label>
+            <input id="fAlta" type="date" class="input" name="fecha_alta">
+          </div>
+          <div class="form-group">
+            <label>Fecha baja</label>
+            <input id="fBaja" type="date" class="input" name="fecha_baja">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="btnUpd" class="btn btn-primary" type="submit" disabled>Actualizar</button>
+          <a href="/adminCoordinador" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <form id="frmDel" method="POST" action="#" onsubmit="return false">
+          <button id="btnDel" class="btn btn-danger" disabled>Eliminar</button>
+        </form>
+      </div>
+    </div>
+
+    <% } %>
+  </main>
+
+<script>
+(function(){
+  if (<%= sinAsignacion ? 'true' : 'false' %>) return;
+
+  const inpQ    = document.getElementById('inpQ');
+  const selList = document.getElementById('selList');
+
+  const selEqEdit = document.getElementById('selEqEdit');
+  const fAlta  = document.getElementById('fAlta');
+  const fBaja  = document.getElementById('fBaja');
+  const hidId  = document.getElementById('hidId');
+  const frm    = document.getElementById('frm');
+  const frmDel = document.getElementById('frmDel');
+  const btnUpd = document.getElementById('btnUpd');
+  const btnDel = document.getElementById('btnDel');
+
+  const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadTeams(){
+    selEqEdit.innerHTML = '<option value="">Selecciona</option>';
+    const es = await GET('/adminCoordinador/inscripcion/equipos');
+    es.forEach(e => {
+      const o = document.createElement('option');
+      o.value = e.id_equipo_temporada;
+      o.textContent = e.nombre;
+      selEqEdit.appendChild(o);
+    });
+  }
+
+  async function loadList(){
+    const q = inpQ.value.trim();
+    const qs = new URLSearchParams();
+    if (q) qs.set('q', q);
+    const list = await GET('/adminCoordinador/inscripcion/lista?' + qs.toString());
+    selList.innerHTML = list.map(x =>
+      `<option value="${x.id}" data-payload='${JSON.stringify(x)}'>
+        ${x.nombre_jugador} · ${x.nombre_equipo}
+      </option>`
+    ).join('');
+    disableEditor();
+  }
+
+  function disableEditor(){
+    hidId.value = '';
+    frm.action = '#';
+    frmDel.action = '#';
+    fAlta.value = '';
+    fBaja.value = '';
+    btnUpd.disabled = true;
+    btnDel.disabled = true;
+    selEqEdit.innerHTML = '<option value="">Selecciona</option>';
+  }
+
+  async function fillEditor(x){
+    hidId.value = x.id;
+    await loadTeams();
+    selEqEdit.value = x.id_equipo_temporada;
+    fAlta.value = x.fecha_alta || '';
+    fBaja.value = x.fecha_baja || '';
+    frm.action    = `/adminCoordinador/jugadorEquipoTemporada/${x.id}`;
+    frmDel.action = `/adminCoordinador/jugadorEquipoTemporada/${x.id}/eliminar`;
+    btnUpd.disabled = false;
+    btnDel.disabled = false;
+  }
+
+  function debounce(fn,ms){
+    let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); };
+  }
+
+  inpQ.addEventListener('input', debounce(loadList, 250));
+
+  selList.addEventListener('change', () => {
+    const opt = selList.selectedOptions[0];
+    if (!opt || !opt.dataset.payload) return disableEditor();
+    fillEditor(JSON.parse(opt.dataset.payload));
+  });
+
+  // confirm eliminar
+  btnDel.addEventListener('click', () => {
+    if (!frmDel.action || frmDel.action === '#') return;
+    Swal.fire({
+      title: '¿Eliminar inscripción?',
+      text: 'También se eliminarán sus estadísticas de la temporada.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar'
+    }).then(r => { if (r.isConfirmed) frmDel.submit(); });
+  });
+
+  (async function init(){
+    await loadList();
+  })();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: <%- JSON.stringify(alertTitle) %>,
+    text:  <%- JSON.stringify(alertMessage) %>,
+    icon:  <%- JSON.stringify(alertIcon) %>,
+    showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+    timer: <%- (timer==null?'null':Number(timer)) %>
+  }).then(() => {
+    window.location = <%- JSON.stringify(ruta || '/adminCoordinador/CoordGestionarInscripcionJugadorEquipo') %>;
+  });
+</script>
+<% } %>
+</body>
+</html>

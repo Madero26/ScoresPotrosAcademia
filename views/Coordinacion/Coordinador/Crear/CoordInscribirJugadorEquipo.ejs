@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Inscribir jugador en equipo</h1>
+
+    <% if (sinAsignacion) { %>
+      <div class="card">
+        <p>Tu usuario no tiene temporada y categoría asignadas. Pide al administrador que configure tu acceso.</p>
+      </div>
+    <% } else { %>
+
+    <div class="card">
+      <form method="POST" action="/adminCoordinador/jugadorEquipoTemporada" id="frm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Temporada</label>
+            <input class="input" value="<%= temporada ? temporada.nombre : '' %>" disabled>
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <input class="input" value="<%= categoria ? categoria.nombre : '' %>" disabled>
+          </div>
+
+          <div class="form-group">
+            <label>Equipo *</label>
+            <select id="selEq" name="id_equipo_temporada" class="input" required>
+              <option value="">Selecciona</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Buscar jugador</label>
+            <input id="inpQ" class="input" placeholder="Escribe nombre o apellidos">
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Jugador *</label>
+            <select id="selJug" name="id_jugador" class="input" size="8" required></select>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha de alta</label>
+            <input type="date" class="input" name="fecha_alta">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Guardar</button>
+          <a class="btn btn-outline" href="/adminCoordinador">Cancelar</a>
+        </div>
+      </form>
+    </div>
+
+    <% } %>
+  </main>
+
+<script>
+(function(){
+  if (<%= sinAsignacion ? 'true' : 'false' %>) return;
+
+  const selEq  = document.getElementById('selEq');
+  const selJug = document.getElementById('selJug');
+  const inpQ   = document.getElementById('inpQ');
+
+  const GET = u => fetch(u,{headers:{'x-requested-with':'XMLHttpRequest'}}).then(r=>r.json());
+
+  async function loadTeams(){
+    selEq.innerHTML = '<option value="">Selecciona</option>';
+    const es = await GET('/adminCoordinador/inscripcion/equipos');
+    es.forEach(e=>{
+      const o = document.createElement('option');
+      o.value = e.id_equipo_temporada;
+      o.textContent = e.nombre;
+      selEq.appendChild(o);
+    });
+  }
+
+  async function loadPlayers(){
+    selJug.innerHTML = '';
+    const q = inpQ.value.trim();
+    const qs = new URLSearchParams({ q });
+    const js = await GET('/adminCoordinador/inscripcion/jugadores?' + qs.toString());
+    if (!js.length){
+      selJug.innerHTML = '<option value="">No hay jugadores disponibles</option>';
+      return;
+    }
+    selJug.innerHTML = js.map(j => `<option value="${j.id_jugador}">${j.nombre}</option>`).join('');
+  }
+
+  function debounce(fn,ms){
+    let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); };
+  }
+
+  inpQ.addEventListener('input', debounce(loadPlayers, 250));
+
+  (async function init(){
+    await loadTeams();
+    await loadPlayers();
+  })();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<% if (typeof alert !== 'undefined' && alert) { %>
+<script>
+  Swal.fire({
+    title: <%- JSON.stringify(alertTitle) %>,
+    text:  <%- JSON.stringify(alertMessage) %>,
+    icon:  <%- JSON.stringify(alertIcon) %>,
+    showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+    timer: <%- (timer==null?'null':Number(timer)) %>
+  }).then(() => {
+    window.location = <%- JSON.stringify(ruta || '/adminCoordinador/CoordInscribirJugadorEquipo') %>;
+  });
+</script>
+<% } %>
+</body>
+</html>

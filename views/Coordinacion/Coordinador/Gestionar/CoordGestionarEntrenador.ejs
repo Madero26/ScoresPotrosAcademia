@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../../../partials/headAdmin') %>
+  <link rel="stylesheet" href="/resources/styles/styleFormsAdmins.css">
+</head>
+<body>
+  <%- include('../../../partials/navbar_adminCoordinador') %>
+
+  <main class="container">
+    <h1>Gestionar entrenadores</h1>
+
+    <div class="card">
+      <!-- Selector de entrenador -->
+      <form id="formSel" method="GET"
+            action="/adminCoordinador/CoordGestionarEntrenador"
+            class="form-group" style="margin-bottom:1rem">
+        <label>Selecciona entrenador</label>
+        <select class="input" name="id"
+                onchange="document.getElementById('formSel').submit()">
+          <% const lista = Array.isArray(entrenadores) ? entrenadores : []; %>
+          <% lista.forEach(x => { %>
+            <option value="<%= x.id_entrenador %>"
+              <%= (entrenador && x.id_entrenador===entrenador.id_entrenador)?'selected':'' %>>
+              <%= x.apellido_paterno %> <%= x.apellido_materno %>, <%= x.nombres %>
+            </option>
+          <% }) %>
+        </select>
+      </form>
+
+      <% const e = (typeof entrenador !== 'undefined' && entrenador) ? entrenador : null; %>
+      <% if (!e) { %>
+        <p>No se encontró el entrenador seleccionado.</p>
+      <% } else { %>
+
+      <!-- Formulario de actualización -->
+      <form action="/adminCoordinador/entrenadores/<%= e.id_entrenador %>" method="POST">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombres *</label>
+            <input class="input" type="text" name="nombres" required maxlength="100"
+                   value="<%= e.nombres %>">
+          </div>
+          <div class="form-group">
+            <label>Apellido paterno *</label>
+            <input class="input" type="text" name="apellido_paterno" required maxlength="100"
+                   value="<%= e.apellido_paterno %>">
+          </div>
+          <div class="form-group">
+            <label>Apellido materno *</label>
+            <input class="input" type="text" name="apellido_materno" required maxlength="100"
+                   value="<%= e.apellido_materno %>">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+          <a href="/adminCoordinador" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+
+      <div class="form-actions" style="margin-top:1rem; display:flex; gap:.5rem">
+        <form action="/adminCoordinador/entrenadores/<%= e.id_entrenador %>/eliminar"
+              method="POST"
+              onsubmit="return confirm('¿Eliminar definitivamente este entrenador?')">
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+
+      <% } %>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (typeof alert !== 'undefined' && alert) { %>
+  <script>
+    Swal.fire({
+      title: <%- JSON.stringify(alertTitle) %>,
+      text: <%- JSON.stringify(alertMessage) %>,
+      icon: <%- JSON.stringify(alertIcon) %>,
+      showConfirmButton: <%- JSON.stringify(showConfirmButton) %>,
+      timer: <%- (timer==null?'null':Number(timer)) %>
+    }).then(()=> {
+      window.location = <%- JSON.stringify(
+        ruta || ('/adminCoordinador/CoordGestionarEntrenador?id=' + (e ? e.id_entrenador : ''))
+      ) %>;
+    });
+  </script>
+  <% } %>
+</body>
+</html>
