@@ -103,24 +103,25 @@ router.get('/categoria/:idCat/jugadores', async (req, res, next) => {
       SELECT
         j.id_jugador, j.nombres, j.apellido_paterno, j.apellido_materno,
         /* Bateo */
-        COALESCE(b.apariciones_al_bat,0) AS apariciones_al_bat,
-        COALESCE(b.hits,0)               AS hits,
-        COALESCE(b.sencillos,0)          AS sencillos,
-        COALESCE(b.dobles,0)             AS dobles,
-        COALESCE(b.triples,0)            AS triples,
-        COALESCE(b.home_runs,0)          AS home_runs,
-        COALESCE(b.bases_robadas,0)      AS bases_robadas,
-        COALESCE(b.bases_por_bolas,0)    AS bases_por_bolas,
-        COALESCE(b.carreras,0)           AS carreras,
-        COALESCE(b.carreras_producidas,0) AS carreras_producidas,
-        COALESCE(b.promedio_bateo,0.000) AS promedio_bateo,
+        COALESCE(b.apariciones_al_bat,0)   AS apariciones_al_bat,
+        COALESCE(b.hits,0)                 AS hits,
+        COALESCE(b.sencillos,0)            AS sencillos,
+        COALESCE(b.dobles,0)               AS dobles,
+        COALESCE(b.triples,0)              AS triples,
+        COALESCE(b.home_runs,0)            AS home_runs,
+        COALESCE(b.bases_robadas,0)        AS bases_robadas,
+        COALESCE(b.bases_por_bolas,0)      AS bases_por_bolas,
+        COALESCE(b.carreras,0)             AS carreras,
+        COALESCE(b.carreras_producidas,0)  AS carreras_producidas,
+        COALESCE(b.promedio_bateo,0.000)   AS promedio_bateo,
         /* Pitcheo */
-        COALESCE(p.entradas_lanzadas,0)  AS entradas_lanzadas,
-        COALESCE(p.bases_por_bolas,0)    AS bb,
-        COALESCE(p.ponches,0)            AS ponches,
-        COALESCE(p.victorias,0)          AS victorias,
-        COALESCE(p.derrotas,0)           AS derrotas,
-        COALESCE(p.efectividad,0.00)     AS efectividad
+        COALESCE(p.entradas_lanzadas,0)    AS entradas_lanzadas,
+        COALESCE(p.bases_por_bolas,0)      AS bb,
+        COALESCE(p.ponches,0)              AS ponches,
+        COALESCE(p.victorias,0)            AS victorias,
+        COALESCE(p.derrotas,0)             AS derrotas,
+        COALESCE(p.carreras_limpias,0)     AS carreras_limpias,
+        COALESCE(p.efectividad,0.000)      AS efectividad
       FROM ${T('JugadorEquipoTemporada')} jet
       JOIN ${T('Jugadores')} j ON j.id_jugador = jet.id_jugador
       LEFT JOIN ${T('EstadisticasBateoTemporada')}  b ON b.id_temporada=? AND b.id_jugador=j.id_jugador
@@ -129,14 +130,14 @@ router.get('/categoria/:idCat/jugadores', async (req, res, next) => {
       ORDER BY j.apellido_paterno, j.apellido_materno, j.nombres
     `, [idTemp, idTemp, idEt]);
 
-    // Rutas/estadisticas.js  (jugadores del equipo)
     res.render('Publico/Estadisticas/Jugadores', {
       jugadores, idTemp, idCat: req.params.idCat, idEt,
-      idEquipo: idEt      // <-- agrega esto
+      idEquipo: idEt
     });
 
   } catch (e) { next(e); }
 });
+
 
 /* 5) Buscador para datalist (opcional) */
 router.get('/categoria/:idCat/buscar', async (req, res, next) => {

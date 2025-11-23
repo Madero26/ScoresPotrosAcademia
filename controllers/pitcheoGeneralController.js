@@ -29,26 +29,62 @@ async function validarEquipoEnFiltro(id_equipo_temporada, id_temporada, id_categ
   return { ok:true };
 }
 
-/* ===== GET: una línea de pitcheo del jugador en temporada ===== */
-exports.obtenerPitcheoJugador = async (req,res)=>{
-  const id_temporada = Number(req.query.id_temporada)||0;
-  const id_jugador   = Number(req.query.id_jugador)||0;
-  if(!id_temporada||!id_jugador) return res.json(null);
+exports.obtenerPitcheoJugador = async (req, res) => {
+  const id_temporada = Number(req.query.id_temporada) || 0;
+  const id_jugador   = Number(req.query.id_jugador)   || 0;
+
+  if (!id_temporada || !id_jugador) {
+    return res.json({
+      bases_por_bolas: 0,
+      victorias: 0,
+      derrotas: 0,
+      entradas_lanzadas: 0.0,
+      carreras_limpias: 0,
+      ponches: 0,
+      efectividad: 0.000
+    });
+  }
+
   const rows = await db.query(
     `SELECT id_temporada,id_jugador,id_equipo_temporada,
-            bases_por_bolas,victorias,derrotas,entradas_lanzadas,carreras_limpias,ponches
-       FROM EstadisticasPitcheoTemporada
-      WHERE id_temporada=? AND id_jugador=? LIMIT 1`,
-    [id_temporada,id_jugador]
+            bases_por_bolas,victorias,derrotas,
+            entradas_lanzadas,carreras_limpias,ponches
+     FROM EstadisticasPitcheoTemporada
+     WHERE id_temporada=? AND id_jugador=? LIMIT 1`,
+    [id_temporada, id_jugador]
   );
-  const x = rows[0] || null;
-  if(!x) return res.json(null);
-  // ERA = 9 * ER / IP, donde IP usa .1 = 1/3, .2 = 2/3 (guardamos 0.1/0.2)
-  const frac = (ip)=>{ const b=Math.floor(ip+1e-9); const f=Math.round((ip-b)*10); return b + (f===1?1/3:f===2?2/3:0); };
-  const ip9 = frac(Number(x.entradas_lanzadas||0));
-  const era = ip9>0 ? (9*Number(x.carreras_limpias||0)/ip9) : 0;
-  res.json({ ...x, efectividad: era });
+
+  // Si no hay registro, regresar ceros
+  if (!rows.length) {
+    return res.json({
+      bases_por_bolas: 0,
+      victorias: 0,
+      derrotas: 0,
+      entradas_lanzadas: 0.0,
+      carreras_limpias: 0,
+      ponches: 0,
+      efectividad: 0.000
+    });
+  }
+
+  const x = rows[0];
+
+  // Calcular ERA correctamente
+  const frac = (ip) => {
+    const b = Math.floor(ip + 1e-9);
+    const f = Math.round((ip - b) * 10);
+    return b + (f === 1 ? 1/3 : f === 2 ? 2/3 : 0);
+  };
+
+  const ip9 = frac(Number(x.entradas_lanzadas || 0));
+  const era = ip9 > 0 ? (9 * Number(x.carreras_limpias || 0) / ip9) : 0;
+
+  return res.json({
+    ...x,
+    efectividad: era
+  });
 };
+
 
 /* ===== POST: carga masiva por equipo (SUMA) ===== */
 exports.batchUpsertPitcheoEquipo = async (req,res)=>{

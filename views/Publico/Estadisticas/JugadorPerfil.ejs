@@ -87,31 +87,34 @@
     </div>
 
     <!-- Pitcheo -->
-    <div class="table-card tab-content" id="tab-pit">
-      <h3 class="t-sub">Pitcheo</h3>
-      <table class="t t-full">
-        <thead>
-          <tr>
-            <th>IP</th>
-            <th>BB</th>
-            <th>K</th>
-            <th>W</th>
-            <th>L</th>
-            <th>ERA</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><%= nz(P.entradas_lanzadas) %></td>
-            <td><%= nz(P.bases_por_bolas) %></td>
-            <td><%= nz(P.ponches) %></td>
-            <td><%= nz(P.victorias) %></td>
-            <td><%= nz(P.derrotas) %></td>
-            <td><%= fix3(P.efectividad) %></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<div class="table-card tab-content" id="tab-pit">
+  <h3 class="t-sub">Pitcheo</h3>
+  <table class="t t-full">
+    <thead>
+      <tr>
+        <th>IP</th>
+        <th>BB</th>
+        <th>K</th>
+        <th>W</th>
+        <th>L</th>
+        <th>ER</th>   <!-- Carreras limpias -->
+        <th>ERA</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= nz(P.entradas_lanzadas) %></td>
+        <td><%= nz(P.bases_por_bolas) %></td>
+        <td><%= nz(P.ponches) %></td>
+        <td><%= nz(P.victorias) %></td>
+        <td><%= nz(P.derrotas) %></td>
+        <td><%= nz(P.carreras_limpias) %></td>  <!-- nuevo -->
+        <td><%= fix3(P.efectividad) %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 
     <!-- Rendimiento mensual -->
     <div class="table-card tab-content" id="tab-rend">
