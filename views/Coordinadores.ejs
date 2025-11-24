@@ -1,26 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include('partials/head') %>
     <link rel="stylesheet" href="resources/styles/styleCoordinadores.css">
 </head>
+
 <body>
 
     <%- include('partials/navbar') %>
     <%- include('partials/footer') %>
-    <section class="content03">
-        <h1 class="titulo-coordinadores">Coordinadores</h1>
 
-        <div class="coordinadores-container">
-            <% coordinadores.forEach(c => { %>
-                <div class="coordinador-card">
-                    <img src="/<%= c.url_foto %>" alt="Foto de <%= c.nombres %>" class="coordinador-foto">
-                    <h3><%= c.nombres %> <%= c.apellido_paterno %> <%= c.apellido_materno %></h3>
-                    <p><strong>Categoría:</strong> <%= c.nombre_categoria %></p>
-                </div>
-            <% }) %>
-        </div>
+    <section class="co-wrap">
+      <h1 class="co-title">Coordinadores</h1>
+
+      <div class="co-grid">
+        <% (coordinadores || []).forEach(c => { %>
+          <div class="co-card">
+            <img src="/<%= c.url_foto %>" alt="Foto coordinador" class="co-img">
+
+            <h2 class="co-name">
+              <%= c.nombres %> <%= c.apellido_paterno %> <%= c.apellido_materno %>
+            </h2>
+
+            <p class="co-cats">
+              <b>Categoría:</b> <%= c.nombre_categoria %>
+            </p>
+          </div>
+        <% }) %>
+      </div>
     </section>
-    
+
 </body>
+
 </html>
+
