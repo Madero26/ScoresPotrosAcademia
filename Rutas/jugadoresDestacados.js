@@ -7,7 +7,8 @@ const SCHEMA = process.env.DB_NAME || 'academia_bd';
 const T = t => `\`${SCHEMA}\`.${t}`;
 const q = async (sql, p = []) => {
   const r = await db.query(sql, p);
-  return Array.isArray(r) && Array.isArray(r[0]) ? r[0] : (Array.isArray(r) ? r : (r?.rows || []));
+  return Array.isArray(r) && Array.isArray(r[0]) ? r[0] :
+         (Array.isArray(r) ? r : (r?.rows || []));
 };
 
 // helpers temporada
@@ -17,11 +18,14 @@ const getTemporadas = () =>
 const getTempActivaOReciente = async () => {
   const a = await q(`SELECT id_temporada FROM ${T('Temporadas')} WHERE is_activa=1 ORDER BY fecha_inicio DESC LIMIT 1`);
   if (a.length) return a[0].id_temporada;
+
   const r = await q(`SELECT id_temporada FROM ${T('Temporadas')} ORDER BY fecha_inicio DESC LIMIT 1`);
   return r[0]?.id_temporada ?? null;
 };
 
+// ---------------------------------------------------------------------
 // 1) Vista de categorías
+// ---------------------------------------------------------------------
 router.get('/', async (req, res, next) => {
   try {
     const temporadas = await getTemporadas();
@@ -39,7 +43,9 @@ router.get('/', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+// ---------------------------------------------------------------------
 // 2) Menú de métricas por categoría
+// ---------------------------------------------------------------------
 router.get('/categoria/:idCat', async (req, res, next) => {
   try {
     const idTemp = Number(req.query.temporada) || await getTempActivaOReciente();
@@ -53,7 +59,9 @@ router.get('/categoria/:idCat', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+// ---------------------------------------------------------------------
 // 3) Tabla paginada de una métrica
+// ---------------------------------------------------------------------
 router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
   try {
     const idTemp = Number(req.query.temporada) || await getTempActivaOReciente();
@@ -98,10 +106,9 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
 
     const whereBase = `WHERE jtc.id_temporada=? AND jtc.id_categoria=?`;
 
-    // Sólo bateo tiene PA
     const selectPa = isBat ? 'IFNULL(b.apariciones_al_bat,0)' : '0';
 
-    // Regla de apariciones solo para promedio de bateo
+    // Regla de PA mínimo solo para promedio
     let rule = null;
     if (isBat && tipo === 'promedio') {
       rule = (await q(
@@ -112,25 +119,31 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
       ))[0] || null;
     }
 
-    // Query base
+    // Query base (ya corregido)
     let baseRows = await q(`
-  SELECT j.id_jugador,
-         CONCAT(j.apellido_paterno,' ',j.apellido_materno,' ',j.nombres) AS nombre,
-         ${meta.col} AS valor,
-         ${selectPa} AS pa
-         ${isBat ? '' : ', IFNULL(p.entradas_lanzadas,0) AS ip, IFNULL(p.carreras_limpias,0) AS er'}
-  ${fromJoin}
-  ${whereBase}
-  ORDER BY ${meta.col} ${meta.order}, nombre ASC
-`, [
-  idTemp,   // para el join
-  idTemp,   // para el where
-  idCat
-]);
+      SELECT j.id_jugador,
+             CONCAT(j.apellido_paterno,' ',j.apellido_materno,' ',j.nombres) AS nombre,
+             ${meta.col} AS valor,
+             ${selectPa} AS pa
+             ${isBat ? '' : ', IFNULL(p.entradas_lanzadas,0) AS ip, IFNULL(p.carreras_limpias,0) AS er'}
+      ${fromJoin}
+      ${whereBase}
+      ORDER BY ${meta.col} ${meta.order}, nombre ASC
+    `, [
+      idTemp,
+      idTemp,
+      idCat
+    ]);
 
+    // ------------------------------------------------------
+    // FILTRO EXTRA PARA ERA: evitar pitchers sin actividad real
+    // ------------------------------------------------------
+    if (tipo === 'efectividad') {
+      const MIN_IP = 1.0; // ajustable
+      baseRows = baseRows.filter(r => Number(r.ip) >= MIN_IP);
+    }
 
-
-    // Filtro por PA mínimo si aplica
+    // Filtro PA mínimo (solo bateo)
     let rowsToUse = baseRows;
     if (rule && rule.habilitado) {
       const min = Number(rule.min_apariciones) || 0;
@@ -166,10 +179,11 @@ router.get('/categoria/:idCat/estadisticas/:tipo', async (req, res, next) => {
       tipo,
       tituloEstadistica: meta.label,
       nombreCategoria,
-      idTemp // para conservar ?temporada= en los links
+      idTemp
     });
   } catch (e) { next(e); }
 });
 
 module.exports = router;
+
 
